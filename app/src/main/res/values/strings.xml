@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">System Configuration</string>
+    <string-array name="brands">
+        <item>Select brand</item>
+        <item>Samsung</item>
+        <item>Oppo</item>
+        <item>Vivo</item>
+        <item>Xiaomi</item>
+        <item>Realme</item>
+        <item>One Plus</item>
+        <item>Poco</item>
+        <item>Nokia</item>
+        <item>Infinix</item>
+        <item>Gionee</item>
+        <item>Coolpad</item>
+        <item>Sony</item>
+        <item>HTC</item>
+        <item>Iball</item>
+        <item>honor</item>
+        <item>LYF</item>
+        <item>Motorola</item>
+        <item>LG</item>
+        <item>Micromax</item>
+        <item>Other Android phone</item>
+    </string-array>
+
+    <string-array name="payment">
+        <item>Select payment mode</item>
+        <item>Cash</item>
+        <item>Loan</item>
+    </string-array>
+
+    <string-array name="loan">
+        <item>Select Financer</item>
+        <item>Bajaj Finance</item>
+        <item>IDFC First Bank</item>
+        <item>Home credit</item>
+        <item>HDFC</item>
+        <item>Kotak</item>
+        <item>Tata Capital</item>
+        <item>Private finance</item>
+        <item>Other finance</item>
+    </string-array>
+</resources>
