@@ -8,4 +8,74 @@
     tools:context=".MainActivity">
 
 
+    <EditText
+        android:id="@+id/emailId"
+        android:layout_width="307dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="265dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginRight="99dp"
+        android:layout_marginBottom="421dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Enter your mail"
+        android:inputType="textPersonName"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/emailBtn"
+        android:layout_width="147dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="151dp"
+        android:layout_marginLeft="151dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="172dp"
+        android:layout_marginRight="172dp"
+        android:layout_marginBottom="332dp"
+        android:background="@drawable/btn_bg"
+        android:text="Check Email"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailId" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="153dp"
+        android:layout_marginLeft="153dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginEnd="157dp"
+        android:layout_marginRight="157dp"
+        android:onClick="getUniqueIMEIId"
+        android:text="Check imei"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailBtn" />
+
+    <TextView
+        android:id="@+id/permissionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="216dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:gravity="center"
+        android:text="Grant all permission to use features"
+        android:textColor="@color/colorText"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

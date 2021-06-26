@@ -2,6 +2,8 @@ package com.emi.systemconfiguration;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -43,9 +45,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    String prevStarted = "yes";
 
     private DatePicker datePicker;
     private Calendar calendar;
@@ -77,12 +83,28 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     List<String> policyDocID = new ArrayList<String>();
 
+    List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        SharedPreferences sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+//        if (!sharedpreferences.getBoolean(prevStarted, false)) {
+//            SharedPreferences.Editor editor = sharedpreferences.edit();
+//            editor.putBoolean(prevStarted, Boolean.TRUE);
+//            editor.apply();
+//        } else {
+//            moveToSecondary();
+//        }
+//    }
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
+
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -108,6 +130,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         // getting our instance
         // from Firebase Firestore.
         db = FirebaseFirestore.getInstance();
+
+        //        Fetch All the Policy Id
+        getPolicyIdList();
+
 
         //Spinner brand
         spinner = findViewById(R.id.spinner1);
@@ -174,7 +200,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         customer_contactEdit = findViewById(R.id.customerNumber);
         registerBtn = findViewById(R.id.registerBtn);
 
-        getListItems();
+
 
         // adding on click listener for button
         registerBtn.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +221,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     customer_emailEdit.setError("Please enter Course Duration");
                 } else {
                     // calling method to add data to Firebase Firestore.
-
                     registerNewUser();
 //                    registerUser();
                 }
@@ -230,6 +255,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 if(s.length() == 8){
                     getvendorId(s.toString());
                     policy_no = s.toString().toUpperCase();
+                    toastMessage(s.toString());
                 }
 //                getvendorId(s.toString());
 //                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
@@ -238,8 +264,17 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
-    private void getvendorId(String policiesNo){
+    public void moveToSecondary(){
+        // use an intent to travel from one activity to another.
+        Intent intent;
+        intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
+
+
+    private void getvendorId(String policiesNo){
+//        toastMessage(policyDocID.toString());
         for (int i=0; i < policyDocID.size(); i++) {
 //            System.out.println(policyDocID.get(i));
 //            toastMessage(policyDocID.get(i));
@@ -309,16 +344,21 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
-    private void getListItems() {
+    private void getPolicyIdList() {
+
         db.collection("policy").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     List<String> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                         list.add(document.getId());
                         policyDocID.add(document.getId());
+//                        Log.d("this id are", String.valueOf(document.getData()));
+//
+//                        toastMessage(document.getData()));
                     }
+//                    toastMessage(policyDocID.toString());
                     Log.d("List are", policyDocID.toString());
                 } else {
                     Log.d("Error", "Error getting documents: ", task.getException());
@@ -454,8 +494,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //                                    "Authentication successful!" + mAuth.getCurrentUser().getUid(),
 //                                    Toast.LENGTH_LONG)
 //                                    .show();
+//                            MainActivity main = new MainActivity();
 
-                            customer_uid  = mAuth.getCurrentUser().getUid();
+            //                customer_uid  = mAuth.getCurrentUser().getUid();
+                            customer_uid =  MainActivity.getDeviceId(getApplicationContext());
+
                             addDataToFirestore(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,VendorID, PolicyNo, startDate, endDate);
 
 
@@ -491,7 +534,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         CollectionReference dbRegister = db.collection("users");
 
         // adding our data to our courses object class.
-        RegistrationDetails registration = new RegistrationDetails(customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate);
+        RegistrationDetails registration = new RegistrationDetails(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate);
 
         // below method is use to add data to Firebase Firestore.
         dbRegister.document(customer_uid).set(registration).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -500,10 +543,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 // after the data addition is successful
                 // we are displaying a success toast message.
                 for (int i=0; i < policyDocID.size(); i++) {
-
                     DocumentReference documentReference = db.collection("policy").document(policyDocID.get(i));
                     String policyDocumentsID = policyDocID.get(i);
                     documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
                         @Override
                         public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                             if (error != null) {
@@ -537,6 +580,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 }
 
                 toastMessage("Registration is done successfully");
+                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(mainActivityIntent);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -622,9 +667,60 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 .append(month).append("/").append(year).toString();
     }
 
+
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
+
+
+    private Object activeUser(){
+        final String[] status = new String[1];
+
+     String deviceId = MainActivity.getDeviceId(this);
+
+        return deviceId;
+//        status[0]= deviceId;
+
+//        DocumentReference documentReference = db.collection("users").document(deviceId);
+//        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                if (error != null) {
+//                    // this method is called when error is not null
+//                    // and we gt any error
+//                    // in this cas we are displaying an error message.
+//                    Log.d("Error is","Error found" + error);
+//                    return;
+//                }
+//                if (value != null && value.exists()) {
+//
+//                     userData.add(value.getData());
+//
+//                    Log.d("Found the", value.getData().get("customer_active").toString());
+//
+//                }
+//            }
+//        });
+
+
+//        DocumentReference documentReference = db.collection("users").document(MainActivity.getDeviceId(getApplicationContext()));
+//        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    // Document found in the offline cache
+//                    DocumentSnapshot document = task.getResult();
+//                    Log.d("Active Device", "Cached document data: " + document.getData());
+////                    toastMessage(document.getData().toString());
+//                } else {
+//                    Log.d("Active device", "Cached get failed: ", task.getException());
+//                }
+//
+//            }
+//        });
+    };
+
+
 }
 

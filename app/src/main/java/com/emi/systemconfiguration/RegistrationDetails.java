@@ -14,7 +14,7 @@ public class RegistrationDetails {
 
 
 
-    public RegistrationDetails(String customer_name, String customer_contact,
+    public RegistrationDetails(String customer_uid,String customer_name, String customer_contact,
                                String customer_email, String customer_mobile_brand, String customer_payment,String customer_loan,
                                String startDate, String endDate ) {
         this.customer_uid = customer_uid;
@@ -34,13 +34,13 @@ public class RegistrationDetails {
 
 
     // getter methods for all variables.
-//    public String getCustomer_uid() {
-//        return customer_uid;
-//    }
-//
-//    public void setCustomer_uid(String customer_uid) {
-//        this.customer_uid = customer_uid;
-//    }
+    public String getCustomer_uid() {
+        return customer_uid;
+    }
+
+    public void setCustomer_uid(String customer_uid) {
+        this.customer_uid = customer_uid;
+    }
 
     public String getCustomer_name() {
         return customer_name;

@@ -16,7 +16,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -28,15 +27,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 
-public class BackgroundService extends Service {
-    public int counter=0;
+public class BackgroundDelayService extends Service {
+    public int counter = 0;
     Dialog dialog;
     private FirebaseFirestore db;
 
@@ -55,17 +53,16 @@ public class BackgroundService extends Service {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
         else
-            startForeground(1, new Notification());
+            startForeground(2, new Notification());
 
 
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private void startMyOwnForeground()
-    {
-        String NOTIFICATION_CHANNEL_ID = "example.permanence";
-        String channelName = "Background Service";
+    private void startMyOwnForeground() {
+        String NOTIFICATION_CHANNEL_ID = "example.delay";
+        String channelName = "Background Delay Service";
         NotificationChannel chan = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
@@ -82,11 +79,9 @@ public class BackgroundService extends Service {
         }
 
 
-
-
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle( "System Service")
+                .setContentTitle("System Delay Service")
                 .setContentText("This service is under Protection-Mode")
                 .setSmallIcon(R.mipmap.ic_launcher)
 //                .setPriority(NotificationManager.IMPORTANCE_MIN)
@@ -99,7 +94,7 @@ public class BackgroundService extends Service {
 //                .setTicker("Ticker text")
 //                .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
 //                .build();
-        startForeground(2, notification);
+        startForeground(3, notification);
     }
 
 
@@ -113,18 +108,18 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        stoptimertask();
+        stoptimertask();
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("restart service");
-        broadcastIntent.setClass(this, BackgroundService.class);
+        broadcastIntent.setClass(this, BackgroundDelayService.class);
         this.sendBroadcast(broadcastIntent);
     }
 
 
-
     private Timer timer;
     private TimerTask timerTask;
+
     public void startTimer() {
         int day = 20;
         timer = new Timer();
@@ -132,20 +127,18 @@ public class BackgroundService extends Service {
 
             @RequiresApi(api = Build.VERSION_CODES.Q)
             public void run() {
-                Log.i("Count", "=========  "+ (counter++));
+                Log.i("Count", "=========  " + (counter++));
                 checkRunningApps();
-                if(day <= counter){
+                if (day <= counter) {
                     Log.i("Count", "========= Workingggg  ");
-                //    activeDevice();
-                  if(isConnected()){
-                      Log.i("INterent", "========= Connected to  Network ");
-                      activeDevice();
-                  }
-                  else
-                  {
-                      Log.i("INterent", "========= Not  Connected to Network ");
-                  }
-                    counter =0;
+                    //    activeDevice();
+                    if (isConnected()) {
+                        Log.i("INterent", "========= Connected to  Network ");
+                        activeDevice();
+                    } else {
+                        Log.i("INterent", "========= Not  Connected to Network ");
+                    }
+                    counter = 0;
                 }
 
             }
@@ -157,8 +150,8 @@ public class BackgroundService extends Service {
     public void checkRunningApps() {
         String myPackage;
         myPackage = retriveNewApp(this);
-        Log.e("app","app details are" + myPackage);
-        if(myPackage.contains("com.android.settings")){
+        Log.e("app", "app details are" + myPackage);
+        if (myPackage.contains("com.android.settings")) {
             Log.e("Tag", " THi is woking properly");
 
             Intent dialogIntent = new Intent(this, LockScreen.class);
@@ -217,46 +210,12 @@ public class BackgroundService extends Service {
         }
     }
 
-    private void activeDevice(){
-        String  deviceId=MainActivity.getDeviceId(getApplicationContext());
+    private void activeDevice() {
+        String deviceId = MainActivity.getDeviceId(getApplicationContext());
 //        RegistrationAcitivity register = new RegistrationAcitivity();
-     //   String status = register.activeUser(context);
-     //   Log.d("gdfhhjgdfhdf",status);
+        //   String status = register.activeUser(context);
+        //   Log.d("gdfhhjgdfhdf",status);
 
-        DocumentReference documentReference = db.collection("users").document(deviceId);
-        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    // this method is called when error is not null
-                    // and we gt any error
-                    // in this cas we are displaying an error message.
-                    Log.d("Error is","Error found" + error);
-                    startTimer();
-                    return;
-                }
-                if (value != null && value.exists()) {
-                    Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
-
-                    if(!customerActiveFeild){
-                        stoptimertask();
-                        Log.i("Count", "========= Stopped");
-                    }
-                    else {
-//                        backgroundService = new BackgroundService();
-//                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-//                        if (MainActivity.isMyServiceRunning)
-                        backgroundService = new BackgroundService();
-                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-                        if (!isMyServiceRunning(backgroundService.getClass())) {
-                            startService(mServiceIntent);
-                        }
-
-                    }
-                    Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
-                }
-            }
-        });
 
 
 //        return deviceId;
@@ -265,7 +224,7 @@ public class BackgroundService extends Service {
     public boolean isConnected() {
         boolean connected = false;
         try {
-            ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
@@ -284,5 +243,5 @@ public class BackgroundService extends Service {
         }
         return false;
     }
-
 }
+
