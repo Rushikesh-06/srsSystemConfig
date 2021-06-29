@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
 import com.karumi.dexter.Dexter;
@@ -81,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
     private BackgroundService backgroundService;
     Intent mServiceIntent;
     FirebaseAuth auth;
+
     EditText emailText;
+    EditText passwordText;
 
 //    Bug features
 //    String prevStarted = "yes";
@@ -109,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
         emailText =(EditText) findViewById(R.id.emailId);
+        passwordText =(EditText) findViewById(R.id.editTextPassword);
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -149,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isConnected(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_SHORT).show();
-                    checkEmail();
+//                    checkEmail();
+                    loginUserAccount();
                 } else {
                     Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }
@@ -249,6 +255,80 @@ public class MainActivity extends AppCompatActivity {
                }
            }
        });
+    }
+
+    private void loginUserAccount()
+    {
+        // show the visibility of progress bar to show loading
+      //  progressbar.setVisibility(View.VISIBLE);
+
+        // Take the value of two edit texts in Strings
+        String email, password;
+        email = emailText.getText().toString();
+        password = passwordText.getText().toString();
+
+        // validations for input email and password
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(),
+                    "Please enter email!!",
+                    Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(),
+                    "Please enter password!!",
+                    Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        // signin existing user
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(
+                                    @NonNull Task<AuthResult> task)
+                            {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Login successful!!",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                    backgroundService = new BackgroundService();
+                                    mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+                                    if (!isMyServiceRunning(backgroundService.getClass())) {
+                                        startService(mServiceIntent);
+                                    }
+
+                                    // hide the progress bar
+
+
+                                    // if sign-in is successful
+                                    // intent to home activity
+//                                    Intent intent
+//                                            = new Intent(LoginActivity.this,
+//                                            MainActivity.class);
+//                                    startActivity(intent);
+                                }
+
+                                else {
+
+                                    // sign-in failed
+                                    Toast.makeText(getApplicationContext(),
+                                            "Login failed!!",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+
+                                    Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
+                                    startActivity(registrationIntent);
+                                    // hide the progress bar
+
+                                }
+                            }
+                        });
     }
 
 //    Permission
@@ -452,7 +532,8 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_NETWORK_STATE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.READ_CONTACTS
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.FOREGROUND_SERVICE
                    //         Manifest.permission.PACKAGE_USAGE_STATS
             //                Manifest.permission.REQUEST_INSTALL_PACKAGES
                     )

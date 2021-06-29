@@ -15,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -80,9 +81,6 @@ public class BackgroundService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(chan);
         }
-
-
-
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
@@ -161,11 +159,9 @@ public class BackgroundService extends Service {
         if(myPackage.contains("com.android.settings")){
             Log.e("Tag", " THi is woking properly");
 
-            Intent dialogIntent = new Intent(this, LockScreen.class);
+            Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-
-
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
         }
@@ -190,6 +186,7 @@ public class BackgroundService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static final String retriveNewApp(Context context) {
+//        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
         if (Build.VERSION.SDK_INT >= 21) {
             String currentApp = null;
             UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
@@ -225,6 +222,7 @@ public class BackgroundService extends Service {
 
         DocumentReference documentReference = db.collection("users").document(deviceId);
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -249,7 +247,7 @@ public class BackgroundService extends Service {
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
                         if (!isMyServiceRunning(backgroundService.getClass())) {
-                            startService(mServiceIntent);
+                            startForegroundService(mServiceIntent);
                         }
 
                     }

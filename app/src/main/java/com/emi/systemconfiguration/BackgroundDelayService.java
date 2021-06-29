@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -14,12 +15,14 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,7 +37,7 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 
 public class BackgroundDelayService extends Service {
-    public int counter = 0;
+    public int counter=0;
     Dialog dialog;
     private FirebaseFirestore db;
 
@@ -60,9 +63,10 @@ public class BackgroundDelayService extends Service {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private void startMyOwnForeground() {
-        String NOTIFICATION_CHANNEL_ID = "example.delay";
-        String channelName = "Background Delay Service";
+    private void startMyOwnForeground()
+    {
+        String NOTIFICATION_CHANNEL_ID = "example.counter";
+        String channelName = "Background Counter";
         NotificationChannel chan = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
@@ -78,10 +82,9 @@ public class BackgroundDelayService extends Service {
             manager.createNotificationChannel(chan);
         }
 
-
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("System Delay Service")
+                .setContentTitle( "Counter Service")
                 .setContentText("This service is under Protection-Mode")
                 .setSmallIcon(R.mipmap.ic_launcher)
 //                .setPriority(NotificationManager.IMPORTANCE_MIN)
@@ -94,7 +97,7 @@ public class BackgroundDelayService extends Service {
 //                .setTicker("Ticker text")
 //                .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
 //                .build();
-        startForeground(3, notification);
+        startForeground(2, notification);
     }
 
 
@@ -108,37 +111,40 @@ public class BackgroundDelayService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stoptimertask();
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restart service");
-        broadcastIntent.setClass(this, BackgroundDelayService.class);
-        this.sendBroadcast(broadcastIntent);
+//        stoptimertask();
+//
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction("restart service");
+//        broadcastIntent.setClass(this, BackgroundDelayService.class);
+//        this.sendBroadcast(broadcastIntent);
     }
+
 
 
     private Timer timer;
     private TimerTask timerTask;
-
     public void startTimer() {
         int day = 20;
         timer = new Timer();
+        Intent intentService = new Intent(this, BackgroundService.class);
+        stopService(intentService);
         timerTask = new TimerTask() {
 
             @RequiresApi(api = Build.VERSION_CODES.Q)
             public void run() {
-                Log.i("Count", "=========  " + (counter++));
-                checkRunningApps();
-                if (day <= counter) {
-                    Log.i("Count", "========= Workingggg  ");
+                Log.i("Counter", "=========  "+ (counter++));
+                if(day <= counter){
+                    Log.i("Counter", "========= Working counter ");
+                    stoptimertask();
                     //    activeDevice();
-                    if (isConnected()) {
-                        Log.i("INterent", "========= Connected to  Network ");
-                        activeDevice();
-                    } else {
-                        Log.i("INterent", "========= Not  Connected to Network ");
-                    }
-                    counter = 0;
+//                    if(isConnected()){
+//                        Log.i("INterent", "========= Connected to  Network ");
+//                    }
+//                    else
+//                    {
+//                        Log.i("INterent", "========= Not  Connected to Network ");
+//                    }
+                    counter =0;
                 }
 
             }
@@ -150,11 +156,11 @@ public class BackgroundDelayService extends Service {
     public void checkRunningApps() {
         String myPackage;
         myPackage = retriveNewApp(this);
-        Log.e("app", "app details are" + myPackage);
-        if (myPackage.contains("com.android.settings")) {
+        Log.e("app","app details are" + myPackage);
+        if(myPackage.contains("com.android.settings")){
             Log.e("Tag", " THi is woking properly");
 
-            Intent dialogIntent = new Intent(this, LockScreen.class);
+            Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
 
@@ -170,7 +176,7 @@ public class BackgroundDelayService extends Service {
             timer = null;
             backgroundService = new BackgroundService();
             mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-            stopService(mServiceIntent);
+            startService(mServiceIntent);
         }
 
     }
@@ -210,12 +216,47 @@ public class BackgroundDelayService extends Service {
         }
     }
 
-    private void activeDevice() {
-        String deviceId = MainActivity.getDeviceId(getApplicationContext());
+    private void activeDevice(){
+        String  deviceId=MainActivity.getDeviceId(getApplicationContext());
 //        RegistrationAcitivity register = new RegistrationAcitivity();
         //   String status = register.activeUser(context);
         //   Log.d("gdfhhjgdfhdf",status);
 
+        DocumentReference documentReference = db.collection("users").document(deviceId);
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    // this method is called when error is not null
+                    // and we gt any error
+                    // in this cas we are displaying an error message.
+                    Log.d("Error is","Error found" + error);
+                    startTimer();
+                    return;
+                }
+                if (value != null && value.exists()) {
+                    Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
+
+                    if(!customerActiveFeild){
+                        stoptimertask();
+                        Log.i("Count", "========= Stopped");
+                    }
+                    else {
+//                        backgroundService = new BackgroundService();
+//                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+//                        if (MainActivity.isMyServiceRunning)
+                        backgroundService = new BackgroundService();
+                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+                        if (!isMyServiceRunning(backgroundService.getClass())) {
+                            startForegroundService(mServiceIntent);
+                        }
+
+                    }
+                    Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
+                }
+            }
+        });
 
 
 //        return deviceId;
@@ -224,7 +265,7 @@ public class BackgroundDelayService extends Service {
     public boolean isConnected() {
         boolean connected = false;
         try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
@@ -243,5 +284,5 @@ public class BackgroundDelayService extends Service {
         }
         return false;
     }
-}
 
+}

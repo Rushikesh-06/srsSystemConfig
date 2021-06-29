@@ -14,7 +14,7 @@
         android:layout_height="51dp"
         android:layout_marginStart="99dp"
         android:layout_marginLeft="99dp"
-        android:layout_marginTop="265dp"
+        android:layout_marginTop="200dp"
         android:layout_marginEnd="99dp"
         android:layout_marginRight="99dp"
         android:layout_marginBottom="421dp"
@@ -27,7 +27,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/emailBtn"
@@ -35,7 +36,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="151dp"
         android:layout_marginLeft="151dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="172dp"
         android:layout_marginRight="172dp"
         android:layout_marginBottom="332dp"
@@ -43,8 +44,10 @@
         android:text="Check Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.322"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailId" />
+        app:layout_constraintTop_toBottomOf="@+id/emailId"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/button"
@@ -52,12 +55,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="153dp"
         android:layout_marginLeft="153dp"
-        android:layout_marginTop="41dp"
+        android:layout_marginTop="92dp"
         android:layout_marginEnd="157dp"
         android:layout_marginRight="157dp"
         android:onClick="getUniqueIMEIId"
         android:text="Check imei"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailBtn" />
 
@@ -67,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="216dp"
+        android:layout_marginTop="96dp"
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
         android:gravity="center"
@@ -77,5 +81,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="307dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginRight="99dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPersonName|textPassword"
+        android:password="true"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailId" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

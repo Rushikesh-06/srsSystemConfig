@@ -130,7 +130,7 @@ public class LockScreen extends AppCompatActivity {
                 Toast.makeText(this, "Code is right", Toast.LENGTH_SHORT).show();
 //                stopService(new Intent(getApplicationContext(), BgService3.class))
                  setIsPass();
-                countDown();
+//                countDown();
 
                 finish();
             } else {
