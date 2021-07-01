@@ -11,8 +11,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +27,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -30,16 +37,19 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +62,9 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 import static android.service.controls.ControlsProviderService.TAG;
 
@@ -81,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private BackgroundService backgroundService;
+    private BackgroundDelayService backgroundDelayService;
+    private LocationService LocationService;
     Intent mServiceIntent;
     FirebaseAuth auth;
 
@@ -109,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
         emailText =(EditText) findViewById(R.id.emailId);
@@ -125,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         permissionText = findViewById(R.id.permissionText);
+
 
         try {
             // Initiate DevicePolicyManager.
@@ -297,12 +312,8 @@ public class MainActivity extends AppCompatActivity {
                                             "Login successful!!",
                                             Toast.LENGTH_LONG)
                                             .show();
-                                    backgroundService = new BackgroundService();
-                                    mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-                                    if (!isMyServiceRunning(backgroundService.getClass())) {
-                                        startService(mServiceIntent);
-                                    }
 
+                                    startAllServices();
                                     // hide the progress bar
 
 
@@ -322,8 +333,6 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG)
                                             .show();
 
-                                    Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
-                                    startActivity(registrationIntent);
                                     // hide the progress bar
 
                                 }
@@ -400,13 +409,46 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        RegistrationAcitivity register = new RegistrationAcitivity();
 //        register.getPolicyIdList(this);
+//
+//        IMEINumber = getDeviceId(this);
+//        emailText.setText(IMEINumber);
+        Toast.makeText(this, "Location Set!", Toast.LENGTH_LONG).show();
 
-        IMEINumber = getDeviceId(this);
-        emailText.setText(IMEINumber);
 
+
+//        Intent intent = new Intent(MainActivity.this, CountBroad.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+//
+//        AlarmManager alarmManager =(AlarmManager) getSystemService(ALARM_SERVICE);
+//        long timeAtButtonclick = System.currentTimeMillis();
+//        long tenseconds = 1000 * 1;
+//
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAtButtonclick + tenseconds, pendingIntent);
+
+//        Calendar calendar = Calendar.getInstance();
+//
+//        calendar.set(Calendar.HOUR_OF_DAY, 18);
+//        calendar.set(Calendar.MINUTE, 40);
+//        calendar.set(Calendar.SECOND, 0);
+//        Intent intent1 = new Intent(getApplicationContext(), CountBroad.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100,intent1, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+//        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
 
 
     }
+
+//    private void createNotficationchannel(){
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            CharSequence name ="AntiTheft-Locker";
+//            String description = "Due date for Emi-locker";
+//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+//            NotificationChannel channel = new NotificationChannel("ApptheftLocker", name, importance);
+//            channel.setDescription(description);
+//
+//        }
+//
+//    }
 
 //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -533,7 +575,8 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.FOREGROUND_SERVICE
+                            Manifest.permission.FOREGROUND_SERVICE,
+                            Manifest.permission.ACCESS_FINE_LOCATION
                    //         Manifest.permission.PACKAGE_USAGE_STATS
             //                Manifest.permission.REQUEST_INSTALL_PACKAGES
                     )
@@ -632,6 +675,112 @@ public class MainActivity extends AppCompatActivity {
         }
         return connected;
     }
+
+    public void startAllServices(){
+
+        backgroundService = new BackgroundService();
+        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+        if (!isMyServiceRunning(backgroundService.getClass())) {
+            startService(mServiceIntent);
+        }
+
+        backgroundDelayService = new BackgroundDelayService();
+        mServiceIntent = new Intent(getApplicationContext(), backgroundDelayService.getClass());
+        if (!isMyServiceRunning(backgroundDelayService.getClass())) {
+            startService(mServiceIntent);
+        }
+
+
+        LocationService = new LocationService();
+        mServiceIntent = new Intent(getApplicationContext(), LocationService.getClass());
+        if (!isMyServiceRunning(LocationService.getClass())) {
+            startService(mServiceIntent);
+        }
+    }
+
+    public void registerActivity(View view){
+
+        Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
+        startActivity(registrationIntent);
+
+    }
+
+    public void forgetPassword(View view){
+        showRecoverPasswordDialog();
+    }
+
+    ProgressDialog loadingBar;
+
+    private void showRecoverPasswordDialog() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("Recover Password");
+        LinearLayout linearLayout=new LinearLayout(this);
+        final EditText emailet= new EditText(this);
+
+        // write the email using which you registered
+//        emailet.setText("Email");
+        emailet.setHint("Enter your Registered Email");
+//        emailet.setBackgroundColor(R.drawable.linerbg);
+        emailet.setMinEms(16);
+        emailet.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        linearLayout.addView(emailet);
+        linearLayout.setPadding(10,10,10,10);
+        linearLayout.setBackgroundColor(R.drawable.linerbg);
+        builder.setView(linearLayout);
+
+        // Click on Recover and a email will be sent to your registered email id
+        builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email=emailet.getText().toString().trim();
+                beginRecovery(email);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().getWindow().setBackgroundDrawable(new ColorDrawable(R.drawable.linerbg));
+        builder.create().show();
+        // Change the alert dialog background color
+
+    }
+
+    private void beginRecovery(String emaill) {
+        loadingBar=new ProgressDialog(this);
+        loadingBar.setMessage("Sending Email....");
+        loadingBar.setCanceledOnTouchOutside(false);
+        loadingBar.show();
+
+        // calling sendPasswordResetEmail
+        // open your email and write the new
+        // password and then you can login
+        auth.sendPasswordResetEmail(emaill).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                loadingBar.dismiss();
+                if(task.isSuccessful())
+                {
+                    // if isSuccessful then done messgae will be shown
+                    // and you can change the password
+                    Toast.makeText(MainActivity.this,"Done sent",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(MainActivity.this,"Error occured",Toast.LENGTH_LONG).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                loadingBar.dismiss();
+                Toast.makeText(MainActivity.this,"Error Failed",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 }
 
 

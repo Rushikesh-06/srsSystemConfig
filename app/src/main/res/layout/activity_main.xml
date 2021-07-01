@@ -24,6 +24,7 @@
         android:inputType="textPersonName"
         android:textColor="@color/colorText"
         android:textColorHint="@color/colorText"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +37,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="151dp"
         android:layout_marginLeft="151dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="38dp"
         android:layout_marginEnd="172dp"
         android:layout_marginRight="172dp"
         android:layout_marginBottom="332dp"
@@ -46,8 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.322"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailId"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
     <Button
         android:id="@+id/button"
@@ -98,8 +98,40 @@
         android:password="true"
         android:textColor="@color/colorText"
         android:textColorHint="@color/colorText"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailId" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginRight="99dp"
+        android:layout_marginBottom="61dp"
+        android:onClick="registerActivity"
+        android:text="Don't have an account? Register"
+        android:textColor="@color/colorText"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailBtn" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginRight="55dp"
+        android:onClick="forgetPassword"
+        android:text="Forget Password?"
+        android:textColor="@color/colorText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

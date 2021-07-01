@@ -15,14 +15,14 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,6 +30,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
@@ -53,57 +54,52 @@ public class BackgroundDelayService extends Service {
 
         db = FirebaseFirestore.getInstance();
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-            startMyOwnForeground();
-        else
-            startForeground(2, new Notification());
-
-
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     private void startMyOwnForeground()
     {
-        String NOTIFICATION_CHANNEL_ID = "example.counter";
-        String channelName = "Background Counter";
-        NotificationChannel chan = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            chan.setLightColor(Color.BLUE);
-        }
-        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        String NOTIFICATION_CHANNEL_ID = "ApptheftLocker";
+        String channelName = "Notification Service";
+//        NotificationChannel chan = null;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            chan.setLightColor(Color.BLUE);
+//        }
+//        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        assert manager != null;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            manager.createNotificationChannel(chan);
+//        }
 
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        assert manager != null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.createNotificationChannel(chan);
-        }
+//        long when = System.currentTimeMillis();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+        Intent notificationIntent = new Intent(this, MainActivity.class);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
-        Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle( "Counter Service")
-                .setContentText("This service is under Protection-Mode")
-                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
-//                .setContentTitle("System Service")
-//                .setContentText("This service is under Protection-Mode")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setTicker("Ticker text")
-//                .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
-//                .build();
-        startForeground(2, notification);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 100,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Emi-Reminder")
+                .setContentText("Your due date is near Please Pay the Amount otherwise the mobile will be made unusable")
+                .setAutoCancel(true);
+
+        notificationManager.notify(100, builder.build());
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+
         startTimer();
         return START_STICKY;
     }
@@ -112,11 +108,11 @@ public class BackgroundDelayService extends Service {
     public void onDestroy() {
         super.onDestroy();
 //        stoptimertask();
-//
-//        Intent broadcastIntent = new Intent();
-//        broadcastIntent.setAction("restart service");
-//        broadcastIntent.setClass(this, BackgroundDelayService.class);
-//        this.sendBroadcast(broadcastIntent);
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("restart Counter service");
+        broadcastIntent.setClass(this, BackgroundDelayService.class);
+        this.sendBroadcast(broadcastIntent);
     }
 
 
@@ -124,26 +120,22 @@ public class BackgroundDelayService extends Service {
     private Timer timer;
     private TimerTask timerTask;
     public void startTimer() {
-        int day = 20;
+//        int day = 2073600 ;
+        int day = 30;
         timer = new Timer();
-        Intent intentService = new Intent(this, BackgroundService.class);
-        stopService(intentService);
         timerTask = new TimerTask() {
 
             @RequiresApi(api = Build.VERSION_CODES.Q)
             public void run() {
-                Log.i("Counter", "=========  "+ (counter++));
+                Log.i("Counter reminder", "=========  "+ (counter++));
+               // checkRunningApps();
                 if(day <= counter){
-                    Log.i("Counter", "========= Working counter ");
-                    stoptimertask();
+                    Log.i("Counter of reminder", "========= Workingggg  ");
                     //    activeDevice();
-//                    if(isConnected()){
-//                        Log.i("INterent", "========= Connected to  Network ");
-//                    }
-//                    else
-//                    {
-//                        Log.i("INterent", "========= Not  Connected to Network ");
-//                    }
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+                        startMyOwnForeground();
+                    else
+                        startForeground(3, new Notification());
                     counter =0;
                 }
 
@@ -151,6 +143,7 @@ public class BackgroundDelayService extends Service {
         };
         timer.schedule(timerTask, 1000, 1000); //
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void checkRunningApps() {
@@ -163,8 +156,6 @@ public class BackgroundDelayService extends Service {
             Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-
-
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
         }
@@ -176,7 +167,7 @@ public class BackgroundDelayService extends Service {
             timer = null;
             backgroundService = new BackgroundService();
             mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-            startService(mServiceIntent);
+            stopService(mServiceIntent);
         }
 
     }
@@ -189,6 +180,7 @@ public class BackgroundDelayService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static final String retriveNewApp(Context context) {
+//        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
         if (Build.VERSION.SDK_INT >= 21) {
             String currentApp = null;
             UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
@@ -243,9 +235,6 @@ public class BackgroundDelayService extends Service {
                         Log.i("Count", "========= Stopped");
                     }
                     else {
-//                        backgroundService = new BackgroundService();
-//                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-//                        if (MainActivity.isMyServiceRunning)
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
                         if (!isMyServiceRunning(backgroundService.getClass())) {
@@ -284,5 +273,4 @@ public class BackgroundDelayService extends Service {
         }
         return false;
     }
-
 }

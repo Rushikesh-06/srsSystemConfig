@@ -58,7 +58,6 @@ public class BackgroundService extends Service {
         else
             startForeground(1, new Notification());
 
-
     }
 
 
@@ -75,7 +74,6 @@ public class BackgroundService extends Service {
             chan.setLightColor(Color.BLUE);
         }
         chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         assert manager != null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -241,9 +239,6 @@ public class BackgroundService extends Service {
                         Log.i("Count", "========= Stopped");
                     }
                     else {
-//                        backgroundService = new BackgroundService();
-//                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-//                        if (MainActivity.isMyServiceRunning)
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
                         if (!isMyServiceRunning(backgroundService.getClass())) {
@@ -282,5 +277,4 @@ public class BackgroundService extends Service {
         }
         return false;
     }
-
 }
