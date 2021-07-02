@@ -1,5 +1,7 @@
 package com.emi.systemconfiguration;
 
+import java.util.Random;
+
 public class RegistrationDetails {
 
     //    private final customer_active Boolean;
@@ -17,6 +19,9 @@ public class RegistrationDetails {
     public RegistrationDetails(String customer_uid,String customer_name, String customer_contact,
                                String customer_email, String customer_mobile_brand, String customer_payment,String customer_loan,
                                String startDate, String endDate ) {
+        Random r = new Random();
+        int randomNumber =10000 + r.nextInt(90000);
+
         this.customer_uid = customer_uid;
         this.customer_name = customer_name;
         this.customer_contact = customer_contact;
@@ -25,7 +30,7 @@ public class RegistrationDetails {
         this.customer_payment = customer_payment;
         this.customer_loan = customer_loan;
         this.customer_active = java.lang.Boolean.TRUE;
-        this.customer_pincode = "NotSet";
+        this.customer_pincode = Integer.toString(randomNumber);
         this.vendorId = vendorId;
         this.policyNo = policyNo;
         this.startDate = startDate;

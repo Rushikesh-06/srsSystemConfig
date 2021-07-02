@@ -56,7 +56,7 @@ public class LocationService extends Service {
 
     public String activeUser = "true";
 
-    private BackgroundService backgroundService;
+    private LocationService locationService;
     Intent mServiceIntent;
 
     LocationRequest locationRequest;
@@ -129,8 +129,8 @@ public class LocationService extends Service {
         if (timer != null) {
             timer.cancel();
             timer = null;
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+            locationService = new LocationService();
+            mServiceIntent = new Intent(getApplicationContext(), locationService.getClass());
             stopService(mServiceIntent);
         }
 

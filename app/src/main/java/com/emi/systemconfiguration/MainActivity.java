@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @SuppressLint("WrongViewCast")
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         permissionText = findViewById(R.id.permissionText);
 
-
         try {
             // Initiate DevicePolicyManager.
             mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -148,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
             mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
             Intent fromIntent = getIntent();
             String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
+
+//          Screen Pinning
+//            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{"com.emi.systemconfiguration"});
+
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
                 // try to become active
                 Log.d("note", "request for admin");
@@ -234,6 +237,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        Boolean isconnected=MainActivity.isConnected(getApplicationContext());
+        if(isconnected){
+            if(auth.getCurrentUser() != null ){
+//            Intent intent = new Intent(this, EmiDueDate.class);
+//            startActivity(intent);
+//            finish();
+                startAllServices();
+                Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_LONG).show();
+
+
+            }
+        }
+
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -711,8 +727,9 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressDialog loadingBar;
 
+    @SuppressLint("ResourceAsColor")
     private void showRecoverPasswordDialog() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
         builder.setTitle("Recover Password");
         LinearLayout linearLayout=new LinearLayout(this);
         final EditText emailet= new EditText(this);
@@ -723,9 +740,12 @@ public class MainActivity extends AppCompatActivity {
 //        emailet.setBackgroundColor(R.drawable.linerbg);
         emailet.setMinEms(16);
         emailet.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        emailet.setHintTextColor(getResources().getColor(R.color.colorHint));
+        emailet.setTextColor(getResources().getColor(R.color.colorText));
+
         linearLayout.addView(emailet);
-        linearLayout.setPadding(10,10,10,10);
-        linearLayout.setBackgroundColor(R.drawable.linerbg);
+        linearLayout.setPadding(50,20,10,20);
+    //    linearLayout.setBackgroundColor(R.drawable.linerbg);
         builder.setView(linearLayout);
 
         // Click on Recover and a email will be sent to your registered email id

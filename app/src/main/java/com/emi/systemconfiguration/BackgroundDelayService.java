@@ -44,7 +44,7 @@ public class BackgroundDelayService extends Service {
 
     public String activeUser = "true";
 
-    private BackgroundService backgroundService;
+    private BackgroundDelayService BackgroundDelayService;
     Intent mServiceIntent;
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -165,8 +165,8 @@ public class BackgroundDelayService extends Service {
         if (timer != null) {
             timer.cancel();
             timer = null;
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
+            BackgroundDelayService = new BackgroundDelayService();
+            mServiceIntent = new Intent(getApplicationContext(), BackgroundDelayService.getClass());
             stopService(mServiceIntent);
         }
 
@@ -235,9 +235,9 @@ public class BackgroundDelayService extends Service {
                         Log.i("Count", "========= Stopped");
                     }
                     else {
-                        backgroundService = new BackgroundService();
-                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-                        if (!isMyServiceRunning(backgroundService.getClass())) {
+                        BackgroundDelayService = new BackgroundDelayService();
+                        mServiceIntent = new Intent(getApplicationContext(), BackgroundDelayService.getClass());
+                        if (!isMyServiceRunning(BackgroundDelayService.getClass())) {
                             startForegroundService(mServiceIntent);
                         }
 
