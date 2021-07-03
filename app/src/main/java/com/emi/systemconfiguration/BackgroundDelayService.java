@@ -60,21 +60,21 @@ public class BackgroundDelayService extends Service {
     @RequiresApi(Build.VERSION_CODES.O)
     private void startMyOwnForeground()
     {
-        String NOTIFICATION_CHANNEL_ID = "ApptheftLocker";
+        String NOTIFICATION_CHANNEL_ID = "example.permanence2";
         String channelName = "Notification Service";
-//        NotificationChannel chan = null;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            chan.setLightColor(Color.BLUE);
-//        }
-//        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        assert manager != null;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            manager.createNotificationChannel(chan);
-//        }
+        NotificationChannel chan = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            chan.setLightColor(Color.BLUE);
+        }
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.createNotificationChannel(chan);
+        }
 
 //        long when = System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -87,12 +87,15 @@ public class BackgroundDelayService extends Service {
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.system_icon)
                 .setContentTitle("Emi-Reminder")
                 .setContentText("Your due date is near Please Pay the Amount otherwise the mobile will be made unusable")
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setCategory(Notification.CATEGORY_SERVICE)
                 .setAutoCancel(true);
 
         notificationManager.notify(100, builder.build());
+//        startForeground(100, builder.build());
     }
 
 

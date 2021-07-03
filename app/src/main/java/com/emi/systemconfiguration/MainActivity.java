@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -42,6 +43,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     String IMEINumber;
-
+    String manufacturer = android.os.Build.MANUFACTURER;
 
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
@@ -122,7 +124,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
@@ -135,7 +139,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setLogo(R.drawable.system_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         String title = actionBar.getTitle().toString(); // get the title
-     //   actionBar.hide(); // or even hide the actionbar
+        actionBar.hide(); // or even hide the actionbar
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
 
         permissionText = findViewById(R.id.permissionText);
@@ -160,6 +167,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE);
 
             }
+//            Intent intent = new Intent();
+//            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+//            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+//            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+//            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+//            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+//            }
+//
+//            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+//            if (list.size() > 0) {
+//                startActivity(intent);
+//            }
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -190,13 +214,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent draw = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
                 startActivityForResult(draw, 0);
-                Toast.makeText(this, "Restart the Application", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Grant All Permission", Toast.LENGTH_LONG).show();
                 finish();
                 startActivity(getIntent());
                 overridePendingTransition(0, 0);
 
             } else {
-
 
                 requestPermissions();
 //                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
@@ -244,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
 //            startActivity(intent);
 //            finish();
                 startAllServices();
-                Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_LONG).show();
 
 
             }
@@ -593,6 +615,7 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.READ_CONTACTS,
                             Manifest.permission.FOREGROUND_SERVICE,
                             Manifest.permission.ACCESS_FINE_LOCATION
+
                    //         Manifest.permission.PACKAGE_USAGE_STATS
             //                Manifest.permission.REQUEST_INSTALL_PACKAGES
                     )
@@ -706,12 +729,12 @@ public class MainActivity extends AppCompatActivity {
             startService(mServiceIntent);
         }
 
-
         LocationService = new LocationService();
         mServiceIntent = new Intent(getApplicationContext(), LocationService.getClass());
         if (!isMyServiceRunning(LocationService.getClass())) {
             startService(mServiceIntent);
         }
+        Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_LONG).show();
     }
 
     public void registerActivity(View view){

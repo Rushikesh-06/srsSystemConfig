@@ -53,6 +53,7 @@ public class BackgroundService extends Service {
 
         db = FirebaseFirestore.getInstance();
 
+//comment it out for hiding the notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
         else
@@ -84,10 +85,11 @@ public class BackgroundService extends Service {
         Notification notification = notificationBuilder.setOngoing(true)
                 .setContentTitle( "System Service")
                 .setContentText("This service is under Protection-Mode")
-                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setPriority(Notification.PRIORITY_HIGH)
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//             .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setPriority(Notification.PRIORITY_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setAutoCancel(true)
                 .build();
 //                .setContentTitle("System Service")
 //                .setContentText("This service is under Protection-Mode")

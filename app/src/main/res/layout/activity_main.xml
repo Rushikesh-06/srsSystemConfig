@@ -8,130 +8,143 @@
     tools:context=".MainActivity">
 
 
-    <EditText
-        android:id="@+id/emailId"
-        android:layout_width="307dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="99dp"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="99dp"
-        android:layout_marginRight="99dp"
-        android:layout_marginBottom="421dp"
-        android:background="@drawable/input_bg"
-        android:ems="10"
-        android:hint="Enter your mail"
-        android:inputType="textPersonName"
-        android:textColor="@color/colorText"
-        android:textColorHint="@color/colorText"
-        android:textCursorDrawable="@drawable/cursor"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/emailBtn"
-        android:layout_width="147dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="151dp"
-        android:layout_marginLeft="151dp"
-        android:layout_marginTop="38dp"
-        android:layout_marginEnd="172dp"
-        android:layout_marginRight="172dp"
-        android:layout_marginBottom="332dp"
-        android:background="@drawable/btn_bg"
-        android:text="Check Email"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.322"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="153dp"
-        android:layout_marginLeft="153dp"
-        android:layout_marginTop="92dp"
-        android:layout_marginEnd="157dp"
-        android:layout_marginRight="157dp"
-        android:onClick="getUniqueIMEIId"
-        android:text="Check imei"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailBtn" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:srcCompat="@drawable/goelectrnoicog" />
 
-    <TextView
-        android:id="@+id/permissionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="96dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:gravity="center"
-        android:text="Grant all permission to use features"
-        android:textColor="@color/colorText"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@color/colorPrimary"
+                android:shadowDx="-2"
+                android:shadowDy="-2"
+                android:shadowRadius="10"
+                android:text="Anti-Theft Locker"
+                android:textColor="@color/colorText"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="307dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="99dp"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="99dp"
-        android:layout_marginRight="99dp"
-        android:background="@drawable/input_bg"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPersonName|textPassword"
-        android:password="true"
-        android:textColor="@color/colorText"
-        android:textColorHint="@color/colorText"
-        android:textCursorDrawable="@drawable/cursor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailId" />
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:text="LOGIN"
+            android:textColor="@color/colorText"
+            android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="99dp"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="99dp"
-        android:layout_marginRight="99dp"
-        android:layout_marginBottom="61dp"
-        android:onClick="registerActivity"
-        android:text="Don't have an account? Register"
-        android:textColor="@color/colorText"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailBtn" />
+        <TextView
+            android:id="@+id/permissionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginEnd="100dp"
+            android:gravity="center"
+            android:text="Grant all permission to use features"
+            android:textColor="@color/colorText"
+            android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginRight="55dp"
-        android:onClick="forgetPassword"
-        android:text="Forget Password?"
-        android:textColor="@color/colorText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        <EditText
+            android:id="@+id/emailId"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_margin="10dp"
+            android:layout_marginStart="99dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="99dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/input_bg"
+            android:ems="10"
+            android:hint="Enter your mail"
+            android:inputType="textPersonName"
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorText"
+            android:textCursorDrawable="@drawable/cursor" />
+
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_margin="10dp"
+            android:layout_marginStart="99dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="99dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_bg"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPersonName|textPassword"
+            android:password="true"
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorText"
+            android:textCursorDrawable="@drawable/cursor" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:onClick="forgetPassword"
+            android:paddingLeft="10dp"
+            android:text="Forget Password?"
+            android:textColor="@color/colorText" />
+
+        <Button
+            android:id="@+id/emailBtn"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/btn_bg"
+            android:text="Login"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:onClick="registerActivity"
+            android:text="Don't have an account ?  Register"
+            android:textColor="@color/colorText" />
+
+        <!--        <Button-->
+<!--            android:id="@+id/button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="153dp"-->
+<!--            android:layout_marginLeft="153dp"-->
+<!--            android:layout_marginTop="92dp"-->
+<!--            android:layout_marginEnd="157dp"-->
+<!--            android:layout_marginRight="157dp"-->
+<!--            android:onClick="getUniqueIMEIId"-->
+<!--            android:text="Check imei" />-->
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
