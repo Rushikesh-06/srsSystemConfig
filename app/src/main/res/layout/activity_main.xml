@@ -81,6 +81,7 @@
             android:ems="10"
             android:hint="Enter your mail"
             android:inputType="textPersonName"
+            android:padding="10dp"
             android:textColor="@color/colorText"
             android:textColorHint="@color/colorText"
             android:textCursorDrawable="@drawable/cursor" />
@@ -99,6 +100,7 @@
             android:ems="10"
             android:hint="Password"
             android:inputType="textPersonName|textPassword"
+            android:padding="10dp"
             android:password="true"
             android:textColor="@color/colorText"
             android:textColorHint="@color/colorText"

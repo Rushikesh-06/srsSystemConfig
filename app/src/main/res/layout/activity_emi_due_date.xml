@@ -8,6 +8,7 @@
     tools:context=".EmiDueDate">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -31,15 +32,15 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:padding="10dp"
-            android:text="@string/app_name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            android:textColor="@color/colorText"
             android:shadowColor="@color/colorPrimary"
             android:shadowDx="-2"
             android:shadowDy="-2"
-            android:shadowRadius="10"/>
+            android:shadowRadius="10"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorText"
+            android:textSize="30dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView12"
@@ -61,24 +62,70 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:padding="10dp"
-            android:text="System Info"
+            android:text="System Informaton"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/colorText"
-            android:textSize="20dp"
-           />
+            android:textSize="16dp" />
 
         <GridView
             android:id="@+id/idGVcourses"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:horizontalSpacing="10dp"
             android:numColumns="3"
             android:padding="8dp"
             android:verticalSpacing="10dp" />
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Protection mode"
+            android:textColor="@color/colorText"
+            android:textSize="16dp" />
+
+        <MultiAutoCompleteTextView
+            android:id="@+id/multiAutoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="This device is under Emi protection period which includes that your device setting will be locked till the end of this period. You may not able to access the device setting until special permission is allowed."
+            android:textColor="@color/colorHint" />
+
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:gravity="bottom|center"
+        android:text=" © 2021 GoElectronix All Rights reserved"
+        android:textColor="@color/colorText"
+        app:layout_constraintBottom_toTopOf="@+id/textelitnotch" />
+
+    <TextView
+        android:id="@+id/textelitnotch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp"
+        android:gravity="bottom|center"
+        android:onClick="aboutusBtn"
+        android:text="Developed &amp; Designed by Elitnotch"
+        android:textColor="@color/colorText"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

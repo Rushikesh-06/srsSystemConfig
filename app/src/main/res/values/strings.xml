@@ -41,4 +41,6 @@
         <item>Private finance</item>
         <item>Other finance</item>
     </string-array>
+
+    <string name="developer">--Designed &amp; Developed--\nBy</string>
 </resources>

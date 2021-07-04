@@ -30,8 +30,11 @@ public class InfoAdapter extends ArrayAdapter<InfoModel> {
         InfoModel infoModel = getItem(position);
         TextView courseTV = listitemView.findViewById(R.id.idTVCourse);
         ImageView courseIV = listitemView.findViewById(R.id.idIVcourse);
+        TextView courseTV2 = listitemView.findViewById(R.id.idTVCourse2);
+
         courseTV.setText(infoModel.getItem_name());
         courseIV.setImageResource(infoModel.getImgid());
+        courseTV2.setText(infoModel.getTitle_name());
         return listitemView;
     }
 }
