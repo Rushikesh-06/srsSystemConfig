@@ -83,7 +83,7 @@
             android:inputType="textPersonName"
             android:padding="10dp"
             android:textColor="@color/colorText"
-            android:textColorHint="@color/colorText"
+            android:textColorHint="@color/colorHint"
             android:textCursorDrawable="@drawable/cursor" />
 
         <EditText
@@ -98,12 +98,12 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/input_bg"
             android:ems="10"
-            android:hint="Password"
+            android:hint="Password same as Phone-No "
             android:inputType="textPersonName|textPassword"
             android:padding="10dp"
             android:password="true"
             android:textColor="@color/colorText"
-            android:textColorHint="@color/colorText"
+            android:textColorHint="@color/colorHint"
             android:textCursorDrawable="@drawable/cursor" />
 
         <TextView
@@ -126,7 +126,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/registerText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

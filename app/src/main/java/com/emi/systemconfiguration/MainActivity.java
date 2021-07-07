@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText emailText;
     EditText passwordText;
+    TextView registerText;
 
 //    Bug features
 //    String prevStarted = "yes";
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         emailText =(EditText) findViewById(R.id.emailId);
         passwordText =(EditText) findViewById(R.id.editTextPassword);
 
+
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         String title = actionBar.getTitle().toString(); // get the title
         actionBar.hide(); // or even hide the actionbar
-
+//
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
 
@@ -188,6 +190,10 @@ public class MainActivity extends AppCompatActivity {
         catch(Exception e) {
             e.printStackTrace();
         }
+
+//        Hide the textview and edittext
+        registerText =(TextView) findViewById(R.id.registerText);
+        registerText.setEnabled(false);
 
         checkEmailBtn = findViewById(R.id.emailBtn);
         checkEmailBtn.setEnabled(false);
@@ -266,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
 //            Intent intent = new Intent(this, EmiDueDate.class);
 //            startActivity(intent);
 //            finish();
-                startAllServices();
 
+                startAllServices();
 
             }
         }
@@ -629,7 +635,9 @@ public class MainActivity extends AppCompatActivity {
                                 // do you work now
                                 Toast.makeText(MainActivity.this, "All the permissions are granted..", Toast.LENGTH_SHORT).show();
                                 checkEmailBtn.setEnabled(true);
+                                registerText.setEnabled(true);
                                 permissionText.setVisibility(View.GONE);
+
                             }
                             // check for permanent denial of any permission
                             if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {

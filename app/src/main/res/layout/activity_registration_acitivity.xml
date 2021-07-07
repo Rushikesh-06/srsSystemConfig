@@ -171,7 +171,7 @@
                     android:layout_marginStart="22dp"
                     android:layout_marginEnd="22dp"
                     android:buttonTint="@color/colorText"
-                    android:text="Cash"
+                    android:text="Anti-Theft"
                     android:textColor="@color/colorText" />
 
                 <CheckBox
@@ -181,7 +181,7 @@
                     android:layout_marginStart="22dp"
                     android:layout_marginEnd="22dp"
                     android:buttonTint="@color/colorText"
-                    android:text="Loan"
+                    android:text="Locker"
                     android:textColor="@color/colorText" />
             </LinearLayout>
 
@@ -203,6 +203,56 @@
 
                 tools:ignore="MissingConstraints" />
 
+
+            <Spinner
+                android:id="@+id/spinnerPlan"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/input_bg"
+                android:gravity="center"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/costLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:text="Device Cost"
+                android:textColor="@color/colorText"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/input_bg"
+                android:ems="10"
+                android:hint="Enter the Amount"
+                android:inputType="number"
+                android:padding="10dp"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                android:textCursorDrawable="@drawable/cursor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/customerNumber"
+                tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/dateTextView"
@@ -309,7 +359,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center_vertical"
-                android:hint="Vendor Number"
+                android:hint="Vendor Contact :"
                 android:textColor="@color/colorText"
                 android:textColorHint="@color/colorHint" />
 

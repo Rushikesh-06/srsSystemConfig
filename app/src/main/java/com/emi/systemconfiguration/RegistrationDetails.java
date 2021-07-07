@@ -6,7 +6,7 @@ public class RegistrationDetails {
 
     //    private final customer_active Boolean;
     // variables for storing our data.
-    private String customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorId, policyNo , startDate,endDate;
+    private String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorId, policyNo , startDate,endDate,device_amount,anti_theft_plan;
     private  Boolean customer_active;
 
     public RegistrationDetails() {
@@ -18,10 +18,9 @@ public class RegistrationDetails {
 
     public RegistrationDetails(String customer_uid,String customer_name, String customer_contact,
                                String customer_email, String customer_mobile_brand, String customer_payment,String customer_loan,
-                               String startDate, String endDate ) {
+                               String startDate, String endDate, String device_amount, String anti_theft_plan ) {
         Random r = new Random();
         int randomNumber =10000 + r.nextInt(90000);
-
         this.customer_uid = customer_uid;
         this.customer_name = customer_name;
         this.customer_contact = customer_contact;
@@ -35,6 +34,10 @@ public class RegistrationDetails {
         this.policyNo = policyNo;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.device_amount = device_amount;
+        this.anti_theft_plan= anti_theft_plan;
+
+
     }
 
 
@@ -137,6 +140,20 @@ public class RegistrationDetails {
     }
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getDevice_amount() {
+        return device_amount;
+    }
+    public void setDevice_amount(String device_amount) {
+        this.device_amount = device_amount;
+    }
+
+    public String getAnti_theft_plan() {
+        return anti_theft_plan;
+    }
+    public void setAnti_theft_plan(String anti_theft_plan) {
+        this.anti_theft_plan = anti_theft_plan;
     }
 }
 

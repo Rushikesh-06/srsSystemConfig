@@ -2,7 +2,6 @@ package com.emi.systemconfiguration;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -55,8 +54,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private DatePicker datePicker;
     private Calendar calendar;
-    private TextView dateView;
-    private TextView endDateView;
+    private TextView dateView, endDateView , costLabel;
     private int year, month, day;
 
     //Firebase auth
@@ -64,22 +62,25 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private FirebaseAuth mAuth;
 
     // creating variables for our edit text
-    private EditText  customer_uidEdit, customer_nameEdit, customer_contactEdit, customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit;
+    private EditText  policyId, device_amount, customer_uidEdit, customer_nameEdit, customer_contactEdit, customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit;
 
     // creating variable for button
     private Button registerBtn;
 
+
+    boolean isAllFieldsChecked = false;
+
     // creating a strings for storing
     // our values from edittext fields.
-    private String policy_no,customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate;
+    private String plan, policy_no,customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate,amount;
 
     // creating a variable
     // for firebasefirestore.
     private FirebaseFirestore db;
 
-    Spinner spinner, spinner1, spinner2;
+    Spinner spinner, spinnerPlan, spinner2;
 
-    CheckBox cashView, loanView;
+    CheckBox planView, loanView;
 
     List<String> policyDocID = new ArrayList<String>();
 
@@ -116,6 +117,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         //Calender View
         dateView = (TextView) findViewById(R.id.dateTextView);
+        dateView.setEnabled(false);
         endDateView = (TextView) findViewById(R.id.endDateView);
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
@@ -160,19 +162,34 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         spinner2.setOnItemSelectedListener(this);
         spinner2.setVisibility(View.GONE);
 
-        cashView = (CheckBox)findViewById(R.id.cashBox);
-        loanView = (CheckBox)findViewById(R.id.loanBox);
+//        Spinner Plan
+        spinnerPlan = findViewById(R.id.spinnerPlan);
+        ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this, R.array.plans, R.layout.color_spinner_layout);
+        adapter3.setDropDownViewResource(R.layout.spinner_dropdown_layout);
+        spinnerPlan.setAdapter(adapter3);
+        spinnerPlan.setOnItemSelectedListener(this);
+        spinnerPlan.setVisibility(View.GONE);
 
-        cashView.setOnClickListener(new View.OnClickListener() {
+
+        planView = (CheckBox)findViewById(R.id.cashBox);
+        loanView = (CheckBox)findViewById(R.id.loanBox);
+        costLabel =(TextView) findViewById(R.id.costLabel);
+        device_amount = (EditText) findViewById(R.id.amount);
+
+        planView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(((CompoundButton) view).isChecked()){
                     spinner2.setVisibility(View.GONE);
                     loanView.setChecked(false);
-                    customer_payment = cashView.getText().toString();
+                    customer_payment = planView.getText().toString();
+                    spinnerPlan.setVisibility(View.VISIBLE);
+                    costLabel.setVisibility(View.VISIBLE);
+                    device_amount.setVisibility(View.VISIBLE);
                 }
                 else {
                     spinner2.setVisibility(View.VISIBLE);
+                    spinnerPlan.setVisibility(View.GONE);
                     loanView.setChecked(true);
                 }
             }
@@ -182,13 +199,19 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             public void onClick(View view) {
                 if(((CompoundButton) view).isChecked()){
                     spinner2.setVisibility(View.VISIBLE);
-                    cashView.setChecked(false);
-                    customer_payment = cashView.getText().toString();
+                    planView.setChecked(false);
+                    spinnerPlan.setVisibility(View.GONE);
+                    customer_payment = planView.getText().toString();
+//                    costLabel.setVisibility(View.GONE);
+//                    device_amount.setVisibility(View.GONE);
                 }
                 else
                 {
                     spinner2.setVisibility(View.GONE);
-                    cashView.setChecked(true);
+                    spinnerPlan.setVisibility(View.VISIBLE);
+                    planView.setChecked(true);
+                    costLabel.setVisibility(View.VISIBLE);
+                    device_amount.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -207,28 +230,41 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
 
+                isAllFieldsChecked = CheckAllFields();
+
                 // getting data from edittext fields
                 customer_name = customer_nameEdit.getText().toString();
                 customer_contact = customer_contactEdit.getText().toString();
                 customer_email = customer_emailEdit.getText().toString();
 
-                // validating the text fields if empty or not.
-                if (TextUtils.isEmpty(customer_name)) {
-                    customer_nameEdit.setError("Please enter Course Name");
-                } else if (TextUtils.isEmpty(customer_contact)) {
-                    customer_contactEdit.setError("Please enter Course Description");
-                } else if (TextUtils.isEmpty(customer_email)) {
-                    customer_emailEdit.setError("Please enter Course Duration");
-                } else {
-                    // calling method to add data to Firebase Firestore.
+                if (isAllFieldsChecked) {
                     registerNewUser();
-//                    registerUser();
+//                    toastMessage("done workin");
                 }
+
+
+
+//
+//                // validating the text fields if empty or not.
+//                if (TextUtils.isEmpty(customer_name)) {
+//                    customer_nameEdit.setError("Please enter Name");
+//                } else if (TextUtils.isEmpty(customer_contact)) {
+//                    customer_contactEdit.setError("Please Enter number");
+//                } else if (TextUtils.isEmpty(customer_email)) {
+//                    customer_emailEdit.setError("Please enter  Duration");
+//                } else {
+//                    // calling method to add data to Firebase Firestore.
+//                    registerNewUser();
+////                    registerUser();
+//                }
             }
         });
 
 
-        EditText policyId = (EditText) findViewById(R.id.policyId);
+
+
+
+        policyId = (EditText) findViewById(R.id.policyId);
 
         policyId.addTextChangedListener(new TextWatcher() {
             @Override
@@ -259,6 +295,47 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 }
 //                getvendorId(s.toString());
 //                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        device_amount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 2) {
+                    if (plan.equals("200")) {
+                        Log.d("AMount", s.toString());
+                        int textAmount = Integer.parseInt(s.toString());
+                        if (textAmount >= 5000) {
+                            toastMessage("alert the amount is not valid with plan");
+                        }
+                    } else if (plan.equals("500")) {
+                        int textAmount = Integer.parseInt(s.toString());
+                        if (textAmount >= 10000) {
+                            toastMessage("alert the amount is not valid with plan");
+                        }
+
+                    } else if (plan.equals("700")) {
+                        int textAmount = Integer.parseInt(s.toString());
+                        if (textAmount >= 20000) {
+                            toastMessage("alert the amount is not valid with plan");
+                        }
+                    }
+                    else if (plan.equals("900")) {
+                        int textAmount = Integer.parseInt(s.toString());
+                        if (textAmount >= 20000) {
+                            toastMessage("alert the amount is not valid with plan");
+                        }
+                    }
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
             }
         });
 
@@ -313,7 +390,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                                         //   toastMessage(value.getData().toString());
                                         TextView vendorName = (TextView) findViewById(R.id.vendorName);
-                                        vendorName.setText("Name : "+ value.getData().get("contactperson").toString());
+                                        vendorName.setText("Vendor Name : "+ value.getData().get("contactperson").toString());
                                         TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
                                         vendorShopName.setText("Shop Name : "+value.getData().get("shopname").toString());
                                         TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
@@ -332,6 +409,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                         {
 //                            toastMessage("policyNo not found" + policiesNo);
                             Log.d("Not Found : " , "Poloici not found");
+//                            policyId.setError("Policy not found");
                         }
 
                     }
@@ -393,7 +471,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     }
 
     public void toastMessage(String message){
-        Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
     }
 
 
@@ -407,6 +485,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         customer_mobile_brand = Brand;
         //   customer_payment = paymentMode;
         customer_loan = loan;
+
+        plan = spinnerPlan.getSelectedItem().toString();
     }
 
 
@@ -499,7 +579,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             //                customer_uid  = mAuth.getCurrentUser().getUid();
                             customer_uid =  MainActivity.getDeviceId(getApplicationContext());
 
-                            addDataToFirestore(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,VendorID, PolicyNo, startDate, endDate);
+                            amount= device_amount.getText().toString();
+                            addDataToFirestore(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,VendorID, PolicyNo, startDate, endDate, amount, plan);
 
 
                             // hide the progress bar
@@ -527,14 +608,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 });
     }
 
-    private void addDataToFirestore(String customer_uid,String customer_name,String customer_contact,String customer_email, String customer_mobile_brand,String customer_payment,String customer_loan, String vendorID, String policyNo, String startDate,String endDate) {
+    private void addDataToFirestore(String customer_uid,String customer_name,String customer_contact,String customer_email, String customer_mobile_brand,String customer_payment,String customer_loan, String vendorID, String policyNo, String startDate,String endDate, String amount, String anti_theft_plan) {
 
         // creating a collection reference
         // for our Firebase Firetore database.
         CollectionReference dbRegister = db.collection("users");
 
         // adding our data to our courses object class.
-        RegistrationDetails registration = new RegistrationDetails(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate);
+        RegistrationDetails registration = new RegistrationDetails(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate, amount, anti_theft_plan);
 
         // below method is use to add data to Firebase Firestore.
         dbRegister.document(customer_uid).set(registration).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -719,6 +800,57 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //
 //            }
 //        });
+    };
+
+    private boolean CheckAllFields(){
+        if(customer_nameEdit.length() == 0){
+            customer_nameEdit.setError("Required");
+            return false;
+        }
+        if(customer_emailEdit.length() == 0){
+            customer_emailEdit.setError("Required");
+            return false;
+        }
+        String email = customer_emailEdit.getText().toString().trim();
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        if(!customer_emailEdit.getText().toString().matches(emailPattern)){
+            customer_emailEdit.setError("Enter Valid Email");
+            return false;
+        }
+
+        if(customer_contactEdit.length() == 0){
+            customer_contactEdit.setError("Required");
+            return false;
+        }
+        else if(customer_contactEdit.length()  <= 9 || customer_contactEdit.length() >= 11){
+            customer_contactEdit.setError("Enter Valid Number");
+            return false;
+        }
+
+        if(spinner.getSelectedItem().toString().equals("Select brand")){
+           toastMessage("Select the device Brand");
+            return false;
+        }
+
+        if(device_amount.length() == 0){
+            device_amount.setError("Required");
+            return false;
+        }
+        if(endDateView.getText().toString().contains("Select end date"))
+        {
+           toastMessage("Set the end date");
+            return false;
+        }
+        if(policyId.length() == 0){
+            policyId.setError("Enter Policy");
+            return false;
+        }
+
+
+
+
+
+        return true;
     };
 
 

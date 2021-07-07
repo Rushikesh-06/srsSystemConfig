@@ -10,6 +10,8 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ProviderInfo;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -41,10 +43,11 @@ public class BackgroundService extends Service {
     Dialog dialog;
     private FirebaseFirestore db;
 
-    public String activeUser = "true";
+    public Boolean activeUser = false;
 
     private BackgroundService backgroundService;
     Intent mServiceIntent;
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
@@ -112,7 +115,6 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
 //        stoptimertask();
-
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("restart service");
         broadcastIntent.setClass(this, BackgroundService.class);
@@ -124,17 +126,21 @@ public class BackgroundService extends Service {
     private Timer timer;
     private TimerTask timerTask;
     public void startTimer() {
-        int day = 20;
+        int day = 5;
         timer = new Timer();
         timerTask = new TimerTask() {
 
             @RequiresApi(api = Build.VERSION_CODES.Q)
             public void run() {
                 Log.i("Count", "=========  "+ (counter++));
-                checkRunningApps();
+//                checkRunningApps();
+//                checkHomelauncher();
+                if(activeUser) {
+                    checkRunningApps();
+                    checkHomelauncher();
+                }
                 if(day <= counter){
                     Log.i("Count", "========= Workingggg  ");
-                //    activeDevice();
                   if(isConnected()){
                       Log.i("INterent", "========= Connected to  Network ");
                       activeDevice();
@@ -156,14 +162,35 @@ public class BackgroundService extends Service {
         String myPackage;
         myPackage = retriveNewApp(this);
         Log.e("app","app details are" + myPackage);
+//        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+//        "com.android.settings"
         if(myPackage.contains("com.android.settings")){
             Log.e("Tag", " THi is woking properly");
-
             Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void checkHomelauncher(){
+        String myPackage;
+        myPackage = retriveNewApp(this);
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        List<ResolveInfo> lst = getPackageManager().queryIntentActivities(intent, 0);
+        if (!lst.isEmpty()) {
+            for (ResolveInfo resolveInfo : lst) {
+                Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
+                if(resolveInfo.activityInfo.packageName.contains(myPackage)){
+                    Intent dialogIntent = new Intent(this, Lock.class);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(dialogIntent);
+                }
+
+            }
         }
     }
 
@@ -192,6 +219,9 @@ public class BackgroundService extends Service {
             UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
             List<UsageStats> applist = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
+            List<ProviderInfo> providers = context.getPackageManager()
+                    .queryContentProviders(null, 0, 0);
+//            Log.d("List Inndor",providers.toString());
             if (applist != null && applist.size() > 0) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
                 for (UsageStats usageStats : applist) {
@@ -206,7 +236,6 @@ public class BackgroundService extends Service {
             return currentApp;
 
         } else {
-
             ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             String mm = (manager.getRunningTasks(1).get(0)).topActivity.getPackageName();
             Log.e("app details", "Current App in foreground is: " + mm);
@@ -235,25 +264,18 @@ public class BackgroundService extends Service {
                 }
                 if (value != null && value.exists()) {
                     Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
-
                     if(!customerActiveFeild){
-                        stoptimertask();
-                        Log.i("Count", "========= Stopped");
+//                        stoptimertask();
+//                        Log.i("Count", "========= Stopped");
+                        activeUser = customerActiveFeild;
                     }
                     else {
-                        backgroundService = new BackgroundService();
-                        mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-                        if (!isMyServiceRunning(backgroundService.getClass())) {
-                            startForegroundService(mServiceIntent);
-                        }
-
+                       activeUser = customerActiveFeild;
                     }
                     Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }
             }
         });
-
-
 //        return deviceId;
     }
 
