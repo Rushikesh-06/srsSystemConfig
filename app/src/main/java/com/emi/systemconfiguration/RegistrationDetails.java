@@ -28,7 +28,7 @@ public class RegistrationDetails {
         this.customer_mobile_brand = customer_mobile_brand;
         this.customer_payment = customer_payment;
         this.customer_loan = customer_loan;
-        this.customer_active = java.lang.Boolean.TRUE;
+        this.customer_active = Boolean.FALSE;
         this.customer_pincode = Integer.toString(randomNumber);
         this.vendorId = vendorId;
         this.policyNo = policyNo;

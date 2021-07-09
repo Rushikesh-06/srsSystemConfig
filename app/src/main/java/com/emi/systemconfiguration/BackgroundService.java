@@ -57,10 +57,10 @@ public class BackgroundService extends Service {
         db = FirebaseFirestore.getInstance();
 
 //comment it out for hiding the notification
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-            startMyOwnForeground();
-        else
-            startForeground(1, new Notification());
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+//            startMyOwnForeground();
+//        else
+//            startForeground(1, new Notification());
 
     }
 

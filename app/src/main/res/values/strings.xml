@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Anti-Theft Locker</string>
+    <string name="app_name">System Configuration</string>
     <string-array name="brands">
         <item>Select brand</item>
         <item>Samsung</item>
@@ -44,10 +44,10 @@
 
     <string-array name="plans">
         <item>Select Plan</item>
-        <item>200</item>
-        <item>500</item>
-        <item>600</item>
-        <item>900</item>
+        <item>220</item>
+        <item>550</item>
+        <item>880</item>
+        <item>1100</item>
     </string-array>
 
     <string name="developer">--Designed &amp; Developed--\nBy</string>
