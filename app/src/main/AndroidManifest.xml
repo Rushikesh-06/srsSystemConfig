@@ -76,19 +76,24 @@
         android:showWhenLocked="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:turnScreenOn="true">
+        android:turnScreenOn="true"
+        android:required="true">
         <activity android:name=".Aboutus"></activity>
         <activity android:name=".EmiDueDate" />
-        <activity android:name=".Lock" />
+        <activity android:name=".Lock" >
+<!--            <intent-filter>-->
+<!--                &lt;!&ndash;<category android:name="android.intent.category.HOME" />&ndash;&gt;-->
+<!--&lt;!&ndash;                <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
+<!--            </intent-filter>-->
+        </activity>
         <activity android:name=".LockScreen" />
         <activity android:name=".RegistrationAcitivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
+<!--                <category android:name="android.intent.category.HOME" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
         </activity>
 

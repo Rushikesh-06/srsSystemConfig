@@ -93,7 +93,7 @@ public class BackgroundService extends Service {
                 .setContentTitle( "System Service")
                 .setContentText("This service is under Protection-Mode")
 //                .setSmallIcon(R.mipmap.ic_launcher)
-             .setPriority(NotificationManager.IMPORTANCE_MIN)
+             .setPriority(NotificationManager.AUTOMATIC_RULE_STATUS_DISABLED)
 //                .setPriority(Notification.PRIORITY_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
 //                .setAutoCancel(true)
@@ -130,7 +130,7 @@ public class BackgroundService extends Service {
     private Timer timer;
     private TimerTask timerTask;
     public void startTimer() {
-        int day = 5;
+        int day = 3;
         timer = new Timer();
         timerTask = new TimerTask() {
 
@@ -168,7 +168,7 @@ public class BackgroundService extends Service {
         Log.e("app","app details are" + myPackage);
 //        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
 //        "com.android.settings"
-        if(myPackage.contains("com.android.settings")){
+        if(myPackage.contains("com.android.settings") || myPackage.contains(("com.emi.systemconfiguration"))){
             Log.e("Tag", " THi is woking properly");
             Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,7 +202,7 @@ public class BackgroundService extends Service {
         if (!lst.isEmpty()) {
             for (ResolveInfo resolveInfo : lst) {
                 Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
-                if(resolveInfo.activityInfo.packageName.contains(myPackage)){
+                if(resolveInfo.activityInfo.packageName.equals(myPackage) ||  myPackage.contains(("com.emi.systemconfiguration"))){
                     Intent dialogIntent = new Intent(this, Lock.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(dialogIntent);
