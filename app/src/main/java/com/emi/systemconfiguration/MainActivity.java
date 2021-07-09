@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     EditText passwordText;
     TextView registerText;
 
-//    Bug features
+ //   Bug features
 //    String prevStarted = "yes";
 //    @Override
 //    protected void onResume() {
@@ -742,14 +742,14 @@ public class MainActivity extends AppCompatActivity {
         if (!isMyServiceRunning(LocationService.getClass())) {
             startService(mServiceIntent);
         }
-        Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 
-//       Hide Application
-        PackageManager packageManager = getPackageManager();
-        ComponentName componentName = new ComponentName(MainActivity.this,MainActivity.class);
-        packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
-        Toast.makeText(MainActivity.this,"App Hidden!", Toast.LENGTH_SHORT).show();
+////       Hide Application
+//        PackageManager packageManager = getPackageManager();
+//        ComponentName componentName = new ComponentName(MainActivity.this,MainActivity.class);
+//        packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                PackageManager.DONT_KILL_APP);
+//        Toast.makeText(MainActivity.this,"App Hidden!", Toast.LENGTH_SHORT).show();
 
 
     }

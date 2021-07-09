@@ -8,9 +8,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -41,6 +44,20 @@ public class Lock extends AppCompatActivity {
 
     private int currentApiVersion;
 //    String pin;
+
+    String prevStarted = "yes";
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        if (!sharedpreferences.getBoolean(prevStarted, false)) {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(prevStarted, Boolean.TRUE);
+            editor.apply();
+        } else {
+//            moveToSecondary();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +171,11 @@ public class Lock extends AppCompatActivity {
             public void onSuccess(String number) {
                 Toast.makeText(Lock.this, "Code is right", Toast.LENGTH_SHORT).show();
                 countDown();
+//                PackageManager packageManager = getPackageManager();
+
+//                ComponentName componentName = new ComponentName(getApplicationContext(),MainActivity.class);
+//                packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                        PackageManager.DONT_KILL_APP);
 //                finish();
 //                count();
             }
@@ -197,6 +219,7 @@ public class Lock extends AppCompatActivity {
                 return super.dispatchKeyEvent(event);
         }
     }
+
 
     private void checkPassword(){
         Boolean  isconnected=MainActivity.isConnected(getApplicationContext());
@@ -295,5 +318,6 @@ public class Lock extends AppCompatActivity {
         super.onDestroy();
         startBgActivity();
     }
+
 
 }

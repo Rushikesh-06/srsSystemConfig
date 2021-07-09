@@ -38,11 +38,11 @@ public class BroadcastReciever extends BroadcastReceiver {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(new Intent(context, BackgroundService.class));
-            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
+//            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
             context.startForegroundService(new Intent(context, LocationService.class));
         } else {
             context.startForegroundService(new Intent(context, BackgroundService.class));
-            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
+//            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
             context.startForegroundService(new Intent(context, LocationService.class));
         }
 

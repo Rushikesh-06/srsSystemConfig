@@ -8,8 +8,10 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -57,10 +59,10 @@ public class BackgroundService extends Service {
         db = FirebaseFirestore.getInstance();
 
 //comment it out for hiding the notification
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-//            startMyOwnForeground();
-//        else
-//            startForeground(1, new Notification());
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+            startMyOwnForeground();
+        else
+            startForeground(1, new Notification());
 
     }
 
@@ -85,14 +87,16 @@ public class BackgroundService extends Service {
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setPriority(Notification.PRIORITY_MIN);
         Notification notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.goelctronixc)
                 .setContentTitle( "System Service")
                 .setContentText("This service is under Protection-Mode")
 //                .setSmallIcon(R.mipmap.ic_launcher)
-//             .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setPriority(Notification.PRIORITY_MAX)
+             .setPriority(NotificationManager.IMPORTANCE_MIN)
+//                .setPriority(Notification.PRIORITY_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
-                .setAutoCancel(true)
+//                .setAutoCancel(true)
                 .build();
 //                .setContentTitle("System Service")
 //                .setContentText("This service is under Protection-Mode")
@@ -181,6 +185,20 @@ public class BackgroundService extends Service {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         List<ResolveInfo> lst = getPackageManager().queryIntentActivities(intent, 0);
+
+//        if(activeUser){
+//            PackageManager p = getPackageManager();
+//            ComponentName componentName = new ComponentName(this, MainActivity.class);
+//            p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+//        }
+//        else{
+//            PackageManager packageManager = getPackageManager();
+//            ComponentName componentName = new ComponentName(this,MainActivity.class);
+//            packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                    PackageManager.DONT_KILL_APP);
+//        }
+
+
         if (!lst.isEmpty()) {
             for (ResolveInfo resolveInfo : lst) {
                 Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
@@ -188,6 +206,7 @@ public class BackgroundService extends Service {
                     Intent dialogIntent = new Intent(this, Lock.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(dialogIntent);
+
                 }
 
             }
@@ -274,9 +293,11 @@ public class BackgroundService extends Service {
                     }
                     Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }
+
             }
         });
 //        return deviceId;
+
     }
 
     public boolean isConnected() {
