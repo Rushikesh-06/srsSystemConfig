@@ -64,6 +64,7 @@ public class Lock extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock);
         passcodeView = findViewById(R.id.passcodeView);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
 
@@ -261,6 +262,7 @@ public class Lock extends AppCompatActivity {
 //            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
 
             db.collection("users").document(deviceId).update("customer_active", false);
+            finish();
 //            new CountDownTimer(10000, 1000) {
 //                public void onTick(long millisUntilFinished) {
 //                    // Used for formatting digit to be in 2 digits only
@@ -292,6 +294,16 @@ public class Lock extends AppCompatActivity {
     public void count(){
         Intent intentService = new Intent(this, BackgroundDelayService.class);
         startService(intentService);
+    }
+
+    @Override
+    public void finish() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            super.finishAndRemoveTask();
+        }
+        else {
+            super.finish();
+        }
     }
 
     @Override

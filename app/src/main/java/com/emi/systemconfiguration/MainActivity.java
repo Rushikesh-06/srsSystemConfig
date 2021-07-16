@@ -729,6 +729,7 @@ public class MainActivity extends AppCompatActivity {
         mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
         if (!isMyServiceRunning(backgroundService.getClass())) {
             startService(mServiceIntent);
+
         }
 
         backgroundDelayService = new BackgroundDelayService();

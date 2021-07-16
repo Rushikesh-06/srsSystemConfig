@@ -89,7 +89,7 @@ public class BackgroundService extends Service {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         notificationBuilder.setPriority(Notification.PRIORITY_MIN);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.goelctronixc)
+                .setSmallIcon(R.drawable.system_icon)
                 .setContentTitle( "System Service")
                 .setContentText("This service is under Protection-Mode")
 //                .setSmallIcon(R.mipmap.ic_launcher)
@@ -168,7 +168,7 @@ public class BackgroundService extends Service {
         Log.e("app","app details are" + myPackage);
 //        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
 //        "com.android.settings"
-        if(myPackage.contains("com.android.settings") || myPackage.contains(("com.emi.systemconfiguration"))){
+        if(myPackage.contains("com.android.settings") || myPackage.contains(("com.emi.systemconfiguration")) || myPackage.contains(("com.whatsapp")) || myPackage.contains("com.google.android.youtube")){
             Log.e("Tag", " THi is woking properly");
             Intent dialogIntent = new Intent(this, Lock.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,13 +202,12 @@ public class BackgroundService extends Service {
         if (!lst.isEmpty()) {
             for (ResolveInfo resolveInfo : lst) {
                 Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
-                if(resolveInfo.activityInfo.packageName.equals(myPackage) ||  myPackage.contains(("com.emi.systemconfiguration"))){
+                if(resolveInfo.activityInfo.packageName.equals(myPackage) ||  myPackage.contains(("com.emi.systemconfiguration"))  || myPackage.contains(("com.whatsapp")) || myPackage.contains("com.google.android.youtube")){
                     Intent dialogIntent = new Intent(this, Lock.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(dialogIntent);
 
                 }
-
             }
         }
     }

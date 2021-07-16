@@ -1,11 +1,17 @@
 package com.emi.systemconfiguration;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -15,10 +21,14 @@ public class BroadcastReciever extends BroadcastReceiver {
 
     private static final String TAG_BOOT_BROADCAST_RECEIVER = "BOOT_BROADCAST_RECEIVER";
     private static final String tag = "TestReceiver";
+    private BackgroundService backgroundService;
+    private BackgroundDelayService backgroundDelayService;
+    private LocationService LocationService;
+    Intent mServiceIntent;
 
     Boolean screenOff;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("NewApi")
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -28,22 +38,38 @@ public class BroadcastReciever extends BroadcastReceiver {
 //            context.startActivity(i);
 //        }
         String action = intent.getAction();
-        if("android.intent.action.BOOT_COMPLETED".equals(action)){
-            Intent BGservice = new Intent(context, BackgroundService.class);
-            context.startService(BGservice);
-            Intent LocationService = new Intent(context, LocationService.class);
-            context.startService(LocationService);
+        if(("android.intent.action.BOOT_COMPLETED").equals(action) || ("restart service").contains(action) || ("android.intent.action.QUICKBOOT_POWERON").equals(action)){
+
+//            context.startForegroundService(new Intent(context, BackgroundService.class));
+//            context.startForegroundService(new Intent(context, LocationService.class));
+            backgroundService = new BackgroundService();
+            mServiceIntent = new Intent(context, backgroundService.getClass());
+            context.startService(mServiceIntent);
+            LocationService = new LocationService();
+            mServiceIntent = new Intent(context, LocationService.getClass());
+            context.startService(mServiceIntent);
+            Log.d("Boot", "Service Started");
+//            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
+
         }
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(new Intent(context, BackgroundService.class));
-//            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
-            context.startForegroundService(new Intent(context, LocationService.class));
+            backgroundService = new BackgroundService();
+            mServiceIntent = new Intent(context, backgroundService.getClass());
+            context.startService(mServiceIntent);
+            LocationService = new LocationService();
+            mServiceIntent = new Intent(context, LocationService.getClass());
+            context.startService(mServiceIntent);
+            Log.d("Boot", "Service Started");
         } else {
-            context.startForegroundService(new Intent(context, BackgroundService.class));
-//            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
-            context.startForegroundService(new Intent(context, LocationService.class));
+            backgroundService = new BackgroundService();
+            mServiceIntent = new Intent(context, backgroundService.getClass());
+            context.startService(mServiceIntent);
+            LocationService = new LocationService();
+            mServiceIntent = new Intent(context, LocationService.getClass());
+            context.startService(mServiceIntent);
+            Log.d("Boot", "Service Started");
         }
 
 
@@ -56,4 +82,7 @@ public class BroadcastReciever extends BroadcastReceiver {
 //        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
     }
+
+
+
 }
