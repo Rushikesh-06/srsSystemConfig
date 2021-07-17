@@ -35,8 +35,8 @@ public class DeviceAdmin extends DeviceAdminReceiver {
     long current_time;
     Timer myThread;
     private Context context;
-    DevicePolicyManager devicePolicyManager =
-            (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+//    DevicePolicyManager devicePolicyManager =
+//            (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
     private static final String OUR_SECURE_ADMIN_PASSWORD = "12345";
 
@@ -59,7 +59,12 @@ public class DeviceAdmin extends DeviceAdminReceiver {
         String action = intent.getAction();
         Log.v("PlugInControlReceiver","action: "+action);
         String state = Environment.getExternalStorageState();
-
+        Intent startMain = new Intent(context, MainActivity.class);
+//                startMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startMain.putExtra("flag","disable");
+        context.startActivity(startMain);
+//        showToast(context, "Device admin disabled");
 
     }
 
