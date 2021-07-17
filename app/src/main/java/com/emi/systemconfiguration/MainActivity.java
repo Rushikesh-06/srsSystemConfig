@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+
+
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
@@ -730,10 +732,11 @@ public class MainActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 
-////       Hide Application
-        PackageManager p = getPackageManager();
-        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
-        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//       Hide Application
+//        PackageManager p = getPackageManager();
+//        Log.d("packman",p.toString());
+//        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
+//        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
     }
 

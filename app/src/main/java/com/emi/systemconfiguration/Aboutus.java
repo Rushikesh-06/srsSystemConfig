@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import java.net.URI;
 
-import libs.mjn.scaletouchlistener.ScaleTouchListener;
+//import libs.mjn.scaletouchlistener.ScaleTouchListener;
 
 public class Aboutus extends AppCompatActivity {
 
@@ -33,23 +33,23 @@ public class Aboutus extends AppCompatActivity {
         gmail = findViewById(R.id.gmail);
         instagram = findViewById(R.id.instagram);
 
-        gmail.setOnTouchListener(new ScaleTouchListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "suppport@elitnotch.com"));
-                intent.putExtra(Intent.EXTRA_SUBJECT, "your_subject");
-                intent.putExtra(Intent.EXTRA_TEXT, "your_text");
-                startActivity(intent);
-            }
-        });
-
-        instagram.setOnTouchListener(new ScaleTouchListener() {
-            @Override
-            public void onClick(View v) {
-                Intent instagram = openInstagram(Aboutus.this);
-                startActivity(instagram);
-            }
-        });
+//        gmail.setOnTouchListener(new ScaleTouchListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "suppport@elitnotch.com"));
+//                intent.putExtra(Intent.EXTRA_SUBJECT, "your_subject");
+//                intent.putExtra(Intent.EXTRA_TEXT, "your_text");
+//                startActivity(intent);
+//            }
+//        });
+//
+//        instagram.setOnTouchListener(new ScaleTouchListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent instagram = openInstagram(Aboutus.this);
+//                startActivity(instagram);
+//            }
+//        });
 
     }
 
@@ -73,11 +73,11 @@ public class Aboutus extends AppCompatActivity {
         }
     }
 
-    ScaleTouchListener.Config config = new ScaleTouchListener.Config(
-        300,
-            0.85f,
-            0.85f
-    );
+//    ScaleTouchListener.Config config = new ScaleTouchListener.Config(
+//        300,
+//            0.85f,
+//            0.85f
+//    );
 
 
 }

@@ -266,7 +266,7 @@ public class BackgroundService extends Service {
 //        RegistrationAcitivity register = new RegistrationAcitivity();
      //   String status = register.activeUser(context);
      //   Log.d("gdfhhjgdfhdf",status);
-
+       // Log.d("DeviceID",deviceId.toString());
         DocumentReference documentReference = db.collection("users").document(deviceId);
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -282,6 +282,7 @@ public class BackgroundService extends Service {
                 }
                 if (value != null && value.exists()) {
                     Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
+//                    Log.d("Lock",customerActiveFeild.toString());
                     if(!customerActiveFeild){
 //                        stoptimertask();
 //                        Log.i("Count", "========= Stopped");

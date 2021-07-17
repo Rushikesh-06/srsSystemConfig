@@ -1,6 +1,6 @@
 package com.emi.systemconfiguration;
 
-import android.annotation.SuppressLint;
+            import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -23,7 +23,7 @@ public class BroadcastReciever extends BroadcastReceiver {
     private static final String tag = "TestReceiver";
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
-    private LocationService LocationService;
+    private LocationService locationService;
     Intent mServiceIntent;
 
     Boolean screenOff;
@@ -50,34 +50,40 @@ public class BroadcastReciever extends BroadcastReceiver {
 //            context.startForegroundService(new Intent(context, BackgroundService.class));
 //            context.startForegroundService(new Intent(context, LocationService.class));
             backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(context, backgroundService.getClass());
-            context.startService(mServiceIntent);
-            LocationService = new LocationService();
-            mServiceIntent = new Intent(context, LocationService.getClass());
-            context.startService(mServiceIntent);
-            Log.d("Boot", "Service Started");
+            mServiceIntent = new Intent(context, BackgroundService.class);
+            context.startForegroundService(mServiceIntent);
+//            locationService = new LocationService();
+            Intent mService= new Intent(context, LocationService.class);
+            context.startService(mService);
+//            Log.d("Boot", "Service Started");
+//            Intent main = new Intent(context, MainActivity.class);
+//            context.startActivity(main);
+
+            Toast.makeText(context,"Service Started",Toast.LENGTH_LONG).show();
 //            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
 
         }
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(context, backgroundService.getClass());
-            context.startService(mServiceIntent);
-            LocationService = new LocationService();
-            mServiceIntent = new Intent(context, LocationService.getClass());
-            context.startService(mServiceIntent);
-            Log.d("Boot", "Service Started");
-        } else {
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(context, backgroundService.getClass());
-            context.startService(mServiceIntent);
-            LocationService = new LocationService();
-            mServiceIntent = new Intent(context, LocationService.getClass());
-            context.startService(mServiceIntent);
-            Log.d("Boot", "Service Started");
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            backgroundService = new BackgroundService();
+//            mServiceIntent = new Intent(context, backgroundService.getClass());
+//            context.startService(mServiceIntent);
+//            LocationService = new LocationService();
+//            mServiceIntent = new Intent(context, LocationService.getClass());
+//            context.startService(mServiceIntent);
+//            Log.d("Boot", "Service Started");
+//            Toast.makeText(context,"2nd Service Started",Toast.LENGTH_LONG).show();
+//        } else {
+//            backgroundService = new BackgroundService();
+//            mServiceIntent = new Intent(context, backgroundService.getClass());
+//            context.startService(mServiceIntent);
+//            LocationService = new LocationService();
+//            mServiceIntent = new Intent(context, LocationService.getClass());
+//            context.startService(mServiceIntent);
+//            Log.d("Boot", "Service Started");
+//            Toast.makeText(context,"3rd Service Started",Toast.LENGTH_LONG).show();
+//        }
 
 
 
@@ -89,7 +95,5 @@ public class BroadcastReciever extends BroadcastReceiver {
 //        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
     }
-
-
 
 }
