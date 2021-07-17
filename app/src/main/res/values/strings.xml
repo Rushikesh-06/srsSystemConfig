@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Anti-Theft Locker</string>
+    <string name="app_name">System Configuration</string>
     <string-array name="brands">
         <item>Select brand</item>
         <item>Samsung</item>

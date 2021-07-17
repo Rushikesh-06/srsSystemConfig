@@ -169,23 +169,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE);
 
             }
-//            Intent intent = new Intent();
-//            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-//                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-//            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
-//                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
-//            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
-//                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-//            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
-//                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-//            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
-//                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-//            }
-//
-//            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-//            if (list.size() > 0) {
-//                startActivity(intent);
-//            }
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -632,6 +615,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                             // this method is called when all permissions are granted
                             if (multiplePermissionsReport.areAllPermissionsGranted()) {
+
+                                addAutoStartup();
                                 // do you work now
                                 Toast.makeText(MainActivity.this, "All the permissions are granted..", Toast.LENGTH_SHORT).show();
                                 checkEmailBtn.setEnabled(true);
@@ -749,6 +734,7 @@ public class MainActivity extends AppCompatActivity {
         PackageManager p = getPackageManager();
         ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
         p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
     }
 
     public void registerActivity(View view){
@@ -834,6 +820,31 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"Error Failed",Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void addAutoStartup() {
+        try {
+            Intent intent = new Intent();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            }
+
+            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if  (list.size() > 0) {
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.e("exc" , String.valueOf(e));
+        }
     }
 
 }

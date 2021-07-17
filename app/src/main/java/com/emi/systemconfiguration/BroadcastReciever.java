@@ -38,7 +38,14 @@ public class BroadcastReciever extends BroadcastReceiver {
 //            context.startActivity(i);
 //        }
         String action = intent.getAction();
-        if(("android.intent.action.BOOT_COMPLETED").equals(action) || ("restart service").contains(action) || ("android.intent.action.QUICKBOOT_POWERON").equals(action)){
+        if(("android.intent.action.BOOT_COMPLETED").equals(action) ||
+                ("restart service").contains(action) ||
+                ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
+                ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
+                ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
+                ("android.intent.action.PACKAGE_ADDED").equals(action) ||
+                ("BackgroundProcess").equals(action) ||
+                ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
 
 //            context.startForegroundService(new Intent(context, BackgroundService.class));
 //            context.startForegroundService(new Intent(context, LocationService.class));

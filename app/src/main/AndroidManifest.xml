@@ -64,8 +64,16 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE" tools:ignore="ProtectedPermissions"/>
 
-<!--     android:name=".AppContext" add in application to show alwasy the after wake up-->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!--     android:name=".AppContext" add in application to show alwasy the after wake up-->
     <application
         android:allowBackup="true"
         android:icon="@drawable/system_icon"
@@ -77,7 +85,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
-        android:required="true">
+        android:required="true"
+        tools:ignore="MissingTvBanner">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!--                <category android:name="android.intent.category.HOME" />-->
+                <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            </intent-filter>
+        </activity>
         <activity android:name=".Aboutus"></activity>
         <activity android:name=".EmiDueDate" />
         <activity android:name=".Lock" >
@@ -88,14 +106,6 @@
         </activity>
         <activity android:name=".LockScreen" />
         <activity android:name=".RegistrationAcitivity" />
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-<!--                <category android:name="android.intent.category.HOME" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-            </intent-filter>
-        </activity>
 
         <receiver
             android:name=".BroadcastReciever"
@@ -106,15 +116,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
-
                 <data android:scheme="package" />
             </intent-filter>
             <intent-filter>
@@ -122,7 +129,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
-
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -133,7 +139,6 @@
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
-
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
