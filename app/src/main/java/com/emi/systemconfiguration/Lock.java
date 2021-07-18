@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -33,8 +34,15 @@ import com.hanks.passcodeview.PasscodeView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Lock extends AppCompatActivity {
+
+    DevicePolicyManager dpm;
+    long current_time;
+    Timer myThread;
+    private Context context ;
 
     private FirebaseFirestore db;
     PasscodeView passcodeView;
@@ -209,6 +217,9 @@ public class Lock extends AppCompatActivity {
                 return true;
 
             case KeyEvent.KEYCODE_HOME:
+                Log.d("HomeClick","Working");
+//                context = this;
+
                 return  true;
 
             case KeyEvent.KEYCODE_POWER:
@@ -221,6 +232,17 @@ public class Lock extends AppCompatActivity {
         }
     }
 
+    // Repeatedly lock the phone every second for 5 seconds
+    TimerTask lock_task = new TimerTask() {
+        @Override
+        public void run() {
+            long diff = System.currentTimeMillis() - current_time;
+            if (diff < 5000) {
+                Log.d("Timer", "1 second");
+                dpm.lockNow();
+            }
+        }
+    };
 
     private void checkPassword(){
         Boolean  isconnected=MainActivity.isConnected(getApplicationContext());

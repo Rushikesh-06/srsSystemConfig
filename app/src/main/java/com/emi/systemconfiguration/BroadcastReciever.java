@@ -9,9 +9,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+            import android.net.Uri;
+            import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
+            import android.view.KeyEvent;
+            import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -43,7 +45,6 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
-                ("android.intent.action.PACKAGE_ADDED").equals(action) ||
                 ("BackgroundProcess").equals(action) ||
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
 
@@ -56,13 +57,33 @@ public class BroadcastReciever extends BroadcastReceiver {
             Intent mService= new Intent(context, LocationService.class);
             context.startService(mService);
 //            Log.d("Boot", "Service Started");
-//            Intent main = new Intent(context, MainActivity.class);
+//            Intent main = new Intent(context, RegistrationAcitivity.class);
 //            context.startActivity(main);
 
-            Toast.makeText(context,"Service Started",Toast.LENGTH_LONG).show();
+//            Toast.makeText(context,"Service Started",Toast.LENGTH_LONG).show();
 //            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
 
         }
+
+
+
+
+
+
+
+//        Uri data = intent.getData();
+//        String mypkg="com.emi.systemconfiguration";
+//
+//        Log.e("DATA",data+"");
+//        Log.e( "Action: " ,intent.getAction());
+//
+//        if(mypkg.equals(data.toString())){
+//            Toast.makeText(context, "Package Installed: ", Toast.LENGTH_LONG).show();
+//        }else {
+//            Toast.makeText(context, "not match ", Toast.LENGTH_LONG).show();
+//        }
+
+
 
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -93,6 +114,7 @@ public class BroadcastReciever extends BroadcastReceiver {
 //        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 //        int interval = (86400 * 1000) / 2;
 //        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+
 
     }
 

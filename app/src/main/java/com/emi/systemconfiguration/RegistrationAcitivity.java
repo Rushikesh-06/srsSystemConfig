@@ -172,37 +172,38 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         spinnerPlan.setVisibility(View.GONE);
 
 
-        planView = (CheckBox)findViewById(R.id.cashBox);
+//        planView = (CheckBox)findViewById(R.id.cashBox);
+//        planView.setVisibility(View.GONE);
         loanView = (CheckBox)findViewById(R.id.loanBox);
         costLabel =(TextView) findViewById(R.id.costLabel);
         device_amount = (EditText) findViewById(R.id.amount);
 
-        planView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(((CompoundButton) view).isChecked()){
-                    spinner2.setVisibility(View.GONE);
-                    loanView.setChecked(false);
-                    customer_payment = planView.getText().toString();
-                    spinnerPlan.setVisibility(View.VISIBLE);
-                    costLabel.setVisibility(View.VISIBLE);
-                    device_amount.setVisibility(View.VISIBLE);
-                }
-                else {
-                    spinner2.setVisibility(View.VISIBLE);
-                    spinnerPlan.setVisibility(View.GONE);
-                    loanView.setChecked(true);
-                }
-            }
-        });
+//        planView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(((CompoundButton) view).isChecked()){
+//                    spinner2.setVisibility(View.GONE);
+//                    loanView.setChecked(false);
+//                    customer_payment = planView.getText().toString();
+//                    spinnerPlan.setVisibility(View.VISIBLE);
+//                    costLabel.setVisibility(View.VISIBLE);
+//                    device_amount.setVisibility(View.VISIBLE);
+//                }
+//                else {
+//                    spinner2.setVisibility(View.VISIBLE);
+//                    spinnerPlan.setVisibility(View.GONE);
+//                    loanView.setChecked(true);
+//                }
+//            }
+//        });
         loanView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(((CompoundButton) view).isChecked()){
                     spinner2.setVisibility(View.VISIBLE);
-                    planView.setChecked(false);
-                    spinnerPlan.setVisibility(View.GONE);
-                    customer_payment = planView.getText().toString();
+//                    planView.setChecked(false);
+//                    spinnerPlan.setVisibility(View.GONE);
+//                    customer_payment = planView.getText().toString();
                     planValid = true;
 //                    costLabel.setVisibility(View.GONE);
 //                    device_amount.setVisibility(View.GONE);
@@ -210,8 +211,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 else
                 {
                     spinner2.setVisibility(View.GONE);
-                    spinnerPlan.setVisibility(View.VISIBLE);
-                    planView.setChecked(true);
+//                    spinnerPlan.setVisibility(View.VISIBLE);
+//                    planView.setChecked(true);
                     costLabel.setVisibility(View.VISIBLE);
                     device_amount.setVisibility(View.VISIBLE);
                 }
@@ -240,11 +241,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 customer_email = customer_emailEdit.getText().toString();
 
                 if (isAllFieldsChecked ) {
-                    if(planValid){
+                    if(VendorID.length() > 0){
                         registerNewUser();
                     }
+
                    else{
-                       toastMessage("The Specified amount is not valid with this plan ");
+                       toastMessage("Policy is empty");
                     }
 //                    toastMessage("done workin");
                 }
@@ -287,6 +289,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //                if(s.toString().length() == 7){
 //                    getvendorId(s.toString());
 //                }
+                PolicyNo = s.toString();
+                if(s.length() >= 1){
+                    getvendorId(s.toString().toUpperCase());
+                    policy_no = s.toString().toUpperCase();
+//                    toastMessage(s.toString());
+                }
 
             }
 
@@ -294,12 +302,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             public void afterTextChanged(Editable s) {
 //                int size= s.length();
 //                toastMessage(String.valueOf(s.length()));
-                PolicyNo = s.toString();
-                if(s.length() == 8){
-                    getvendorId(s.toString());
-                    policy_no = s.toString().toUpperCase();
-                    toastMessage(s.toString());
-                }
+//                PolicyNo = s.toString();
+//                if(s.length() >= 1){
+//                    getvendorId(s.toString().toUpperCase());
+//                    policy_no = s.toString().toUpperCase();
+////                    toastMessage(s.toString());
+//                }
 //                getvendorId(s.toString());
 //                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
             }
@@ -312,48 +320,49 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 2 && planView.isChecked()) {
-                    int textAmount = Integer.parseInt(s.toString());
-                    if (plan.equals("220")) {
-                        Log.d("Amount", s.toString());
 
-                        if (textAmount >= 6000 && textAmount <= 9990  ) {
-                            toastMessage("The amount is valid with 220 plan");
-                            planValid= true;
-                        }
-                        else{
-                            toastMessage("The amount is not valid with 220 plan");
-                            planValid=false;
-                        }
-                    } else if (plan.equals("550")) {
-                        if (textAmount >= 9990 && textAmount <= 12490 ) {
-                            toastMessage("The amount is valid with 550 plan");
-                            planValid= true;
-                        } else{
-                            toastMessage("The amount is not valid with 550 plan");
-                            planValid=false;
-                        }
-
-                    } else if (plan.equals("880")) {
-
-                        if (textAmount >= 12490 && textAmount <= 17490 ) {
-                            toastMessage("The amount is valid with 880 plan");
-                            planValid= true;
-                        } else{
-                            toastMessage("The amount is not valid with 880 plan");
-                            planValid=false;
-                        }
-                    }
-                    else if (plan.equals("1100")) {
-                        if (textAmount >= 17490) {
-                            toastMessage("The amount is valid with 1100 plan");
-                            planValid= true;
-                        } else{
-                            toastMessage("The amount is not valid with 1100 plan");
-                            planValid=false;
-                        }
-                    }
-                }
+//                if (s.length() > 2 && planView.isChecked()) {
+//                    int textAmount = Integer.parseInt(s.toString());
+//                    if (plan.equals("220")) {
+//                        Log.d("Amount", s.toString());
+//
+//                        if (textAmount >= 6000 && textAmount <= 9990  ) {
+//                            toastMessage("The amount is valid with 220 plan");
+//                            planValid= true;
+//                        }
+//                        else{
+//                            toastMessage("The amount is not valid with 220 plan");
+//                            planValid=false;
+//                        }
+//                    } else if (plan.equals("550")) {
+//                        if (textAmount >= 9990 && textAmount <= 12490 ) {
+//                            toastMessage("The amount is valid with 550 plan");
+//                            planValid= true;
+//                        } else{
+//                            toastMessage("The amount is not valid with 550 plan");
+//                            planValid=false;
+//                        }
+//
+//                    } else if (plan.equals("880")) {
+//
+//                        if (textAmount >= 12490 && textAmount <= 17490 ) {
+//                            toastMessage("The amount is valid with 880 plan");
+//                            planValid= true;
+//                        } else{
+//                            toastMessage("The amount is not valid with 880 plan");
+//                            planValid=false;
+//                        }
+//                    }
+//                    else if (plan.equals("1100")) {
+//                        if (textAmount >= 17490) {
+//                            toastMessage("The amount is valid with 1100 plan");
+//                            planValid= true;
+//                        } else{
+//                            toastMessage("The amount is not valid with 1100 plan");
+//                            planValid=false;
+//                        }
+//                    }
+//                }
             }
             @Override
             public void afterTextChanged(Editable s) {
@@ -371,77 +380,122 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
 
 
-    private void getvendorId(String policiesNo){
+    private void getvendorId(String policiesNo) {
 //        toastMessage(policyDocID.toString());
-        for (int i=0; i < policyDocID.size(); i++) {
+//        for (int i=0; i < policyDocID.size(); i++) {
 //            System.out.println(policyDocID.get(i));
 //            toastMessage(policyDocID.get(i));
-            DocumentReference documentReference = db.collection("policy").document(policyDocID.get(i));
-            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (error != null) {
-                        // this method is called when error is not null
-                        // and we gt any error
-                        // in this cas we are displaying an error message.
-                        toastMessage("Error found" + error);
-                        return;
-                    }
-                    if (value != null && value.exists()) {
-                        // if th value from firestore is not null then we are getting
-                        // our data and setting that data to our text view.
-//                        toastMessage(value.getData().get("policyNo").toString() + (value.getData().get("vendorID").toString() ));
-                        //  toastMessage(policiesNo + value.getData().get("policyNo").toString());
-                        if(value.getData().get("policyNo").toString().equals(policy_no)){
+        VendorID = "";
+        TextView vendorName = (TextView) findViewById(R.id.vendorName);
+        vendorName.setText("Vendor Name : ");
+        TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
+        vendorShopName.setText("Shop Name : " );
+        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
+        vendorShopCode.setText("Shop Code : ");
+        TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
+        vendorContact.setText("Vendor Contact : ");
+        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
+        vendorEmail.setText("Email Id : " );
+        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
+        vendorAddress.setText("Shop Address : ");
 
-                            String vendorId = value.getData().get("vendorID").toString();
-                            VendorID = vendorId;
-                            //      toastMessage("Success found id" + vendorId);
-                            db.collection("vendors").document(vendorId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                    if (error != null) {
-                                        // this method is called when error is not null
-                                        // and we gt any error
-                                        // in this cas we are displaying an error message.
-                                        toastMessage("Error found" + error);
-                                        return;
-                                    }
-                                    if (value != null && value.exists()) {
+        db.collection("policy").whereEqualTo("policyNo", policiesNo)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+//                            toastMessage("Success found");
+                        Log.d("Success","Suucfull ofund ==========================");
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                        //   toastMessage(value.getData().toString());
-                                        TextView vendorName = (TextView) findViewById(R.id.vendorName);
-                                        vendorName.setText("Vendor Name : "+ value.getData().get("contactperson").toString());
-                                        TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
-                                        vendorShopName.setText("Shop Name : "+value.getData().get("shopname").toString());
-                                        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
-                                        vendorShopCode.setText("Shop Code : "+value.getData().get("vendorcode").toString());
-                                        TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
-                                        vendorContact.setText("Vendor Contact : "+value.getData().get("contact").toString());
-                                        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
-                                        vendorEmail.setText("Email Id : "+value.getData().get("email").toString());
-                                        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
-                                        vendorAddress.setText("Shop Address : "+value.getData().get("address").toString() +","+ value.getData().get("location").toString());
-                                    }
+//                                toastMessage(document.getData().toString());
+                                Log.d("2Success","Suucfull ofund ==========================");
+                                if (!document.getData().containsKey("customerUid") && document.getData().containsKey("vendorID")) {
+
+                                    String vendorId = document.getData().get("vendorID").toString();
+                                    VendorID = vendorId;
+
+                                    db.collection("vendors").document(vendorId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                            if (error != null) {
+                                                // this method is called when error is not null
+                                                // and we gt any error
+                                                // in this cas we are displaying an error message.
+                                                toastMessage("Error found" + error);
+                                                return;
+                                            }
+                                            if (value != null && value.exists()) {
+                                                if(value.getId().equals(VendorID)) {
+                                                    //   toastMessage(value.getData().toString());
+                                                    TextView vendorName = (TextView) findViewById(R.id.vendorName);
+                                                    vendorName.setText("Vendor Name : " + value.getData().get("contactperson").toString());
+                                                    TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
+                                                    vendorShopName.setText("Shop Name : " + value.getData().get("shopname").toString());
+                                                    TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
+                                                    vendorShopCode.setText("Shop Code : " + value.getData().get("vendorcode").toString());
+                                                    TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
+                                                    vendorContact.setText("Vendor Contact : " + value.getData().get("contact").toString());
+                                                    TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
+                                                    vendorEmail.setText("Email Id : " + value.getData().get("email").toString());
+                                                    TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
+                                                    vendorAddress.setText("Shop Address : " + value.getData().get("address").toString() + "," + value.getData().get("location").toString());
+                                                }
+                                            }
+
+                                        }
+                                    });
                                 }
-                            });
+                            }
                         }
-                        else
-                        {
-//                            toastMessage("policyNo not found" + policiesNo);
-                            Log.d("Not Found : " , "Poloici not found");
-//                            policyId.setError("Policy not found");
-                        }
+                        else{
+                            Log.d("Policy","Policy not found");
+                            toastMessage("policy not found");
 
+                        }
                     }
-
-                }
-
-            });
-
-        }
-
+                });
     }
+//                    .document(policyDocID.get(i));
+
+//            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//                @Override
+//                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                    if (error != null) {
+//                        // this method is called when error is not null
+//                        // and we gt any error
+//                        // in this cas we are displaying an error message.
+//                        toastMessage("Error found" + error);
+//                        return;
+//                    }
+//                    if (value != null && value.exists()) {
+//                        // if th value from firestore is not null then we are getting
+//                        // our data and setting that data to our text view.
+////                        toastMessage(value.getData().get("policyNo").toString() + (value.getData().get("vendorID").toString() ));
+////                          toastMessage(policiesNo + value.getData().get("customerUid").toString()); && !value.getData().containsKey("customerUid")
+//                        Log.d("Customer", String.valueOf(value.getData()));
+//
+//                        if(value.getData().get("policyNo").toString().equals(policy_no)  ){
+//
+//
+//                        }
+//                        else
+//                        {
+////                            toastMessage("policyNo not found" + policiesNo);
+//                            Log.d("Not Found : " , "Poloici not found");
+////                            policyId.setError("Policy not found");
+//                        }
+//
+//                    }
+//
+//                }
+
+//            });
+//
+//        }
+
+//    }
 
 
 
@@ -577,9 +631,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     .show();
             return;
         }
-        Toast.makeText(getApplicationContext(),
-                email + password,
-                Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(),
+//                email + password,
+//                Toast.LENGTH_LONG).show();
 
 
         // create new user or register new user

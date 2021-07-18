@@ -72,10 +72,11 @@ import static android.service.controls.ControlsProviderService.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_3 = 3;
     public ComponentName mDeviceAdmin;
     public DevicePolicyManager mDPM;
     public TextView mToggleAdminBtn;
-    public static final int REQUEST_CODE =0;
+    public static final int REQUEST_CODE = 0, REQUEST_CODE_2 = 2 ;
 
     Button checkEmailBtn;
     TextView permissionText;
@@ -145,38 +146,13 @@ public class MainActivity extends AppCompatActivity {
         String title = actionBar.getTitle().toString(); // get the title
         actionBar.hide(); // or even hide the actionbar
 //
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+//                WindowManager.LayoutParams.FLAG_SECURE);
 
 
         permissionText = findViewById(R.id.permissionText);
 
-        try {
-            // Initiate DevicePolicyManager.
-            mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-            // Set DeviceAdmin Demo Receiver for active the component with different option
-            mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
-            Intent fromIntent = getIntent();
-            String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
-
-//          Screen Pinning
-//            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{"com.emi.systemconfiguration"});
-
-            if (!mDPM.isAdminActive(mDeviceAdmin)) {
-                // try to become active
-                Log.d("note", "request for admin");
-                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mDeviceAdmin);
-                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Click on Activate button to secure your application.");
-                startActivityForResult(intent, REQUEST_CODE);
-
-            }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-
-//        Hide the textview and edittext
+        //        Hide the textview and edittext
         registerText =(TextView) findViewById(R.id.registerText);
         registerText.setEnabled(false);
 
@@ -196,70 +172,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        requestPermissions();
 
+        try {
+            // Initiate DevicePolicyManager.
+            mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+            // Set DeviceAdmin Demo Receiver for active the component with different option
+            mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
+            Intent fromIntent = getIntent();
+            String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
+
+//          Screen Pinning
+//            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{"com.emi.systemconfiguration"});
+
+            if (!mDPM.isAdminActive(mDeviceAdmin)) {
+                // try to become active
+                Log.d("note", "request for admin");
+                getDeviceAdminPermsion();
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-            if (!isAccessGranted() && !Settings.canDrawOverlays(this) || !Settings.canDrawOverlays(this) || !isAccessGranted()) {
-                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                startActivity(intent);
-                Intent draw = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(draw, 0);
-                Toast.makeText(this, "Grant All Permission", Toast.LENGTH_LONG).show();
-                finish();
-                startActivity(getIntent());
-                overridePendingTransition(0, 0);
-
-            } else {
-
-                requestPermissions();
-//                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
-//                checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_FINE_LOCATION_CODE);
-//                checkPermission(Manifest.permission.ACCESS_NETWORK_STATE, ACCESS_NETWORK_STATE_CODE);
-//                checkPermission(Manifest.permission.PACKAGE_USAGE_STATS, PACKAGE_USAGE_STATS_CODE);
-//                checkPermission(Manifest.permission.READ_PHONE_STATE, READ_PHONE_STATE_CODE);
-
-//                emailText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                        if(s.toString().contains("@") && s.toString().contains(".")){
-////                            checkEmail();
-//                        }
-//                    }
-//                });
-
-//
-//                Intent registrationIntent = new Intent(this, RegistrationAcitivity.class);
-//                startActivity(registrationIntent);
-                //    New Bgservice 3
-//                mYourService = new BackgroundService();
-//                mServiceIntent = new Intent(this, mYourService.getClass());
-//                if (!isMyServiceRunning(mYourService.getClass())) {
-//                    startService(mServiceIntent);
-//                }
-
-
+            if (!isAccessGranted()) {
+                getUsagePermission();
+//                Toast.makeText(this, "Grant All Permission", Toast.LENGTH_LONG).show();
+//                startActivity(getIntent());
+//                overridePendingTransition(0, 0);
+            }
+            else if(!Settings.canDrawOverlays(this)){
+                getdrawPermission();
             }
 
         }
+
+
         Boolean isconnected=MainActivity.isConnected(getApplicationContext());
         if(isconnected){
             if(auth.getCurrentUser() != null ){
-//            Intent intent = new Intent(this, EmiDueDate.class);
-//            startActivity(intent);
-//            finish();
-
                 startAllServices();
-
             }
         }
 
@@ -276,6 +228,23 @@ public class MainActivity extends AppCompatActivity {
         Log.i ("Service status", "Not running");
         //    Toast.makeText(this, "No runnng", Toast.LENGTH_LONG).show();
         return false;
+    }
+
+    public void getUsagePermission(){
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        startActivityForResult(intent, REQUEST_CODE_3);
+    }
+    public void getdrawPermission(){
+        Intent draw = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivityForResult(draw, REQUEST_CODE_2);
+    }
+    public void getDeviceAdminPermsion(){
+
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mDeviceAdmin);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Click on Activate button to secure your application.");
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     public void checkEmail(){
@@ -343,15 +312,6 @@ public class MainActivity extends AppCompatActivity {
                                             .show();
 
                                     startAllServices();
-                                    // hide the progress bar
-
-
-                                    // if sign-in is successful
-                                    // intent to home activity
-//                                    Intent intent
-//                                            = new Intent(LoginActivity.this,
-//                                            MainActivity.class);
-//                                    startActivity(intent);
                                 }
 
                                 else {
@@ -404,31 +364,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE) {
-//            Log.d("note", String.valueOf(resultCode));
-//            switch (resultCode) {
-//                // End user cancels the request
-//                case Activity.RESULT_CANCELED:
-//                    Log.d("note","Cancled");
-////                    startService(new Intent(this, BackgroundService.class));
-//                    break;
-//                // End user accepts the request
-//                case Activity.RESULT_OK:
-//                    Log.d("note","Actvated");
-////                    stopService(new Intent(this, BackgroundService.class));
-////                    Log.d("note",getResources().getString(R.string.admin_activated));
-////                    refreshButtons();
-//                    break;
-////                case Activity.DEL
-//                default:
-//                    Log.d("note", "default");
-//
-//            }
-//        }
-//    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void  getUniqueIMEIId(View view) {
 //        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -463,7 +398,6 @@ public class MainActivity extends AppCompatActivity {
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100,intent1, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 //        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 //        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
-
 
     }
 
@@ -527,6 +461,23 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     }
+
+//    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @SuppressLint("MissingSuperCall")
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_CODE) {
+//            Log.d("note",String.valueOf(resultCode));
+//            getdrawPermission();
+//
+//        }
+//        else if(requestCode == REQUEST_CODE_2){
+//            getUsagePermission();
+//        }
+//        else if(requestCode == REQUEST_CODE_3){
+//            requestPermissions();
+//        }
+//    }
 
 
     @Override
@@ -647,6 +598,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onError(DexterError error) {
                     // we are displaying a toast message for error message.
                     Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+//                    requestPermissions();
                 }
             })
                     // below line is use to run the permissions
@@ -733,10 +685,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 
 //       Hide Application
-//        PackageManager p = getPackageManager();
-//        Log.d("packman",p.toString());
-//        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
-//        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        PackageManager p = getPackageManager();
+        Log.d("packman",p.toString());
+        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
+        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
     }
 

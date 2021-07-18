@@ -1,15 +1,18 @@
 package com.emi.systemconfiguration;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -18,6 +21,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
@@ -41,11 +45,17 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 
 public class BackgroundService extends Service {
+
+    DevicePolicyManager dpm;
+    long current_time;
+    Timer myThread;
+    private Context context ;
+
     public int counter=0;
     Dialog dialog;
     private FirebaseFirestore db;
 
-    public Boolean activeUser = false;
+    public Boolean activeUser = false, userAlert = true;
 
     private BackgroundService backgroundService;
     Intent mServiceIntent;
@@ -111,6 +121,7 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+
         startTimer();
         return START_STICKY;
     }
@@ -129,21 +140,29 @@ public class BackgroundService extends Service {
 
     private Timer timer;
     private TimerTask timerTask;
-    public void startTimer() {
+    Handler handler = new Handler();
+    private Runnable runnableCode = new Runnable() {
         int day = 3;
-        timer = new Timer();
-        timerTask = new TimerTask() {
+        @RequiresApi(api = Build.VERSION_CODES.Q)
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            Log.d("Handlers", "Called on main thread");
+            Log.i("Count", "=========  "+ (counter++));
 
-            @RequiresApi(api = Build.VERSION_CODES.Q)
-            public void run() {
-                Log.i("Count", "=========  "+ (counter++));
-//                checkRunningApps();
-//                checkHomelauncher();
-                if(activeUser) {
-                    checkRunningApps();
-                    checkHomelauncher();
+            if(activeUser) {
+                if(userAlert){
+                    userAlert = false;
+                    Intent dialogIntent = new Intent(getApplicationContext(), Lock.class);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(dialogIntent);
                 }
-                if(day <= counter){
+                continuesLock();
+
+//                    checkRunningApps();
+//                    checkHomelauncher();
+            }
+            if(day <= counter) {
                     Log.i("Count", "========= Workingggg  ");
                   if(isConnected()){
                       Log.i("INterent", "========= Connected to  Network ");
@@ -156,27 +175,204 @@ public class BackgroundService extends Service {
                     counter =0;
                 }
 
+            // Repeat this the same runnable code block again another 2 seconds
+            handler.postDelayed(runnableCode, 2000);
+        }
+    };
+
+
+    public void startTimer() {
+        int day = 3;
+
+//         Define the code block to be executed
+//
+// Start the initial runnable task by posting through the handler
+        handler.post(runnableCode);
+//        timer = new Timer();
+//        timerTask = new TimerTask() {
+//
+//            @RequiresApi(api = Build.VERSION_CODES.Q)
+//            public void run() {
+//                Log.i("Count", "=========  "+ (counter++));
+////                checkRunningApps();
+////                checkHomelauncher();
+//                if(activeUser) {
+//                    continuesLock();
+//
+////                    checkRunningApps();
+////                    checkHomelauncher();
+//
+//                }
+//                if(day <= counter){
+//                    Log.i("Count", "========= Workingggg  ");
+//                  if(isConnected()){
+//                      Log.i("INterent", "========= Connected to  Network ");
+//                      activeDevice();
+//                  }
+//                  else
+//                  {
+//                      Log.i("INterent", "========= Not  Connected to Network ");
+//                  }
+//                    counter =0;
+//                }
+//
+//            }
+//        };
+//        timer.schedule(timerTask, 0, 2000); //
+    }
+
+
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void continuesLock(){
+        dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        try{
+//            ActivityManager mActivityManager =(ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
+            String activityName= retriveNewApp(this);
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            String currentLauncherName= resolveInfo.activityInfo.packageName;
+
+            if(activityName.contains("contacts") || activityName.equals(currentLauncherName) || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
+                Log.e("USer","User is on activity");
+//            startActivity(new Intent(this, Lock.class));
+//            dialog.show();
+
             }
-        };
-        timer.schedule(timerTask, 1000, 1000); //
+            else {
+//                Toast.makeText(BackgroundService.this.getApplicationContext(), "Please Contact Vendor",Toast.LENGTH_LONG).show();
+//                Alert();
+                dpm.lockNow();
+
+            }
+            Log.e("Locking", " *********************** THi is woking properly"+ activityName );
+        }
+        catch (Exception e){
+//            Toast.makeText(this, "Please Contact Vendor",Toast.LENGTH_LONG).show();
+//            Alert();
+            dpm.lockNow();
+        }
+
+//        myThread = new Timer();
+//        current_time = System.currentTimeMillis();
+//        myThread.schedule(lock_task,0,1000);
+//        String myPackage = retriveNewApp(this);
+
+//        dpm.lockNow();
+
+//        Toast.makeText(context,"Working",Toast.LENGTH_LONG).show();
+
+    }
+
+    public void Alert(){
+        // Create the object of
+        // AlertDialog Builder class
+        AlertDialog.Builder builder
+                = new AlertDialog
+                .Builder(this);
+
+        // Set the message show for the Alert time
+        builder.setMessage("Do you want to exit ?");
+
+        // Set Alert Title
+        builder.setTitle("Alert !");
+
+        // Set Cancelable false
+        // for when the user clicks on the outside
+        // the Dialog Box then it will remain show
+        builder.setCancelable(false);
+
+        // Set the positive button with yes name
+        // OnClickListener method is use of
+        // DialogInterface interface.
+        builder
+                .setPositiveButton(
+                        "Yes",
+                        new DialogInterface
+                                .OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+
+                                // When the user click yes button
+                                // then app will close
+//                                finish();
+                            }
+                        });
+
+        // Set the Negative button with No name
+        // OnClickListener method is use
+        // of DialogInterface interface.
+        builder
+                .setNegativeButton(
+                        "No",
+                        new DialogInterface
+                                .OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+
+                                // If user click no
+                                // then dialog box is canceled.
+                                dialog.cancel();
+                            }
+                        });
+
+        // Create the Alert dialog
+        AlertDialog alertDialog = builder.create();
+
+        // Show the Alert Dialog box
+        alertDialog.show();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void checkRunningApps() {
+
         String myPackage;
         myPackage = retriveNewApp(this);
         Log.e("app","app details are" + myPackage);
 //        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
 //        "com.android.settings"
-        if(myPackage.contains("com.android.settings") || myPackage.contains(("com.emi.systemconfiguration")) || myPackage.contains(("com.whatsapp")) || myPackage.contains("com.google.android.youtube")){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        String currentLauncherName= resolveInfo.activityInfo.packageName;
+
+        if(myPackage.contains("com.android.settings") ||
+                myPackage.contains(("com.emi.systemconfiguration")) ||
+                myPackage.contains(("com.whatsapp")) ||
+                myPackage.contains("com.google.android.youtube")||
+                myPackage.contains(currentLauncherName)){
             Log.e("Tag", " THi is woking properly");
-            Intent dialogIntent = new Intent(this, Lock.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(dialogIntent);
+//            Intent dialogIntent = new Intent(this, Lock.class);
+//            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(dialogIntent);
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
+
+
         }
     }
+
+    // Repeatedly lock the phone every second for 5 seconds
+    TimerTask lock_task = new TimerTask() {
+        @Override
+        public void run() {
+            long diff = System.currentTimeMillis() - current_time;
+            if (diff < 3000) {
+                Log.d("Timer", "1 second");
+                dpm.lockNow();
+            }
+        }
+    };
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void checkHomelauncher(){
