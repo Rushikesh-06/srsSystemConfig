@@ -649,6 +649,8 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+
+
     public static boolean isConnected(Context context) {
         boolean connected = false;
         try {
@@ -684,11 +686,13 @@ public class MainActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 
+//        mDPM.resetPassword("523260", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+
 //       Hide Application
-        PackageManager p = getPackageManager();
-        Log.d("packman",p.toString());
-        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
-        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//        PackageManager p = getPackageManager();
+//        Log.d("packman",p.toString());
+//        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
+//        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
     }
 

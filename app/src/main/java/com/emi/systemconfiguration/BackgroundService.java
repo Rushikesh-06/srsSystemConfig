@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -176,7 +177,7 @@ public class BackgroundService extends Service {
                 }
 
             // Repeat this the same runnable code block again another 2 seconds
-            handler.postDelayed(runnableCode, 2000);
+            handler.postDelayed(runnableCode, 500);
         }
     };
 
@@ -231,12 +232,13 @@ public class BackgroundService extends Service {
         try{
 //            ActivityManager mActivityManager =(ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
             String activityName= retriveNewApp(this);
+            Log.d("PackageName",activityName);
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
             String currentLauncherName= resolveInfo.activityInfo.packageName;
-
-            if(activityName.contains("contacts") || activityName.equals(currentLauncherName) || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
+//|| activityName.equals(currentLauncherName)
+            if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
                 Log.e("USer","User is on activity");
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
@@ -347,6 +349,7 @@ public class BackgroundService extends Service {
         String currentLauncherName= resolveInfo.activityInfo.packageName;
 
         if(myPackage.contains("com.android.settings") ||
+//                myPackage.contains(" com.android.settings/com.coloros.settings.feature.security.ColorDeviceAdminAdd") ||
                 myPackage.contains(("com.emi.systemconfiguration")) ||
                 myPackage.contains(("com.whatsapp")) ||
                 myPackage.contains("com.google.android.youtube")||

@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "247474756438",
+    "firebase_url": "https://emi-locker-default-rtdb.firebaseio.com",
+    "project_id": "emi-locker",
+    "storage_bucket": "emi-locker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247474756438:android:3faa98d3d374dba44a54f7",
+        "android_client_info": {
+          "package_name": "com.emi.systemconfiguration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7xTac0PtQD4FOL6i_ZdeOkEHEofBQ50Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247474756438:android:9a91edb4c3e5846e4a54f7",
+        "android_client_info": {
+          "package_name": "com.example.customer_registration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7xTac0PtQD4FOL6i_ZdeOkEHEofBQ50Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247474756438:android:f4c449231c90a5554a54f7",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7xTac0PtQD4FOL6i_ZdeOkEHEofBQ50Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247474756438-39cl1ab93qoajtsl67gm7eqh4u5d8v73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

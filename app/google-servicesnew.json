@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "741955552131",
-    "project_id": "emi-locker-e99c1",
-    "storage_bucket": "emi-locker-e99c1.appspot.com"
+    "project_number": "776829973456",
+    "project_id": "emi-locker-88e43",
+    "storage_bucket": "emi-locker-88e43.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:741955552131:android:46e414569afb006e2decb6",
+        "mobilesdk_app_id": "1:776829973456:android:d3497b2b4441e5c566ffd5",
         "android_client_info": {
           "package_name": "com.emi.systemconfiguration"
         }
       },
       "oauth_client": [
         {
-          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
+          "client_id": "776829973456-isatbbvlata3ko9h4d2j80r86m5sioh9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCv9uRksmssCqnVkxOVqszEAvI7pti25Dg"
+          "current_key": "AIzaSyC6GBR7Q9SW2QhMiNoI41mDl81Y6CpvsC0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
+              "client_id": "776829973456-isatbbvlata3ko9h4d2j80r86m5sioh9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
