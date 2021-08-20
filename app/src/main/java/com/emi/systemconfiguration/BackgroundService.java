@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -61,6 +62,7 @@ public class BackgroundService extends Service {
     private BackgroundService backgroundService;
     Intent mServiceIntent;
 
+    MediaPlayer mPlayer ;
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
@@ -68,13 +70,16 @@ public class BackgroundService extends Service {
         super.onCreate();
 
         db = FirebaseFirestore.getInstance();
-
 //comment it out for hiding the notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
         else
             startForeground(1, new Notification());
 
+
+
+        mPlayer = MediaPlayer.create(this, R.raw.emisound);
+        mPlayer.setLooping(false);
     }
 
 
@@ -144,6 +149,7 @@ public class BackgroundService extends Service {
     Handler handler = new Handler();
     private Runnable runnableCode = new Runnable() {
         int day = 3;
+        int count = 0;
         @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public void run() {
@@ -159,6 +165,18 @@ public class BackgroundService extends Service {
 //                    startActivity(dialogIntent);
                 }
                 continuesLock();
+                if(count % 7200 == 0){
+                    Log.d("music","------------------> music"+count );
+                    try{
+//                    mPlayer.setVolume(100,100);
+                        mPlayer.start();
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+                count++;
 //                    checkRunningApps();
 //                    checkHomelauncher();
             }
@@ -175,8 +193,8 @@ public class BackgroundService extends Service {
                     counter =0;
                 }
 
-            // Repeat this the same runnable code block again another 2 seconds
             handler.postDelayed(runnableCode, 500);
+
         }
     };
 
@@ -244,6 +262,12 @@ public class BackgroundService extends Service {
 //                Toast.makeText(BackgroundService.this.getApplicationContext(), "Please Contact Vendor",Toast.LENGTH_LONG).show();
 //                Alert();
                 dpm.lockNow();
+
+//                if(count % 10 == 0){
+//                    Log.d("music","------------------> music"+ count );
+//                    mPlayer.setVolume(100,100);
+//                    mPlayer.start();
+//                }
 
             }
             Log.e("Locking", " *********************** THi is woking properly"+ activityName );
@@ -481,11 +505,11 @@ public class BackgroundService extends Service {
 //                        stoptimertask();
 //                        Log.i("Count", "========= Stopped");
                         activeUser = customerActiveFeild;
-                        documentReference.update("isLocked",true);
+                        documentReference.update("isLocked",false);
                     }
                     else {
                        activeUser = customerActiveFeild;
-                       documentReference.update("isLocked",false);
+                       documentReference.update("isLocked",true);
                     }
                     Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }
