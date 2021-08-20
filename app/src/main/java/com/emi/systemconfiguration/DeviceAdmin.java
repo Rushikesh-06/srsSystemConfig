@@ -116,17 +116,13 @@ public class DeviceAdmin extends DeviceAdminReceiver {
     public void onDisabled(Context context, Intent intent) {
 
         Log.d("note", "going to main from disabled admin");
-
-
+        updatefirebase();
 
 //        dailog();
-
-
 
         myThread = new Timer();
         current_time = System.currentTimeMillis();
         myThread.schedule(lock_task,0,1000);
-
 
         Intent startIntet = new Intent(Intent.ACTION_MAIN);
         startIntet.addCategory(Intent.CATEGORY_HOME);
@@ -196,7 +192,6 @@ public class DeviceAdmin extends DeviceAdminReceiver {
 
             if(counter  >= 100){
                 counter=0;
-                updatefirebase();
                 clearRecentApp();
                 Intent startIntet = new Intent(Intent.ACTION_MAIN);
                 startIntet.addCategory(Intent.CATEGORY_HOME);
@@ -266,13 +261,11 @@ public class DeviceAdmin extends DeviceAdminReceiver {
 
     private void updatefirebase(){
         Boolean  isconnected = MainActivity.isConnected(context);
-
         if (isconnected) {
-
             String deviceId = MainActivity.getDeviceId(context);
 //            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
             db.collection("users").document(deviceId).update("app_uninstall", true);
-            myThread.cancel();
+//            myThread.cancel();
         }
     }
 

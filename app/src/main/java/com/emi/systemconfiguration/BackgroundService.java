@@ -154,12 +154,11 @@ public class BackgroundService extends Service {
             if(activeUser) {
                 if(userAlert){
                     userAlert = false;
-                    Intent dialogIntent = new Intent(getApplicationContext(), Lock.class);
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(dialogIntent);
+//                    Intent dialogIntent = new Intent(getApplicationContext(), Lock.class);
+//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(dialogIntent);
                 }
                 continuesLock();
-
 //                    checkRunningApps();
 //                    checkHomelauncher();
             }
@@ -221,9 +220,6 @@ public class BackgroundService extends Service {
 //        };
 //        timer.schedule(timerTask, 0, 2000); //
     }
-
-
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -419,7 +415,6 @@ public class BackgroundService extends Service {
             mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
             stopService(mServiceIntent);
         }
-
     }
 
     @Nullable
@@ -486,17 +481,17 @@ public class BackgroundService extends Service {
 //                        stoptimertask();
 //                        Log.i("Count", "========= Stopped");
                         activeUser = customerActiveFeild;
+                        documentReference.update("isLocked",true);
                     }
                     else {
                        activeUser = customerActiveFeild;
+                       documentReference.update("isLocked",false);
                     }
                     Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }
-
             }
         });
 //        return deviceId;
-
     }
 
     public boolean isConnected() {

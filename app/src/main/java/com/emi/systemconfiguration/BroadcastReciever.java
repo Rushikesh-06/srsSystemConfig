@@ -30,21 +30,18 @@ public class BroadcastReciever extends BroadcastReceiver {
 
     Boolean screenOff;
 
-    @SuppressLint("NewApi")
     @Override
     public void onReceive(Context context, Intent intent) {
 
-//        if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-//            Intent i = new Intent(context, MainActivity.class);
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(i);
-//        }
         String action = intent.getAction();
         if(("android.intent.action.BOOT_COMPLETED").equals(action) ||
                 ("restart service").contains(action) ||
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
+                ("android.intent.action.BATTERY_CHANGED").contains(action) ||
+                ("android.intent.action.ACTION_POWER_CONNECTED").contains((action)) ||
+                ("android.intent.action.PACKAGE_REMOVED").contains((action)) ||
                 ("BackgroundProcess").equals(action) ||
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
 
@@ -52,10 +49,16 @@ public class BroadcastReciever extends BroadcastReceiver {
 //            context.startForegroundService(new Intent(context, LocationService.class));
             backgroundService = new BackgroundService();
             mServiceIntent = new Intent(context, BackgroundService.class);
-            context.startForegroundService(mServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(mServiceIntent);
+            }
+            else{
+                context.startService(mServiceIntent);
+            }
+
 //            locationService = new LocationService();
-            Intent mService= new Intent(context, LocationService.class);
-            context.startService(mService);
+//            Intent mService= new Intent(context, LocationService.class);
+//            context.startService(mService);
 //            Log.d("Boot", "Service Started");
 //            Intent main = new Intent(context, RegistrationAcitivity.class);
 //            context.startActivity(main);

@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.emi.systemconfiguration"
     tools:ignore="MissingLeanbackLauncher">
+
     <!-- Permissions for internet -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -18,6 +22,7 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -34,7 +39,6 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -65,7 +69,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE" tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+        android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"
+        tools:ignore="ProtectedPermissions" />
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -73,46 +80,44 @@
         android:name="android.software.leanback"
         android:required="true" />
 
-    <!--     android:name=".AppContext" add in application to show alwasy the after wake up-->
     <application
         android:allowBackup="true"
         android:icon="@drawable/system_icon"
         android:keepScreenOn="true"
         android:label="@string/app_name"
+        android:required="true"
         android:sharedUserId="android.uid.system"
         android:showOnLockScreen="true"
         android:showWhenLocked="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
-        android:required="true"
         tools:ignore="MissingTvBanner">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
 
-                <!--                <category android:name="android.intent.category.HOME" />-->
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="*/*"/>
+                <!-- <category android:name="android.intent.category.HOME" /> -->
+                <!-- <action android:name="android.intent.action.SEND"/> -->
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".Aboutus">
-
-        </activity>
+        <activity android:name=".Aboutus"></activity>
         <activity android:name=".EmiDueDate" />
-        <activity android:name=".Lock" >
-            <!--            <intent-filter>-->
-            <!--                &lt;!&ndash;<category android:name="android.intent.category.HOME" />&ndash;&gt;-->
-            <!--&lt;!&ndash;                <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
-            <!--            </intent-filter>-->
+        <activity android:name=".Lock">
+
+            <!-- <intent-filter> -->
+            <!-- &lt;!&ndash;<category android:name="android.intent.category.HOME" />&ndash;&gt; -->
+            <!-- &lt;!&ndash;                <category android:name="android.intent.category.DEFAULT" />&ndash;&gt; -->
+            <!-- </intent-filter> -->
         </activity>
         <activity android:name=".LockScreen" />
-        <activity android:name=".RegistrationAcitivity" >
-
-        </activity>
+        <activity android:name=".RegistrationAcitivity"></activity>
 
         <receiver
             android:name=".BroadcastReciever"
@@ -123,13 +128,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
                 <data android:scheme="package" />
             </intent-filter>
             <intent-filter>
@@ -138,6 +147,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_INSTALL" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -148,6 +158,7 @@
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
+
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
@@ -155,16 +166,31 @@
                 <action android:name="android.app.action.DISALLOW_FACTORY_RESET" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".NetworkBroadcast"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".SmsBroadCastReciever"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".HomeReciever">
             <intent-filter>
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
-        </receiver>
-        <!--        <receiver android:name=".Kisko">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.SCREEN_ON" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
+        </receiver> <!-- <receiver android:name=".Kisko"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.SCREEN_ON" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <!-- <receiver android:name=".CountBroad" android:exported="true"  android:enabled="true"> -->
         <!-- </receiver> -->
         <service
@@ -172,19 +198,6 @@
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
-        <!--        <service-->
-        <!--            android:name=".BackgroundDelayService"-->
-        <!--            android:enabled="true"-->
-        <!--            android:exported="true"-->
-        <!--            android:stopWithTask="false" />-->
-        <service
-            android:name=".LocationService"
-            android:enabled="true"
-            android:exported="true"
-            android:stopWithTask="false" />
-        <!--        <service-->
-        <!--            android:name=".KiskoService"-->
-        <!--            android:exported="false" />-->
     </application>
 
 </manifest>
