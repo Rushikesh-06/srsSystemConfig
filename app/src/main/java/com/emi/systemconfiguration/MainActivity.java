@@ -53,10 +53,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -68,6 +75,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 import static android.service.controls.ControlsProviderService.TAG;
 
@@ -82,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     Button checkEmailBtn;
     TextView permissionText;
 
+    private FirebaseFirestore db;
 
     //For Permission
     private static final int CAMERA_PERMISSION_CODE = 100;
@@ -133,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         emailText =(EditText) findViewById(R.id.emailId);
         passwordText =(EditText) findViewById(R.id.editTextPassword);
 
@@ -210,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         Boolean isconnected=MainActivity.isConnected(getApplicationContext());
         if(isconnected){
             if(auth.getCurrentUser() != null ){
+                updateVendor();
                 startAllServices();
             }
         }
@@ -297,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // signin existing user
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(
                         new OnCompleteListener<AuthResult>() {
@@ -309,6 +322,14 @@ public class MainActivity extends AppCompatActivity {
                                             "Login successful!!",
                                             Toast.LENGTH_LONG)
                                             .show();
+
+//                                            .(new OnSuccessListener<QuerySnapshot>() {
+//                                        @Override
+//                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//
+//                                        }
+//                                    });
+                                    updateVendor();
 
                                     startAllServices();
                                 }
@@ -343,6 +364,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateVendor(){
+        String deviceID= getDeviceId(this);
+        db.collection("policy").whereEqualTo("customerUid", deviceID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if(task.getResult().getDocuments().size() > 0){
+                    String  vendorId ;
+                    vendorId=  task.getResult().getDocuments().get(0).get("vendorID").toString();
+
+                    db.collection("vendors").document(vendorId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            String vendorNumber =task.getResult().get("contact").toString();
+                            Vendor.number = vendorNumber;
+                            Log.d("Number","---------->"+ vendorNumber);
+//                            Toast.makeText(getApplicationContext(),
+//                                    vendorNumber,
+//                                    Toast.LENGTH_LONG)
+//                                    .show();
+                        }
+                    });
+                }
+                else {
+                    Log.d("Game", "Nt fund the vendor");
+                }
+
+            }
+        });
+    }
+
     // Function to check and request permission
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -363,68 +415,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void  getUniqueIMEIId(View view) {
-//        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-//        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
-//            return;
-//        }
-//        RegistrationAcitivity register = new RegistrationAcitivity();
-//        register.getPolicyIdList(this);
-//
-//        IMEINumber = getDeviceId(this);
-//        emailText.setText(IMEINumber);
-        Toast.makeText(this, "Location Set!", Toast.LENGTH_LONG).show();
-
-
-
-//        Intent intent = new Intent(MainActivity.this, CountBroad.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-//
-//        AlarmManager alarmManager =(AlarmManager) getSystemService(ALARM_SERVICE);
-//        long timeAtButtonclick = System.currentTimeMillis();
-//        long tenseconds = 1000 * 1;
-//
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAtButtonclick + tenseconds, pendingIntent);
-
-//        Calendar calendar = Calendar.getInstance();
-//
-//        calendar.set(Calendar.HOUR_OF_DAY, 18);
-//        calendar.set(Calendar.MINUTE, 40);
-//        calendar.set(Calendar.SECOND, 0);
-//        Intent intent1 = new Intent(getApplicationContext(), CountBroad.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100,intent1, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-//        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-//        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
-
-    }
-
-//    private void createNotficationchannel(){
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            CharSequence name ="AntiTheft-Locker";
-//            String description = "Due date for Emi-locker";
-//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-//            NotificationChannel channel = new NotificationChannel("ApptheftLocker", name, importance);
-//            channel.setDescription(description);
-//
-//        }
-//
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case REQUEST_CODE: {
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        }
-//    }
 
     @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String getDeviceId(Context context) {
@@ -461,23 +451,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @SuppressLint("MissingSuperCall")
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CODE) {
-//            Log.d("note",String.valueOf(resultCode));
-//            getdrawPermission();
-//
-//        }
-//        else if(requestCode == REQUEST_CODE_2){
-//            getUsagePermission();
-//        }
-//        else if(requestCode == REQUEST_CODE_3){
-//            requestPermissions();
-//        }
-//    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -488,15 +461,6 @@ public class MainActivity extends AppCompatActivity {
                 permissions,
                 grantResults);
 
-//        if (requestCode == CAMERA_PERMISSION_CODE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(MainActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT) .show();
-//
-//            }
-//            else {
-//                Toast.makeText(MainActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT) .show();
-//            }
-//        }
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -538,25 +502,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("InlinedApi")
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void requestPermissions() {
         // below line is use to request
         // permission in the current activity.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Dexter.withActivity(this)
-                    // below line is use to request the number of
-                    // permissions which are required in our app.
-                    .withPermissions(Manifest.permission.CAMERA,
-                            // below is the list of permissions
+                    .withPermissions(
+                            Manifest.permission.CAMERA,
                             Manifest.permission.READ_PHONE_STATE,
-                            Manifest.permission.ACCESS_NETWORK_STATE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.FOREGROUND_SERVICE,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-
+                            Manifest.permission.RECEIVE_SMS
                    //         Manifest.permission.PACKAGE_USAGE_STATS
             //                Manifest.permission.REQUEST_INSTALL_PACKAGES
                     )
@@ -567,16 +525,14 @@ public class MainActivity extends AppCompatActivity {
                         public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                             // this method is called when all permissions are granted
                             if (multiplePermissionsReport.areAllPermissionsGranted()) {
-
-                                addAutoStartup();
                                 // do you work now
                                 Toast.makeText(MainActivity.this, "All the permissions are granted..", Toast.LENGTH_SHORT).show();
                                 checkEmailBtn.setEnabled(true);
                                 registerText.setEnabled(true);
                                 permissionText.setVisibility(View.GONE);
 
+                                addAutoStartup();
                             }
-                            // check for permanent denial of any permission
                             if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {
                                 // permission is denied permanently,
                                 // we will show user a dialog message.
@@ -695,13 +651,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 
-//        mDPM.resetPassword("523260", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-
-//       Hide Application
-//        PackageManager p = getPackageManager();
-//        Log.d("packman",p.toString());
-//        ComponentName componentName = new ComponentName(this,com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
-//        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
     }
 

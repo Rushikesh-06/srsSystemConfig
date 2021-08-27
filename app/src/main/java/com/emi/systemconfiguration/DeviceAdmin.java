@@ -283,7 +283,7 @@ public class DeviceAdmin extends DeviceAdminReceiver {
             String currentLauncherName= resolveInfo.activityInfo.packageName;
 //|| activityName.equals(currentLauncherName)
             if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
-                Log.e("USer","User is on activity");
+                Log.e("USer","Vendor is on activity");
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
 

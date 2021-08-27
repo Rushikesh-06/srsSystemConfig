@@ -722,6 +722,23 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                     CollectionReference dbPolicy = db.collection("policy");
 
                                     dbPolicy.document( policyDocumentsID.toString()).update("customerUid",customer_uid);
+
+                                    db.collection("vendors").document(vendorID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> vendorDetails) {
+                                            Vendor.number =  vendorDetails.getResult().get("number").toString();
+                                        }
+                                    });
+
+//                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                            Log.d("VendorId",task.getResult().getData().toString());
+//                                            String vendorId = task.getResult().get("vendorID").toString();
+//
+//                                        }
+//                                    });
+
                                 }
                                 else
                                 {

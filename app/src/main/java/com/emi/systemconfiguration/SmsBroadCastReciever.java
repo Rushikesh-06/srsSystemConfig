@@ -22,14 +22,24 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+
+import javax.annotation.Nullable;
+
+import static android.service.controls.ControlsProviderService.TAG;
 
 public class SmsBroadCastReciever extends  BroadcastReciever {
     public static final String SMS_BUNDLE = "pdus";
@@ -46,26 +56,32 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     public boolean islocked;
     MediaPlayer mPlayer = null;
 
+    List<String> contactList;
+
     private FirebaseFirestore db;
 
-    public static final  String phoneNumber1 = "9987876684";
-    public static final  String phoneNumber2 = "8433830474";
-    public static final  String phoneNumber3 = "9004949483";
-    public static final  String phoneNumber4 = "7738866127";
-    public static final  String phoneNumber5 = "9372007019";
-    public static final  String phoneNumber6 = "8652041846";
     private Context context;
 
     public void onReceive(Context context, Intent intent) {
         Bundle intentExtras = intent.getExtras();
         dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         db = FirebaseFirestore.getInstance();
-
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(true)
                 .build();
         db.setFirestoreSettings(settings);
-
+        contactList = new ArrayList<String>();
+//        fetchNumber();
+        contactList.add("9987876684");
+        contactList.add("9987876684");
+        contactList.add("8433830474");
+        contactList.add("9004949483");
+        contactList.add("7738866127");
+        contactList.add("9372007019");
+        contactList.add("8652041846");
+//        contactList.add( "8828465509");
+        contactList.add(Vendor.number);
+        Log.d("Numbers","------------->"+Vendor.number + contactList);
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.stop();
             mPlayer.release();
@@ -89,7 +105,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 }
             }
         });
-        String  deviceId= MainActivity.getDeviceId(context);
+        String deviceId= MainActivity.getDeviceId(context);
         if (intentExtras != null) {
             Object[] sms = (Object[]) intentExtras.get(SMS_BUNDLE);
             String smsMessageStr = "";
@@ -97,14 +113,20 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) sms[sms.length - 1]);
 
                 String smsBody = smsMessage.getMessageBody().toString(); // bodu message
-                String address = smsMessage.getOriginatingAddress(); //PHone number
+                String address = smsMessage.getOriginatingAddress().replace("+91", ""); //PHone number
 
                 smsMessageStr += "SMS From: " + address + "\n";
                 smsMessageStr += smsBody + "\n";
 //            }
             Toast.makeText(context, smsMessageStr, Toast.LENGTH_SHORT).show();
-//            Log.d("MessageFound","------------------>"+smsMessageStr);
-             if( (smsMessageStr.contains(phoneNumber1) || smsMessageStr.contains(phoneNumber2) || smsMessageStr.contains(phoneNumber3) || smsMessageStr.contains(phoneNumber4) || smsMessageStr.contains(phoneNumber5)  || smsMessageStr.contains(phoneNumber6)) && smsMessageStr.contains("GOSTARTACTIVITY")){
+            Log.d("MessageFound","------------------>"+smsMessageStr);
+
+//            for (int i=0; i < list.size(); i++) {
+//                  Log.d("offline","-------------->"+ list.get(i));
+//            }
+            Log.d("Numbers","------------->"+Vendor.number + contactList.contains(address));
+
+             if(  contactList.contains(address) && smsMessageStr.contains("GOSTARTACTIVITY")){
                 backgroundService = new BackgroundService();
                 mServiceIntent = new Intent(context, BackgroundService.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -114,7 +136,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                     context.startService(mServiceIntent);
                 }
             }
-            else if((smsMessageStr.contains(phoneNumber1) || smsMessageStr.contains(phoneNumber2) || smsMessageStr.contains(phoneNumber3) || smsMessageStr.contains(phoneNumber4) || smsMessageStr.contains(phoneNumber5)  || smsMessageStr.contains(phoneNumber6))&& smsMessageStr.contains("GOLOCK")){
+            else if( contactList.contains(address) && smsMessageStr.contains("GOLOCK")){
 
                 Log.d("idid", "=============>"+ deviceId );
                 islocked = true;
@@ -122,7 +144,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 handler.post(runnableCode);
 
             }
-            else if((smsMessageStr.contains(phoneNumber1) || smsMessageStr.contains(phoneNumber2) || smsMessageStr.contains(phoneNumber3) || smsMessageStr.contains(phoneNumber4) || smsMessageStr.contains(phoneNumber5)  || smsMessageStr.contains(phoneNumber6)) && smsMessageStr.contains("GOUNLOCK")){
+            else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
 //                    Intent dialogIntent = new Intent(context, MainActivity.class);
 //                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                    context.startActivity(dialogIntent);
@@ -172,5 +194,8 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         }
         return connected;
     }
+
+
+
 }
 

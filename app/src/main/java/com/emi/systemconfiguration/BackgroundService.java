@@ -123,7 +123,6 @@ public class BackgroundService extends Service {
         startForeground(2, notification);
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -174,7 +173,6 @@ public class BackgroundService extends Service {
                     catch (Exception e){
                         e.printStackTrace();
                     }
-
                 }
                 count++;
 //                    checkRunningApps();
@@ -253,7 +251,7 @@ public class BackgroundService extends Service {
             String currentLauncherName= resolveInfo.activityInfo.packageName;
 //|| activityName.equals(currentLauncherName)
             if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
-                Log.e("USer","User is on activity");
+                Log.e("USer","Vendor is on activity");
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
 
