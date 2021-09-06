@@ -764,6 +764,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void welcome(View v){
+        Intent registrationIntent = new Intent(getApplicationContext(), Welcome.class);
+        startActivity(registrationIntent);
+    }
 }
 
 

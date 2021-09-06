@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.emi.systemconfiguration"
     tools:ignore="MissingLeanbackLauncher">
-
     <!-- Permissions for internet -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,9 +12,13 @@
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.BROADCAST_SMS"
+    <uses-permission
+        android:name="android.permission.BROADCAST_SMS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.DEVICE_POWER"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
@@ -95,7 +98,7 @@
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
         tools:ignore="MissingTvBanner">
-
+        <activity android:name=".Welcome"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -109,7 +112,7 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".Aboutus"></activity>
+        <activity android:name=".Aboutus" />
         <activity android:name=".EmiDueDate" />
         <activity android:name=".Lock">
 
@@ -119,7 +122,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".LockScreen" />
-        <activity android:name=".RegistrationAcitivity"></activity>
+        <activity android:name=".RegistrationAcitivity" />
 
         <receiver
             android:name=".BroadcastReciever"
@@ -136,6 +139,7 @@
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
             <intent-filter>
@@ -188,7 +192,14 @@
             <intent-filter>
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
-        </receiver> <!-- <receiver android:name=".Kisko"> -->
+        </receiver>
+<!--        <receiver android:name=".ScreenReceiver">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.-->
+<!--                 action.CLOSE_SYSTEM_DIALOGS" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+        <!-- <receiver android:name=".Kisko"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.SCREEN_ON" /> -->
         <!-- </intent-filter> -->
@@ -200,6 +211,11 @@
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
+<!--        <service-->
+<!--            android:name=".PowerButtonService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
+<!--        </service>-->
     </application>
 
 </manifest>

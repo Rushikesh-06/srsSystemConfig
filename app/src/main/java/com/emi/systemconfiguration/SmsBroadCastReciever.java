@@ -66,10 +66,10 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         Bundle intentExtras = intent.getExtras();
         dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
+//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//                .setPersistenceEnabled(true)
+//                .build();
+//        db.setFirestoreSettings(settings);
         contactList = new ArrayList<String>();
 //        fetchNumber();
         contactList.add("9987876684");
@@ -79,7 +79,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         contactList.add("7738866127");
         contactList.add("9372007019");
         contactList.add("8652041846");
-//        contactList.add( "8828465509");
+        contactList.add( "8828465509");
         contactList.add(Vendor.number);
         Log.d("Numbers","------------->"+Vendor.number + contactList);
         if (mPlayer != null && mPlayer.isPlaying()) {
@@ -140,7 +140,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 
                 Log.d("idid", "=============>"+ deviceId );
                 islocked = true;
-                db.collection("users").document(deviceId).update("isLocked",true);
+//                db.collection("users").document(deviceId).update("isLocked",true);
                 handler.post(runnableCode);
 
             }
@@ -150,10 +150,9 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 //                    context.startActivity(dialogIntent);
                 islocked = false;
                 Log.d("ServiceLocked", "------------------>"+ islocked);
-                 db.collection("users").document(deviceId).update("isLocked",false);
+//                db.collection("users").document(deviceId).update("isLocked",false);
                 handler.removeCallbacks(runnableCode);
             }
-
             //this will update the UI with message
 //            SmsActivity inst = SmsActivity.instance();
 //            inst.updateList(smsMessageStr);
@@ -194,7 +193,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         }
         return connected;
     }
-
 
 
 }

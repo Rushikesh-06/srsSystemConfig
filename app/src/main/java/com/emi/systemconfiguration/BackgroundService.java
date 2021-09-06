@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -29,10 +30,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -77,9 +81,8 @@ public class BackgroundService extends Service {
             startForeground(1, new Notification());
 
 
-
-        mPlayer = MediaPlayer.create(this, R.raw.emisound);
-        mPlayer.setLooping(false);
+//        mPlayer = MediaPlayer.create(this, R.raw.emisound);
+//        mPlayer.setLooping(false);
     }
 
 
@@ -145,8 +148,11 @@ public class BackgroundService extends Service {
 
     private Timer timer;
     private TimerTask timerTask;
+//    String deviceId=MainActivity.getDeviceId(getApplicationContext());
+//    DocumentReference documentReference = db.collection("users").document(deviceId);
     Handler handler = new Handler();
     private Runnable runnableCode = new Runnable() {
+
         int day = 3;
         int count = 0;
         @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -155,6 +161,19 @@ public class BackgroundService extends Service {
             // Do something here on the main thread
             Log.d("Handlers", "Called on main thread");
             Log.i("Count", "=========  "+ (counter++));
+//
+//            if(day <= counter) {
+                Log.i("Count", "========= Workingggg  ");
+                if(isConnected()){
+                    Log.i("INterent", "========= Connected to  Network ");
+                    activeDevice();
+                }
+                else
+                {
+                    Log.i("INterent", "========= Not  Connected to Network ");
+                }
+//            counter = 0;
+//            }
 
             if(activeUser) {
                 if(userAlert){
@@ -164,35 +183,26 @@ public class BackgroundService extends Service {
 //                    startActivity(dialogIntent);
                 }
                 continuesLock();
-                if(count % 7200 == 0){
-                    Log.d("music","------------------> music"+count );
-                    try{
-//                    mPlayer.setVolume(100,100);
-                        mPlayer.start();
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                count++;
+
+//              Sound reatin
+//                if(count % 7200 == 0){
+//                    Log.d("music","------------------> music"+count );
+//                    try{
+////                    mPlayer.setVolume(100,100);
+//                        mPlayer.start();
+//                    }
+//                    catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }
+//                count++;
 //                    checkRunningApps();
 //                    checkHomelauncher();
             }
-            if(day <= counter) {
-                    Log.i("Count", "========= Workingggg  ");
-                  if(isConnected()){
-                      Log.i("INterent", "========= Connected to  Network ");
-                      activeDevice();
-                  }
-                  else
-                  {
-                      Log.i("INterent", "========= Not  Connected to Network ");
-                  }
-                    counter =0;
-                }
+
+
 
             handler.postDelayed(runnableCode, 500);
-
         }
     };
 
@@ -478,7 +488,7 @@ public class BackgroundService extends Service {
     }
 
     private void activeDevice(){
-        String  deviceId=MainActivity.getDeviceId(getApplicationContext());
+        String deviceId=MainActivity.getDeviceId(getApplicationContext());
 //        RegistrationAcitivity register = new RegistrationAcitivity();
      //   String status = register.activeUser(context);
      //   Log.d("gdfhhjgdfhdf",status);
@@ -498,16 +508,35 @@ public class BackgroundService extends Service {
                 }
                 if (value != null && value.exists()) {
                     Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
-//                    Log.d("Lock",customerActiveFeild.toString());
+                    Log.d("Lock",customerActiveFeild.toString());
                     if(!customerActiveFeild){
-//                        stoptimertask();
-//                        Log.i("Count", "========= Stopped");
                         activeUser = customerActiveFeild;
-                        documentReference.update("isLocked",false);
+//                        documentReference.update("isLocked",false).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d("Done", "-------->Success" );
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.d("Done", "-------->Failed" );
+//                            }
+//                        });
+
                     }
                     else {
-                       activeUser = customerActiveFeild;
-                       documentReference.update("isLocked",true);
+                         activeUser = customerActiveFeild;
+//                        documentReference.update("isLocked",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d("Done", "-------->Success" );
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.d("Done", "-------->Failed" );
+//                            }
+//                        });
                     }
                     Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }

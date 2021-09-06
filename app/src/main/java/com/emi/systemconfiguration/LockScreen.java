@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -71,7 +72,6 @@ public class LockScreen extends AppCompatActivity {
         // getting our instance
         // from Firebase Firestore.
         db = FirebaseFirestore.getInstance();
-
 
 
         checkPin();
