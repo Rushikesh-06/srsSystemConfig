@@ -54,25 +54,24 @@ public class BackgroundService extends Service {
 
     DevicePolicyManager dpm;
     long current_time;
-    Timer myThread;
     private Context context ;
 
     public int counter=0;
-    Dialog dialog;
     private FirebaseFirestore db;
 
-    public Boolean activeUser = false, userAlert = true;
+    public Boolean activeUser = false, userAlert = true, playState = false;
 
     private BackgroundService backgroundService;
     Intent mServiceIntent;
 
     MediaPlayer mPlayer ;
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         super.onCreate();
-
+        dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         db = FirebaseFirestore.getInstance();
 //comment it out for hiding the notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
@@ -80,9 +79,8 @@ public class BackgroundService extends Service {
         else
             startForeground(1, new Notification());
 
+        mPlayer = MediaPlayer.create(this, R.raw.emisound);
 
-//        mPlayer = MediaPlayer.create(this, R.raw.emisound);
-//        mPlayer.setLooping(false);
     }
 
 
@@ -139,20 +137,15 @@ public class BackgroundService extends Service {
         super.onDestroy();
 //        stoptimertask();
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restart service");
+        broadcastIntent.setAction("restart.service");
         broadcastIntent.setClass(this, BackgroundService.class);
         this.sendBroadcast(broadcastIntent);
     }
 
-
-
     private Timer timer;
     private TimerTask timerTask;
-//    String deviceId=MainActivity.getDeviceId(getApplicationContext());
-//    DocumentReference documentReference = db.collection("users").document(deviceId);
     Handler handler = new Handler();
     private Runnable runnableCode = new Runnable() {
-
         int day = 3;
         int count = 0;
         @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -178,12 +171,9 @@ public class BackgroundService extends Service {
             if(activeUser) {
                 if(userAlert){
                     userAlert = false;
-//                    Intent dialogIntent = new Intent(getApplicationContext(), Lock.class);
-//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(dialogIntent);
                 }
                 continuesLock();
-
+                playSound();
 //              Sound reatin
 //                if(count % 7200 == 0){
 //                    Log.d("music","------------------> music"+count );
@@ -200,8 +190,6 @@ public class BackgroundService extends Service {
 //                    checkHomelauncher();
             }
 
-
-
             handler.postDelayed(runnableCode, 500);
         }
     };
@@ -209,48 +197,13 @@ public class BackgroundService extends Service {
 
     public void startTimer() {
         int day = 3;
-
-//         Define the code block to be executed
-//
-// Start the initial runnable task by posting through the handler
         handler.post(runnableCode);
-//        timer = new Timer();
-//        timerTask = new TimerTask() {
-//
-//            @RequiresApi(api = Build.VERSION_CODES.Q)
-//            public void run() {
-//                Log.i("Count", "=========  "+ (counter++));
-////                checkRunningApps();
-////                checkHomelauncher();
-//                if(activeUser) {
-//                    continuesLock();
-//
-////                    checkRunningApps();
-////                    checkHomelauncher();
-//
-//                }
-//                if(day <= counter){
-//                    Log.i("Count", "========= Workingggg  ");
-//                  if(isConnected()){
-//                      Log.i("INterent", "========= Connected to  Network ");
-//                      activeDevice();
-//                  }
-//                  else
-//                  {
-//                      Log.i("INterent", "========= Not  Connected to Network ");
-//                  }
-//                    counter =0;
-//                }
-//
-//            }
-//        };
-//        timer.schedule(timerTask, 0, 2000); //
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void continuesLock(){
-        dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+
         try{
 //            ActivityManager mActivityManager =(ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
             String activityName= retriveNewApp(this);
@@ -267,101 +220,16 @@ public class BackgroundService extends Service {
 
             }
             else {
-//                Toast.makeText(BackgroundService.this.getApplicationContext(), "Please Contact Vendor",Toast.LENGTH_LONG).show();
-//                Alert();
                 dpm.lockNow();
-
-//                if(count % 10 == 0){
-//                    Log.d("music","------------------> music"+ count );
-//                    mPlayer.setVolume(100,100);
-//                    mPlayer.start();
-//                }
 
             }
             Log.e("Locking", " *********************** THi is woking properly"+ activityName );
         }
         catch (Exception e){
-//            Toast.makeText(this, "Please Contact Vendor",Toast.LENGTH_LONG).show();
-//            Alert();
             dpm.lockNow();
         }
-
-//        myThread = new Timer();
-//        current_time = System.currentTimeMillis();
-//        myThread.schedule(lock_task,0,1000);
-//        String myPackage = retriveNewApp(this);
-
-//        dpm.lockNow();
-
-//        Toast.makeText(context,"Working",Toast.LENGTH_LONG).show();
-
     }
 
-    public void Alert(){
-        // Create the object of
-        // AlertDialog Builder class
-        AlertDialog.Builder builder
-                = new AlertDialog
-                .Builder(this);
-
-        // Set the message show for the Alert time
-        builder.setMessage("Do you want to exit ?");
-
-        // Set Alert Title
-        builder.setTitle("Alert !");
-
-        // Set Cancelable false
-        // for when the user clicks on the outside
-        // the Dialog Box then it will remain show
-        builder.setCancelable(false);
-
-        // Set the positive button with yes name
-        // OnClickListener method is use of
-        // DialogInterface interface.
-        builder
-                .setPositiveButton(
-                        "Yes",
-                        new DialogInterface
-                                .OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which)
-                            {
-
-                                // When the user click yes button
-                                // then app will close
-//                                finish();
-                            }
-                        });
-
-        // Set the Negative button with No name
-        // OnClickListener method is use
-        // of DialogInterface interface.
-        builder
-                .setNegativeButton(
-                        "No",
-                        new DialogInterface
-                                .OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which)
-                            {
-
-                                // If user click no
-                                // then dialog box is canceled.
-                                dialog.cancel();
-                            }
-                        });
-
-        // Create the Alert dialog
-        AlertDialog alertDialog = builder.create();
-
-        // Show the Alert Dialog box
-        alertDialog.show();
-
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void checkRunningApps() {
@@ -388,8 +256,6 @@ public class BackgroundService extends Service {
 //            startActivity(dialogIntent);
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
-
-
         }
     }
 
@@ -412,19 +278,6 @@ public class BackgroundService extends Service {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         List<ResolveInfo> lst = getPackageManager().queryIntentActivities(intent, 0);
-
-//        if(activeUser){
-//            PackageManager p = getPackageManager();
-//            ComponentName componentName = new ComponentName(this, MainActivity.class);
-//            p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-//        }
-//        else{
-//            PackageManager packageManager = getPackageManager();
-//            ComponentName componentName = new ComponentName(this,MainActivity.class);
-//            packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//                    PackageManager.DONT_KILL_APP);
-//        }
-
 
         if (!lst.isEmpty()) {
             for (ResolveInfo resolveInfo : lst) {
@@ -488,60 +341,41 @@ public class BackgroundService extends Service {
     }
 
     private void activeDevice(){
-        String deviceId=MainActivity.getDeviceId(getApplicationContext());
-//        RegistrationAcitivity register = new RegistrationAcitivity();
-     //   String status = register.activeUser(context);
-     //   Log.d("gdfhhjgdfhdf",status);
-       // Log.d("DeviceID",deviceId.toString());
-        DocumentReference documentReference = db.collection("users").document(deviceId);
-        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    // this method is called when error is not null
-                    // and we gt any error
-                    // in this cas we are displaying an error message.
-                    Log.d("Error is","Error found" + error);
-                    startTimer();
-                    return;
-                }
-                if (value != null && value.exists()) {
-                    Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
-                    Log.d("Lock",customerActiveFeild.toString());
-                    if(!customerActiveFeild){
-                        activeUser = customerActiveFeild;
-//                        documentReference.update("isLocked",false).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d("Done", "-------->Success" );
-//                            }
-//                        }).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.d("Done", "-------->Failed" );
-//                            }
-//                        });
+        try {
+            String deviceId = MainActivity.getDeviceId(getApplicationContext());
+            Log.d("deviceUid", deviceId);
+            DocumentReference documentReference = db.collection("users").document(deviceId);
+            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        // this method is called when error is not null
+                        // and we gt any error
+                        // in this cas we are displaying an error message.
+                        Log.d("Error is", "Error found" + error);
+                        startTimer();
+                        return;
+                    }
+                    if (value != null && value.exists()) {
+                        Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
+                        Log.d("Lock", customerActiveFeild.toString());
+                        if (!customerActiveFeild) {
+                            activeUser = customerActiveFeild;
+                            Log.d("LockStatus", activeUser.toString());
+                            playState= true;
 
+                        } else {
+                            activeUser = customerActiveFeild;
+                            Log.d("LockStatus2", activeUser.toString());
+                        }
+                        Log.d("Found the" + activeUser, value.getData().get("customer_active").toString());
                     }
-                    else {
-                         activeUser = customerActiveFeild;
-//                        documentReference.update("isLocked",true).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d("Done", "-------->Success" );
-//                            }
-//                        }).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.d("Done", "-------->Failed" );
-//                            }
-//                        });
-                    }
-                    Log.d("Found the"+activeUser, value.getData().get("customer_active").toString());
                 }
-            }
-        });
+            });
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
 //        return deviceId;
     }
 
@@ -566,5 +400,17 @@ public class BackgroundService extends Service {
             }
         }
         return false;
+    }
+
+    private void playSound(){
+        try{
+            if(playState.equals(true)){
+                mPlayer.start();
+//                mPlayer.setLooping(true);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

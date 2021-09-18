@@ -35,7 +35,7 @@ public class BroadcastReciever extends BroadcastReceiver {
 
         String action = intent.getAction();
         if(("android.intent.action.BOOT_COMPLETED").equals(action) ||
-                ("restart service").contains(action) ||
+                ("restart.service").contains(action) ||
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||

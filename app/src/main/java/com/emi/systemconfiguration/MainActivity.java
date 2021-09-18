@@ -159,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
 //                WindowManager.LayoutParams.FLAG_SECURE);
 
+//        Script
+//        Intent intent = new Intent(this, Script.class);
+//        startActivity(intent);
+
 
         permissionText = findViewById(R.id.permissionText);
 

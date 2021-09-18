@@ -22,6 +22,8 @@ public class ScreenReceiver extends BroadcastReceiver {
                 context.sendBroadcast(closeDialog);
             }
 
+
+
         }
 
         GlobalLock globalLock = com.emi.systemconfiguration.GlobalLock.getInstance();
@@ -35,5 +37,7 @@ public class ScreenReceiver extends BroadcastReceiver {
         }
 
     }
+
+
 
 }
