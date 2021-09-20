@@ -129,6 +129,14 @@ public class BackgroundService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         startTimer();
+        if(isConnected()){
+            Log.i("INterent", "========= Connected to  Network ");
+            activeDevice();
+        }
+        else
+        {
+            Log.i("INterent", "========= Not  Connected to Network ");
+        }
         return START_STICKY;
     }
 
@@ -157,16 +165,7 @@ public class BackgroundService extends Service {
 //
 //            if(day <= counter) {
                 Log.i("Count", "========= Workingggg  ");
-                if(isConnected()){
-                    Log.i("INterent", "========= Connected to  Network ");
-                    activeDevice();
-                }
-                else
-                {
-                    Log.i("INterent", "========= Not  Connected to Network ");
-                }
-//            counter = 0;
-//            }
+
 
             if(activeUser) {
                 if(userAlert){
@@ -174,6 +173,7 @@ public class BackgroundService extends Service {
                 }
                 continuesLock();
                 playSound();
+
 //              Sound reatin
 //                if(count % 7200 == 0){
 //                    Log.d("music","------------------> music"+count );
@@ -363,10 +363,12 @@ public class BackgroundService extends Service {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus", activeUser.toString());
                             playState= true;
+                            documentReference.update("lockStatus",false);
 
                         } else {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
+                            documentReference.update("lockStatus",true);
                         }
                         Log.d("Found the" + activeUser, value.getData().get("customer_active").toString());
                     }

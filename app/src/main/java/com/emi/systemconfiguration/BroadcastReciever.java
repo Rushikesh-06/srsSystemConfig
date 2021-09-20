@@ -56,6 +56,10 @@ public class BroadcastReciever extends BroadcastReceiver {
                 context.startService(mServiceIntent);
             }
 
+
+
+
+
 //            locationService = new LocationService();
 //            Intent mService= new Intent(context, LocationService.class);
 //            context.startService(mService);
@@ -67,12 +71,6 @@ public class BroadcastReciever extends BroadcastReceiver {
 //            context.startForegroundService(new Intent(context, BackgroundDelayService.class));
 
         }
-
-
-
-
-
-
 
 //        Uri data = intent.getData();
 //        String mypkg="com.emi.systemconfiguration";

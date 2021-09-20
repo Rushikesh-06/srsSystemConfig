@@ -2,6 +2,7 @@ package com.emi.systemconfiguration;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -144,6 +145,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        spinner.setVisibility(View.GONE);
+
+
+        TextView paymnet = (TextView) findViewById(R.id.textView4);
+        TextView cost = (TextView) findViewById(R.id.costLabel);
+        EditText amount= (EditText) findViewById(R.id.amount);
+        paymnet.setVisibility(View.GONE);
+        cost.setVisibility(View.GONE);
+        amount.setVisibility(View.GONE);
 
 
 //        if(radiobutton1.isChecked() == false){
@@ -175,6 +185,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //        planView = (CheckBox)findViewById(R.id.cashBox);
 //        planView.setVisibility(View.GONE);
         loanView = (CheckBox)findViewById(R.id.loanBox);
+        loanView.setVisibility(View.GONE);
         costLabel =(TextView) findViewById(R.id.costLabel);
         device_amount = (EditText) findViewById(R.id.amount);
 
@@ -727,8 +738,19 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentSnapshot> vendorDetails) {
                                             Vendor.number =  vendorDetails.getResult().get("number").toString();
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            e.printStackTrace();
                                         }
                                     });
+
+                                        Intent intent = new Intent();
+                                        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$UserSettingsActivity"));
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
 
 //                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //                                        @Override
@@ -922,13 +944,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         }
 
         if(spinner.getSelectedItem().toString().equals("Select brand")){
-           toastMessage("Select the device Brand");
-            return false;
+//           toastMessage("Select the device Brand");
+            return true;
         }
 
         if(device_amount.length() == 0){
             device_amount.setError("Required");
-            return false;
+            return true;
         }
         if(endDateView.getText().toString().contains("Select end date"))
         {
@@ -939,10 +961,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             policyId.setError("Enter Policy");
             return false;
         }
-
-
-
-
 
         return true;
     };

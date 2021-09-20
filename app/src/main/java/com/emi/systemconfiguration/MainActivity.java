@@ -35,7 +35,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.os.PowerManager;
+import android.os.RemoteException;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -58,6 +62,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -75,9 +80,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import static android.os.UserManager.DISALLOW_OUTGOING_CALLS;
+import static android.os.UserManager.DISALLOW_SMS;
 import static android.service.controls.ControlsProviderService.TAG;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int READ_PHONE_STATE_CODE= 105;
 
 
+    public static final int MAKE_USER_EPHEMERAL = 1;
+
 
     String IMEINumber;
     String manufacturer = android.os.Build.MANUFACTURER;
@@ -111,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationService LocationService;
     Intent mServiceIntent;
     FirebaseAuth auth;
+
+    UserManager userManager;
 
     EditText emailText;
     EditText passwordText;
@@ -771,6 +784,70 @@ public class MainActivity extends AppCompatActivity {
     public void welcome(View v){
         Intent registrationIntent = new Intent(getApplicationContext(), Welcome.class);
         startActivity(registrationIntent);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createUser(View v){
+
+        UserManager um = (UserManager) getSystemService(USER_SERVICE);
+        List<UserHandle> userProfiles = um.getUserProfiles();
+
+        ComponentName adminName = new ComponentName(this, DeviceAdmin.class);
+//
+//        mDPM.switchUser(adminName, userProfiles.get(0));
+
+        Toast.makeText(this,userProfiles.toString(), Toast.LENGTH_LONG).show();
+
+//        Intent processIntent = new Intent("com.emi.systemconfiguration.SubActivity");
+//        processIntent.putExtra("com.android.settings", ".Settings$UserSettingsActivity");
+//        MainActivity.this.startActivity(processIntent);
+
+//        ComponentName componetName = new ComponentName("com.android.settings", pkgname);
+//        Intent intent = new Intent();
+//        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$UserSettingsActivity"));
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+
+//        ComponentName adminName = new ComponentName(this, DeviceAdmin.class);
+//
+//
+//// If possible, reuse an existing affiliation ID across the
+//// primary user and (later) the ephemeral user.
+//        Set<String> identifiers = mDPM.getAffiliationIds(adminName);
+//        if (identifiers.isEmpty()) {
+//            identifiers.add(UUID.randomUUID().toString());
+//            mDPM.setAffiliationIds(adminName, identifiers);
+//        }
+//
+//// Pass an affiliation ID to the ephemeral user in the admin extras.
+//        PersistableBundle adminExtras = new PersistableBundle();
+//        adminExtras.putString("2", identifiers.iterator().next());
+//// Include any other config for the new user here ...
+//
+//// Create the ephemeral user, using this component as the admin.
+//        try {
+//            UserHandle ephemeralUser = mDPM.createAndManageUser(
+//                    adminName,
+//                    "tmp_user",
+//                    adminName,
+//                    adminExtras,
+//                    DevicePolicyManager.MAKE_USER_EPHEMERAL |
+//                            DevicePolicyManager.SKIP_SETUP_WIZARD);
+//
+//        } catch (UserManager.UserOperationException e) {
+//            if (e.getUserOperationResult() ==
+//                    UserManager.USER_OPERATION_ERROR_MAX_USERS) {
+//                // Find a way to free up users...
+//            }
+
+
+//        Intent inSet = new Intent("com.android.settings/.Settings$UserSettingsActivity");
+//        startActivity(inSet);
+
+            // startActivity(new Intent("com.android.settings/.Settings$UserSettingsActivity"));
+
+//        }
     }
 }
 
