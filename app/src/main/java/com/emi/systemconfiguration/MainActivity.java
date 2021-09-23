@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -129,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
     EditText passwordText;
     TextView registerText;
 
+    String MultiUser;
+
  //   Bug features
 //    String prevStarted = "yes";
 //    @Override
@@ -160,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         emailText =(EditText) findViewById(R.id.emailId);
         passwordText =(EditText) findViewById(R.id.editTextPassword);
 
+        settingActivitiesInit();
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -667,6 +671,17 @@ public class MainActivity extends AppCompatActivity {
             startService(mServiceIntent);
         }
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
+        try{
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.android.settings", MultiUser));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        catch (Exception e){
+            Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
 
 
     }
@@ -786,18 +801,58 @@ public class MainActivity extends AppCompatActivity {
         startActivity(registrationIntent);
     }
 
+    @SuppressLint("WrongConstant")
+    private void settingActivitiesInit(){
+        try {
+            PackageManager packageManager = getPackageManager();
+            for (ActivityInfo activity : packageManager.getPackageInfo("com.android.settings", 1).activities) {
+                if (activity.enabled && activity.exported) {
+                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("Guest users")){
+                        Log.d("lable", activity.loadLabel(packageManager) + activity.name);
+                        MultiUser = activity.name;
+                    }
+                }
+            }
 
+        }
+        catch (Exception e) {
+            Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
+    @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createUser(View v){
+        try {
+            PackageManager packageManager = getPackageManager();
+            for (ActivityInfo activity : packageManager.getPackageInfo("com.android.settings", 1).activities) {
+                if (activity.enabled && activity.exported) {
+                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("multiple") || activity.loadLabel(packageManager).toString().contains("Guest users")){
+                        Log.d("lable", activity.loadLabel(packageManager) + activity.name);
+                        MultiUser = activity.name;
+                    }
+                }
+            }
 
-        UserManager um = (UserManager) getSystemService(USER_SERVICE);
-        List<UserHandle> userProfiles = um.getUserProfiles();
+        }
+        catch (Exception e) {
+            Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
 
-        ComponentName adminName = new ComponentName(this, DeviceAdmin.class);
+//        UserManager um = (UserManager) getSystemService(USER_SERVICE);
+//        List<UserHandle> userProfiles = um.getUserProfiles();
+//
+//        ComponentName adminName = new ComponentName(this, DeviceAdmin.class);
+////
+//        Toast.makeText(this,  userProfiles.toString(), Toast.LENGTH_LONG).show();
 //
 //        mDPM.switchUser(adminName, userProfiles.get(0));
 
-        Toast.makeText(this,userProfiles.toString(), Toast.LENGTH_LONG).show();
+
+
 
 //        Intent processIntent = new Intent("com.emi.systemconfiguration.SubActivity");
 //        processIntent.putExtra("com.android.settings", ".Settings$UserSettingsActivity");
@@ -809,11 +864,9 @@ public class MainActivity extends AppCompatActivity {
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        startActivity(intent);
 
-//        ComponentName adminName = new ComponentName(this, DeviceAdmin.class);
-//
-//
-//// If possible, reuse an existing affiliation ID across the
-//// primary user and (later) the ephemeral user.
+
+// If possible, reuse an existing affiliation ID across the
+// primary user and (later) the ephemeral user.
 //        Set<String> identifiers = mDPM.getAffiliationIds(adminName);
 //        if (identifiers.isEmpty()) {
 //            identifiers.add(UUID.randomUUID().toString());
@@ -844,8 +897,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        Intent inSet = new Intent("com.android.settings/.Settings$UserSettingsActivity");
 //        startActivity(inSet);
-
-            // startActivity(new Intent("com.android.settings/.Settings$UserSettingsActivity"));
+//
+//             startActivity(new Intent("com.android.settings/.Settings$UserSettingsActivity"));
 
 //        }
     }

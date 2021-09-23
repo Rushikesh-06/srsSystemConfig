@@ -145,7 +145,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        spinner.setVisibility(View.GONE);
 
 
         TextView paymnet = (TextView) findViewById(R.id.textView4);
@@ -746,11 +745,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                             e.printStackTrace();
                                         }
                                     });
-
-                                        Intent intent = new Intent();
-                                        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$UserSettingsActivity"));
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
 
 //                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //                                        @Override
