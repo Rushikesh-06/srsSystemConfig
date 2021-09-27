@@ -36,6 +36,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.os.RemoteException;
@@ -81,6 +82,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -129,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
     EditText emailText;
     EditText passwordText;
     TextView registerText;
+    password pass;
+
 
     String MultiUser;
 
@@ -180,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
 //        Intent intent = new Intent(this, Script.class);
 //        startActivity(intent);
 
+         pass =password.getInstance();
+         pass.setLockState(false);
+         startLockTimerInit();
 
         permissionText = findViewById(R.id.permissionText);
 
@@ -247,6 +254,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void startLockTimerInit(){
+
+        long maxCounter = 10000;
+        long diff = 1000;
+        new CountDownTimer(maxCounter , diff ) {
+
+            public void onTick(long millisUntilFinished) {
+                long diff = maxCounter - millisUntilFinished;
+                Log.d("Timer", "TimerTask"+diff/1000);
+                pass.setLockState(false);
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                Log.d("Finish", "Task is finished");
+                pass.setLockState(true);
+            }
+
+        }.start();
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -679,6 +707,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (Exception e){
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             e.printStackTrace();
         }
 
@@ -807,16 +836,17 @@ public class MainActivity extends AppCompatActivity {
             PackageManager packageManager = getPackageManager();
             for (ActivityInfo activity : packageManager.getPackageInfo("com.android.settings", 1).activities) {
                 if (activity.enabled && activity.exported) {
-                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("Guest users")){
+                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") ||
+                            activity.loadLabel(packageManager).toString().contains("Guest users")){
                         Log.d("lable", activity.loadLabel(packageManager) + activity.name);
                         MultiUser = activity.name;
                     }
                 }
             }
-
         }
         catch (Exception e) {
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+       //     startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             e.printStackTrace();
         }
     }
@@ -829,9 +859,10 @@ public class MainActivity extends AppCompatActivity {
             PackageManager packageManager = getPackageManager();
             for (ActivityInfo activity : packageManager.getPackageInfo("com.android.settings", 1).activities) {
                 if (activity.enabled && activity.exported) {
-                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("multiple") || activity.loadLabel(packageManager).toString().contains("Guest users")){
+                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("multiple")){
                         Log.d("lable", activity.loadLabel(packageManager) + activity.name);
                         MultiUser = activity.name;
+                        Toast.makeText(this, activity.name,Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -841,7 +872,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
 //        UserManager um = (UserManager) getSystemService(USER_SERVICE);
 //        List<UserHandle> userProfiles = um.getUserProfiles();
 //
@@ -902,6 +932,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        }
     }
+
 }
 
 

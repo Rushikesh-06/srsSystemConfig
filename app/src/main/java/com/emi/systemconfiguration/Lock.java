@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -54,6 +55,7 @@ public class Lock extends AppCompatActivity {
 //    String pin;
 
     String prevStarted = "yes";
+    String deviceId;
     @Override
     protected void onResume() {
         super.onResume();
@@ -80,6 +82,8 @@ public class Lock extends AppCompatActivity {
         actionBar.hide();
 
         db = FirebaseFirestore.getInstance();
+
+        deviceId = MainActivity.getDeviceId(this);
 
         checkPassword();
         // Hide Status Bar
@@ -179,7 +183,32 @@ public class Lock extends AppCompatActivity {
             @Override
             public void onSuccess(String number) {
                 Toast.makeText(Lock.this, "Code is right", Toast.LENGTH_SHORT).show();
-                countDown();
+                password pass = password.getInstance();
+                pass.setLockState(false);
+                finish();
+                Random r = new Random();
+                int randomNumber =10000 + r.nextInt(90000);
+
+                long maxCounter = 10000;
+                long diff = 1000;
+                new CountDownTimer(maxCounter , diff ) {
+
+                    public void onTick(long millisUntilFinished) {
+                        long diff = maxCounter - millisUntilFinished;
+                        Log.d("Timer", "TimerTask"+diff/1000);
+                        //here you can have your logic to set text to edittext
+                    }
+
+                    public void onFinish() {
+                        Log.d("Finish", "Task is finished");
+                        pass.setLockState(true);
+                        db.collection("users").document(deviceId).update("customer_pincode",Integer.toString(randomNumber));
+                    }
+
+                }.start();
+
+
+//                countDown();
 //                PackageManager packageManager = getPackageManager();
 
 //                ComponentName componentName = new ComponentName(getApplicationContext(),MainActivity.class);
@@ -190,6 +219,8 @@ public class Lock extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     protected void onPause() {
@@ -219,7 +250,6 @@ public class Lock extends AppCompatActivity {
             case KeyEvent.KEYCODE_HOME:
                 Log.d("HomeClick","Working");
 //                context = this;
-
                 return  true;
 
             case KeyEvent.KEYCODE_POWER:
@@ -244,6 +274,10 @@ public class Lock extends AppCompatActivity {
         }
     };
 
+
+
+
+
     private void checkPassword(){
         Boolean  isconnected=MainActivity.isConnected(getApplicationContext());
 
@@ -258,7 +292,7 @@ public class Lock extends AppCompatActivity {
                         // and we gt any error
                         // in this cas we are displaying an error message.
                         Log.d("Error is","Error found" + error);
-//                        setPassword("69691");
+                        setPassword("69691");
                         return;
                     }
                     if (value != null && value.exists()) {
@@ -271,20 +305,20 @@ public class Lock extends AppCompatActivity {
             });
         } else {
             Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//            setPassword("69691");
+            setPassword("69691");
         }
     }
 
+
     private  void countDown(){
         Boolean  isconnected=MainActivity.isConnected(getApplicationContext());
-
         if (isconnected) {
 
             String deviceId = MainActivity.getDeviceId(this);
 //            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
 
-            db.collection("users").document(deviceId).update("customer_active", false);
-            finish();
+//            db.collection("users").document(deviceId).update("customer_active", false);
+//            finish();
 //            new CountDownTimer(10000, 1000) {
 //                public void onTick(long millisUntilFinished) {
 //                    // Used for formatting digit to be in 2 digits only

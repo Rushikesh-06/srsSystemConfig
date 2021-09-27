@@ -66,6 +66,7 @@ public class BackgroundService extends Service {
 
     MediaPlayer mPlayer ;
 
+    password pass;
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
@@ -73,6 +74,7 @@ public class BackgroundService extends Service {
         super.onCreate();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         db = FirebaseFirestore.getInstance();
+        pass = password.getInstance();
 //comment it out for hiding the notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
@@ -137,6 +139,8 @@ public class BackgroundService extends Service {
         {
             Log.i("INterent", "========= Not  Connected to Network ");
         }
+
+
         return START_STICKY;
     }
 
@@ -167,6 +171,7 @@ public class BackgroundService extends Service {
                 Log.i("Count", "========= Workingggg  ");
 
 
+
             if(activeUser) {
                 if(userAlert){
                     userAlert = false;
@@ -190,7 +195,11 @@ public class BackgroundService extends Service {
 //                    checkHomelauncher();
             }
 
-            handler.postDelayed(runnableCode, 500);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                checkRunningApps();
+            }
+
+            handler.postDelayed(runnableCode, 100);
         }
     };
 
@@ -244,19 +253,45 @@ public class BackgroundService extends Service {
         ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
         String currentLauncherName= resolveInfo.activityInfo.packageName;
 
-        if(myPackage.contains("com.android.settings") ||
-//                myPackage.contains(" com.android.settings/com.coloros.settings.feature.security.ColorDeviceAdminAdd") ||
-                myPackage.contains(("com.emi.systemconfiguration")) ||
-                myPackage.contains(("com.whatsapp")) ||
-                myPackage.contains("com.google.android.youtube")||
-                myPackage.contains(currentLauncherName)){
-            Log.e("Tag", " THi is woking properly");
-//            Intent dialogIntent = new Intent(this, Lock.class);
+//        checkHomelauncher();
+        if(myPackage.contains(currentLauncherName)){
+            Intent mainINtent = new Intent(this, MainActivity.class);
+            mainINtent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainINtent);
+
+        }
+        if(myPackage.contains("com.emi.systemconfiguration") || myPackage.contains("com.emi.anti_theft")){
+            Log.d("Done","Working");
+        }
+        else
+        {
+            if(pass.getLockState().equals(true)){
+                Intent dialogIntent = new Intent(this, MainActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(dialogIntent);
+            }
+
+        }
+//        Intent dialogIntent = new Intent(this, MainActivity.class);
+//        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(dialogIntent);
+
+//        if(myPackage.contains("com.android.settings/com.android.settings.Settings$UserSettingsActivity") ||
+//                myPackage.contains(("com.emi.systemconfiguration")) ||
+//                  myPackage.contains(currentLauncherName)){
+//
+//            Intent dialogIntent = new Intent(this, MainActivity.class);
 //            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            startActivity(dialogIntent);
-//            startActivity(new Intent(this, Lock.class));
-//            dialog.show();
-        }
+//
+//        }
+//        else{
+//            if(pass.getLockState().equals(true)){
+//                Intent dialogIntent = new Intent(this, MainActivity.class);
+//                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(dialogIntent);
+//            }
+//        }
     }
 
     // Repeatedly lock the phone every second for 5 seconds
@@ -282,8 +317,8 @@ public class BackgroundService extends Service {
         if (!lst.isEmpty()) {
             for (ResolveInfo resolveInfo : lst) {
                 Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
-                if(resolveInfo.activityInfo.packageName.equals(myPackage) ||  myPackage.contains(("com.emi.systemconfiguration"))  || myPackage.contains(("com.whatsapp")) || myPackage.contains("com.google.android.youtube")){
-                    Intent dialogIntent = new Intent(this, Lock.class);
+                if(resolveInfo.activityInfo.packageName.equals(myPackage) ){
+                    Intent dialogIntent = new Intent(this, MainActivity.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(dialogIntent);
 
