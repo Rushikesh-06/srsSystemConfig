@@ -49,6 +49,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
          pass =password.getInstance();
          pass.setLockState(false);
-         startLockTimerInit();
+         startLockTimerInit(10000);
 
         permissionText = findViewById(R.id.permissionText);
 
@@ -254,11 +255,52 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
+//        Stop Service
+        TextView anti = (TextView) findViewById(R.id.anti);
+        anti.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                askPassword();
+                return true;
+            }
+        });
+
     }
 
-    private void startLockTimerInit(){
+    private void askPassword(){
+        String password = "ELIT98N67O87T66C83H";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter password to stop services");
+        final EditText passwordInput = new EditText(this);
 
-        long maxCounter = 10000;
+        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(passwordInput);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            if(password.equals(passwordInput.getText().toString())){
+                Toast.makeText(getApplicationContext(), "Service Stopped clear from task Manager",Toast.LENGTH_LONG).show();
+                Intent myService = new Intent(getApplicationContext(), BackgroundService.class);
+                stopService(myService);
+            }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void startLockTimerInit(long seconds){
+
+        long maxCounter = seconds;
         long diff = 1000;
         new CountDownTimer(maxCounter , diff ) {
 
@@ -852,26 +894,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch( event.getKeyCode() ) {
+
+            case KeyEvent.KEYCODE_MENU:
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+
+            case KeyEvent.KEYCODE_BACK:
+                return true;
+
+            case KeyEvent.KEYCODE_HOME:
+                Log.d("HomeClick","Working");
+//                context = this;
+                return  true;
+
+            case KeyEvent.KEYCODE_POWER:
+                return  true;
+
+            case KeyEvent.KEYCODE_MOVE_HOME:
+                return  true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
+
     @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createUser(View v){
-        try {
-            PackageManager packageManager = getPackageManager();
-            for (ActivityInfo activity : packageManager.getPackageInfo("com.android.settings", 1).activities) {
-                if (activity.enabled && activity.exported) {
-                    if(activity.loadLabel(packageManager).toString().contains("Multiple users") || activity.loadLabel(packageManager).toString().contains("multiple")){
-                        Log.d("lable", activity.loadLabel(packageManager) + activity.name);
-                        MultiUser = activity.name;
-                        Toast.makeText(this, activity.name,Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-        }
-        catch (Exception e) {
-            Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+        Intent myService = new Intent(this, BackgroundService.class);
+        stopService(myService);
 //        UserManager um = (UserManager) getSystemService(USER_SERVICE);
 //        List<UserHandle> userProfiles = um.getUserProfiles();
 //

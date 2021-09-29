@@ -275,9 +275,6 @@ public class Lock extends AppCompatActivity {
     };
 
 
-
-
-
     private void checkPassword(){
         Boolean  isconnected=MainActivity.isConnected(getApplicationContext());
 

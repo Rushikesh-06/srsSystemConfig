@@ -219,19 +219,20 @@
                     android:name="android.intent.action.DOWNLOAD_COMPLETE"
                     android:enabled="true" />
             </intent-filter>
-        </receiver> <!-- <receiver android:name=".ScreenReceiver"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent. -->
-        <!-- action.CLOSE_SYSTEM_DIALOGS" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
-        <!-- <receiver android:name=".Kisko"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.SCREEN_ON" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
-        <!-- <receiver android:name=".CountBroad" android:exported="true"  android:enabled="true"> -->
-        <!-- </receiver> -->
+        </receiver>
+         <receiver android:name=".ScreenReceiver">
+         <intent-filter>
+         <action android:name="android.intent.
+         action.CLOSE_SYSTEM_DIALOGS" />
+         </intent-filter>
+         </receiver>
+<!--         <receiver android:name=".Kisko"> -->
+<!--         <intent-filter> -->
+<!--         <action android:name="android.intent.action.SCREEN_ON" /> -->
+<!--         </intent-filter> -->
+<!--         </receiver> -->
+<!--         <receiver android:name=".CountBroad" android:exported="true"  android:enabled="true"> -->
+<!--         </receiver> -->
         <service
             android:name=".BackgroundService"
             android:enabled="true"

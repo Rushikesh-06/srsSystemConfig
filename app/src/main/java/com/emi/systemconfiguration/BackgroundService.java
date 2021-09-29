@@ -1,8 +1,6 @@
 package com.emi.systemconfiguration;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,9 +8,7 @@ import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -21,29 +17,22 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
@@ -170,7 +159,7 @@ public class BackgroundService extends Service {
 //            if(day <= counter) {
                 Log.i("Count", "========= Workingggg  ");
 
-
+            sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
             if(activeUser) {
                 if(userAlert){
@@ -400,6 +389,7 @@ public class BackgroundService extends Service {
                             playState= true;
                             documentReference.update("lockStatus",false);
 
+
                         } else {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
@@ -450,4 +440,8 @@ public class BackgroundService extends Service {
             e.printStackTrace();
         }
     }
+
+
+
+
 }
