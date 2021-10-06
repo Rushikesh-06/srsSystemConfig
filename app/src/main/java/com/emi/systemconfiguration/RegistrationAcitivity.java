@@ -121,6 +121,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         dateView = (TextView) findViewById(R.id.dateTextView);
         dateView.setEnabled(false);
         endDateView = (TextView) findViewById(R.id.endDateView);
+        endDateView.setVisibility(View.GONE);
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
 
@@ -949,7 +950,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         if(endDateView.getText().toString().contains("Select end date"))
         {
            toastMessage("Set the end date");
-            return false;
+            return true;
         }
         if(policyId.length() == 0){
             policyId.setError("Enter Policy");

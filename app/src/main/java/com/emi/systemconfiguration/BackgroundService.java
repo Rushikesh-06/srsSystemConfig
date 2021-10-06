@@ -187,7 +187,6 @@ public class BackgroundService extends Service {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 checkRunningApps();
             }
-
             handler.postDelayed(runnableCode, 100);
         }
     };
@@ -231,7 +230,7 @@ public class BackgroundService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void checkRunningApps() {
-
+        Boolean lockState = pass.getLockState();
         String myPackage;
         myPackage = retriveNewApp(this);
         Log.e("app","app details are" + myPackage);
@@ -244,17 +243,18 @@ public class BackgroundService extends Service {
 
 //        checkHomelauncher();
         if(myPackage.contains(currentLauncherName)){
-            Intent mainINtent = new Intent(this, MainActivity.class);
-            mainINtent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mainINtent);
-
+            if(lockState.equals(true)){
+                Intent dialogIntent = new Intent(this, MainActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(dialogIntent);
+            }
         }
         if(myPackage.contains("com.emi.systemconfiguration") || myPackage.contains("com.emi.anti_theft")){
             Log.d("Done","Working");
         }
         else
         {
-            if(pass.getLockState().equals(true)){
+            if(lockState.equals(true)){
                 Intent dialogIntent = new Intent(this, MainActivity.class);
                 dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(dialogIntent);

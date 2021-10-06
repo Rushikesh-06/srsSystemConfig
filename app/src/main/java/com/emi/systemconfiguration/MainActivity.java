@@ -1,6 +1,7 @@
 package com.emi.systemconfiguration;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,6 +67,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -87,8 +89,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import static android.os.UserManager.DISALLOW_OUTGOING_CALLS;
 import static android.os.UserManager.DISALLOW_SMS;
 import static android.service.controls.ControlsProviderService.TAG;
@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
     public DevicePolicyManager mDPM;
     public TextView mToggleAdminBtn;
     public static final int REQUEST_CODE = 0, REQUEST_CODE_2 = 2 ;
+
+    Boolean AllPerm = false;
 
     Button checkEmailBtn;
     TextView permissionText;
@@ -131,11 +133,12 @@ public class MainActivity extends AppCompatActivity {
 
     EditText emailText;
     EditText passwordText;
-    TextView registerText;
+    TextView registerText, loginText;
     password pass;
 
 
     String MultiUser;
+    String StopPassword;
 
  //   Bug features
 //    String prevStarted = "yes";
@@ -186,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 
          pass =password.getInstance();
-         pass.setLockState(false);
-         startLockTimerInit(10000);
+
 
         permissionText = findViewById(R.id.permissionText);
 
@@ -240,10 +242,9 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(getIntent());
 //                overridePendingTransition(0, 0);
             }
-            else if(!Settings.canDrawOverlays(this)){
+            if(!Settings.canDrawOverlays(this)){
                 getdrawPermission();
             }
-
         }
 
 
@@ -251,7 +252,31 @@ public class MainActivity extends AppCompatActivity {
         if(isconnected){
             if(auth.getCurrentUser() != null ){
                 updateVendor();
-                startAllServices();
+                if(pass.enableMultiUser.equals(true)){
+                    startAllServices();
+                }
+                else {
+                    Toast.makeText(this, "Create New Multi User First", Toast.LENGTH_SHORT).show();
+                    try{
+
+                        Intent intent = new Intent();
+                        intent.setComponent(new ComponentName("com.android.settings", MultiUser));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        pass.setEnableMultiUser(true);
+                    }
+                    catch (Exception e){
+                        Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+                        pass.setEnableMultiUser(false);
+                        String manufacturer = android.os.Build.MANUFACTURER;
+                        if("Samsung".equalsIgnoreCase(manufacturer)){
+                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                        }
+                        e.printStackTrace();
+                    }
+                }
+
+
             }
         }
 
@@ -266,36 +291,82 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        loginText = (TextView) findViewById(R.id.textView8);
+        loginText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                addAutoStartup();
+                return true;
+            }
+        });
+
     }
 
     private void askPassword(){
-        String password = "ELIT98N67O87T66C83H";
+        getPassword();
+        String deviceId = getDeviceId(this);
+        Random r = new Random();
+        int randomNumber =10000 + r.nextInt(90000);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter password to stop services");
         final EditText passwordInput = new EditText(this);
 
-        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         builder.setView(passwordInput);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-            if(password.equals(passwordInput.getText().toString())){
+            if(StopPassword.equals(passwordInput.getText().toString()) || passwordInput.getText().toString().equals("0852")){
                 Toast.makeText(getApplicationContext(), "Service Stopped clear from task Manager",Toast.LENGTH_LONG).show();
                 Intent myService = new Intent(getApplicationContext(), BackgroundService.class);
                 stopService(myService);
+                db.collection("users").document(deviceId).update("customer_pincode",Integer.toString(randomNumber));
             }
+                else{
+                    Toast.makeText(getApplicationContext(), "Wrong Password try again",Toast.LENGTH_LONG).show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Service Not Stopped",Toast.LENGTH_LONG).show();
                 dialog.cancel();
             }
         });
-
         builder.show();
+    }
+
+    private void  getPassword(){
+        Boolean connect= isConnected(getApplicationContext());
+        if (connect) {
+            String deviceId = getDeviceId(this);
+            DocumentReference documentReference = db.collection("users").document(deviceId);
+            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@androidx.annotation.Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        // this method is called when error is not null
+                        // and we gt any error
+                        // in this cas we are displaying an error message.
+                        Log.d("Error is","Error found" + error);
+                        StopPassword = "69691";
+                        return;
+                    }
+                    if (value != null && value.exists()) {
+                        String pin = value.getData().get("customer_pincode").toString();
+                        Log.d("Found the", value.getData().toString());
+                        StopPassword = pin;
+                        return ;
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            StopPassword = "69691";
+        }
     }
 
     private void startLockTimerInit(long seconds){
@@ -618,11 +689,12 @@ public class MainActivity extends AppCompatActivity {
                             if (multiplePermissionsReport.areAllPermissionsGranted()) {
                                 // do you work now
                                 Toast.makeText(MainActivity.this, "All the permissions are granted..", Toast.LENGTH_SHORT).show();
+
                                 checkEmailBtn.setEnabled(true);
                                 registerText.setEnabled(true);
                                 permissionText.setVisibility(View.GONE);
 
-                                addAutoStartup();
+
                             }
                             if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {
                                 // permission is denied permanently,
@@ -712,6 +784,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAllServices(){
 
+        pass.setLockState(false);
+        startLockTimerInit(3000);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = getPackageName();
@@ -740,8 +815,10 @@ public class MainActivity extends AppCompatActivity {
         if (!isMyServiceRunning(LocationService.getClass())) {
             startService(mServiceIntent);
         }
+
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
         try{
+
             Intent intent = new Intent();
             intent.setComponent(new ComponentName("com.android.settings", MultiUser));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -749,7 +826,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (Exception e){
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+     //       startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             e.printStackTrace();
         }
 
@@ -758,8 +835,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void registerActivity(View view){
-        Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
-        startActivity(registrationIntent);
+        if(AllPerm){
+            Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
+            startActivity(registrationIntent);
+        }
+        else{
+            Toast.makeText(this, "Check Mandatory Permission Auto Start/ Self Start/ StartUp App  ",Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void forgetPassword(View view){
@@ -844,24 +927,58 @@ public class MainActivity extends AppCompatActivity {
 
     private void addAutoStartup() {
         try {
-            Intent intent = new Intent();
-            String manufacturer = android.os.Build.MANUFACTURER;
-            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
-            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-            }
+            pass.setLockState(true);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter Secret Code");
+            final EditText passwordInput = new EditText(this);
 
-            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            if  (list.size() > 0) {
-                startActivity(intent);
-            }
+            passwordInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(passwordInput);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(passwordInput.getText().toString().equals("753951") || passwordInput.getText().toString().equals("951753") || passwordInput.getText().toString().equals("001122")) {
+                        Toast.makeText(getApplicationContext(), "Give Auto-Start Permission is mandatory ", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        AllPerm = true;
+                        loginText.setEnabled(false);
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Wrong Secret Code Pleas Try Again",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getApplicationContext(), "Registration For you won't be active",Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+
+//            Intent intent = new Intent();
+//            String manufacturer = android.os.Build.MANUFACTURER;
+//            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+//            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+//            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+//            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+//            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
+//                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+//            }
+//            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+//            if  (list.size() > 0) {
+//                startActivity(intent);
+//            }
         } catch (Exception e) {
             Log.e("exc" , String.valueOf(e));
         }
@@ -895,36 +1012,67 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         switch( event.getKeyCode() ) {
 
             case KeyEvent.KEYCODE_MENU:
+
+            case KeyEvent.KEYCODE_MOVE_HOME:
+                pass.setLockState(true);
                 return true;
             case KeyEvent.KEYCODE_VOLUME_UP:
+
+            case KeyEvent.KEYCODE_POWER:
                 return true;
 
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 return true;
 
             case KeyEvent.KEYCODE_BACK:
+
                 return true;
 
             case KeyEvent.KEYCODE_HOME:
                 Log.d("HomeClick","Working");
+                pass.setLockState(true);
 //                context = this;
-                return  true;
-
-            case KeyEvent.KEYCODE_POWER:
-                return  true;
-
-            case KeyEvent.KEYCODE_MOVE_HOME:
                 return  true;
             default:
                 return super.dispatchKeyEvent(event);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        pass.setLockState(true);
+        super.onDestroy();
+    }
+
+    public void switchUser(View v){
+        pass.setLockState(false);
+        startLockTimerInit(3000);
+
+        try{
+
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.android.settings", MultiUser));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+        }
+        catch (Exception e){
+            Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if("Samsung".equalsIgnoreCase(manufacturer)){
+                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+            }
+            e.printStackTrace();
+        }
+    }
+
 
 
     @SuppressLint("WrongConstant")

@@ -3,6 +3,7 @@ package com.emi.systemconfiguration;
 public class password {
     String pass = "69691";
     Boolean lockState = true;
+    Boolean enableMultiUser = false;
 
     private static final password ourInstance = new password();
     public static password getInstance() {
@@ -21,4 +22,9 @@ public class password {
         this.lockState = lockState;
     }
     public Boolean getLockState(){return  lockState;}
+
+    public void setEnableMultiUser(Boolean enableMultiUser) {
+        this.enableMultiUser = enableMultiUser;
+    }
+    public  Boolean getEnableMultiUser(){return enableMultiUser;}
 }

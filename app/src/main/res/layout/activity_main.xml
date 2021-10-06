@@ -136,7 +136,21 @@
             android:text="Don't have an account ?  Register"
             android:textColor="@color/colorText" />
 
-<!--        <Button-->
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:onClick="switchUser"
+            android:text="Switch User"
+            android:textColor="@color/colorText"
+            android:textSize="24sp" />
+
+        <!--        <Button-->
 <!--            android:id="@+id/button"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="36dp"-->
