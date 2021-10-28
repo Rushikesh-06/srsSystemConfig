@@ -158,8 +158,9 @@ public class BackgroundService extends Service {
 //
 //            if(day <= counter) {
                 Log.i("Count", "========= Workingggg  ");
-
-            sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+            if(MainActivity.multiFound){
+                sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+            }
 
             if(activeUser) {
                 if(userAlert){
@@ -210,7 +211,7 @@ public class BackgroundService extends Service {
             ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
             String currentLauncherName= resolveInfo.activityInfo.packageName;
 //|| activityName.equals(currentLauncherName)
-            if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller") || activityName.equals("com.emi.systemconfiguration")){
+            if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller")){
                 Log.e("USer","Vendor is on activity");
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();

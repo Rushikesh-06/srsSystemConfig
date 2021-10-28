@@ -110,6 +110,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
+        android:testOnly="false"
         tools:ignore="MissingTvBanner">
         <meta-data
             android:name="com.google.android.actions"

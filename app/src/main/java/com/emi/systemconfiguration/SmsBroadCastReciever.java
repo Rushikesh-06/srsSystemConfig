@@ -121,7 +121,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) sms[sms.length - 1]);
 
                 String smsBody = smsMessage.getMessageBody().toString(); // bodu message
-                String address = smsMessage.getOriginatingAddress().replace("+91", ""); //PHone number
+                String address = smsMessage.getOriginatingAddress().replace("+91", ""); //Phone number
 
                 smsMessageStr += "SMS From: " + address + "\n";
                 smsMessageStr += smsBody + "\n";
@@ -150,7 +150,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 islocked = true;
 //                db.collection("users").document(deviceId).update("isLocked",true);
                 handler.post(runnableCode);
-
             }
             else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
 //                    Intent dialogIntent = new Intent(context, MainActivity.class);
@@ -193,7 +192,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
             while(islocked) {
                 dpm.lockNow();
                 handler.postDelayed(runnableCode, 500);
-
                 if(count % 7200 == 0){
                     Log.d("music","------------------> music" );
                     mPlayer.setVolume(100,100);

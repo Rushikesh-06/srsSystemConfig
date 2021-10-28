@@ -18,12 +18,10 @@ public class ScreenReceiver extends BroadcastReceiver {
         if(intent.getAction().equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)){
             String dialogType = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
             if(dialogType != null && dialogType.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)){
+
                 Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
                 context.sendBroadcast(closeDialog);
             }
-
-
-
         }
 
         GlobalLock globalLock = com.emi.systemconfiguration.GlobalLock.getInstance();

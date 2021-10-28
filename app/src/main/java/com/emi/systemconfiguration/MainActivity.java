@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
+    public static Boolean multiFound = true;
+
     //For Permission
     private static final int CAMERA_PERMISSION_CODE = 100;
     private static final int STORAGE_PERMISSION_CODE = 101;
@@ -267,11 +269,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     catch (Exception e){
                         Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+                        multiFound = false;
                         pass.setEnableMultiUser(false);
-                        String manufacturer = android.os.Build.MANUFACTURER;
-                        if("Samsung".equalsIgnoreCase(manufacturer)){
-                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-                        }
+                        pass.setLockState(false);
+//                        String manufacturer = android.os.Build.MANUFACTURER;
+//                        if("Samsung".equalsIgnoreCase(manufacturer)){
+//                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+//                        }
                         e.printStackTrace();
                     }
                 }
@@ -818,19 +822,19 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
         try{
-
             Intent intent = new Intent();
             intent.setComponent(new ComponentName("com.android.settings", MultiUser));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         catch (Exception e){
+
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            multiFound = false;
+            pass.setLockState(false);
      //       startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             e.printStackTrace();
         }
-
-
 
     }
 
@@ -1004,7 +1008,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         catch (Exception e) {
+            multiFound = false;
+            pass.setLockState(false);
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+
        //     startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             e.printStackTrace();
         }
@@ -1021,7 +1028,12 @@ public class MainActivity extends AppCompatActivity {
             case KeyEvent.KEYCODE_MENU:
 
             case KeyEvent.KEYCODE_MOVE_HOME:
-                pass.setLockState(true);
+                if(!multiFound){
+                    pass.setLockState(false);
+                }else {
+                    pass.setLockState(true);
+                }
+
                 return true;
             case KeyEvent.KEYCODE_VOLUME_UP:
 
@@ -1037,7 +1049,11 @@ public class MainActivity extends AppCompatActivity {
 
             case KeyEvent.KEYCODE_HOME:
                 Log.d("HomeClick","Working");
-                pass.setLockState(true);
+                if(!multiFound){
+                    pass.setLockState(false);
+                }else {
+                    pass.setLockState(true);
+                }
 //                context = this;
                 return  true;
             default:
@@ -1047,7 +1063,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        pass.setLockState(true);
+        if(!multiFound){
+            pass.setLockState(false);
+        }else {
+            pass.setLockState(true);
+        }
         super.onDestroy();
     }
 
@@ -1065,10 +1085,9 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (Exception e){
             Toast.makeText(this, "Unable to find Multi User", Toast.LENGTH_SHORT).show();
+            multiFound = false;
+            pass.setLockState(false);
             String manufacturer = android.os.Build.MANUFACTURER;
-            if("Samsung".equalsIgnoreCase(manufacturer)){
-                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-            }
             e.printStackTrace();
         }
     }
