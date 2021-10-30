@@ -89,6 +89,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import static android.os.UserManager.DISALLOW_BLUETOOTH;
+import static android.os.UserManager.DISALLOW_FACTORY_RESET;
 import static android.os.UserManager.DISALLOW_OUTGOING_CALLS;
 import static android.os.UserManager.DISALLOW_SMS;
 import static android.service.controls.ControlsProviderService.TAG;
@@ -224,6 +226,10 @@ public class MainActivity extends AppCompatActivity {
             mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
             Intent fromIntent = getIntent();
             String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
+
+            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
+            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
+//            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
 
 //          Screen Pinning
 //            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{"com.emi.systemconfiguration"});
