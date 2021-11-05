@@ -120,6 +120,7 @@ public class BackgroundService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         startTimer();
+
         if(isConnected()){
             Log.i("INterent", "========= Connected to  Network ");
             activeDevice();
@@ -158,9 +159,10 @@ public class BackgroundService extends Service {
 //
 //            if(day <= counter) {
                 Log.i("Count", "========= Workingggg  ");
-            if(MainActivity.multiFound){
-                sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-            }
+
+//            if(MainActivity.multiFound){
+//                sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+//            }
 
             if(activeUser) {
                 if(userAlert){
@@ -169,25 +171,9 @@ public class BackgroundService extends Service {
                 continuesLock();
                 playSound();
 
-//              Sound reatin
-//                if(count % 7200 == 0){
-//                    Log.d("music","------------------> music"+count );
-//                    try{
-////                    mPlayer.setVolume(100,100);
-//                        mPlayer.start();
-//                    }
-//                    catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//                count++;
-//                    checkRunningApps();
-//                    checkHomelauncher();
+
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                checkRunningApps();
-            }
             handler.postDelayed(runnableCode, 100);
         }
     };
@@ -262,26 +248,8 @@ public class BackgroundService extends Service {
             }
 
         }
-//        Intent dialogIntent = new Intent(this, MainActivity.class);
-//        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(dialogIntent);
 
-//        if(myPackage.contains("com.android.settings/com.android.settings.Settings$UserSettingsActivity") ||
-//                myPackage.contains(("com.emi.systemconfiguration")) ||
-//                  myPackage.contains(currentLauncherName)){
-//
-//            Intent dialogIntent = new Intent(this, MainActivity.class);
-//            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(dialogIntent);
-//
-//        }
-//        else{
-//            if(pass.getLockState().equals(true)){
-//                Intent dialogIntent = new Intent(this, MainActivity.class);
-//                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(dialogIntent);
-//            }
-//        }
+
     }
 
     // Repeatedly lock the phone every second for 5 seconds

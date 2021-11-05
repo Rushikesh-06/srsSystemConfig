@@ -7,7 +7,8 @@ public class RegistrationDetails {
     //    private final customer_active Boolean;
     // variables for storing our data.
     private String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorId, policyNo , startDate,endDate,device_amount,anti_theft_plan;
-    private  Boolean customer_active;
+
+    private  Boolean customer_active, uninstall_status;
 
     public RegistrationDetails() {
         // empty constructor
@@ -36,7 +37,7 @@ public class RegistrationDetails {
         this.endDate = endDate;
         this.device_amount = device_amount;
         this.anti_theft_plan= anti_theft_plan;
-
+        this.uninstall_status = false;
 
     }
 
@@ -154,6 +155,13 @@ public class RegistrationDetails {
     }
     public void setAnti_theft_plan(String anti_theft_plan) {
         this.anti_theft_plan = anti_theft_plan;
+    }
+
+    public Boolean getUninstall_status() {
+        return uninstall_status;
+    }
+    public void setUninstall_status(Boolean uninstall_status) {
+        this.uninstall_status = uninstall_status;
     }
 }
 

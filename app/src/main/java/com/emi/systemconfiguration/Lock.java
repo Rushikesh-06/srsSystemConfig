@@ -104,18 +104,7 @@ public class Lock extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
             actionBar.setDisplayShowHomeEnabled(false); // remove the icon
         }
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("Counter");
-//
-//        BroadcastReciever broadcastReciever = new BroadcastReciever(){
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Integer integerTime = intent.getIntExtra("TimeRemaining", 0);
-//
-//            }
-//        };
-//
-//        registerReceiver(broadcastReciever, intentFilter);
+
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -147,10 +136,6 @@ public class Lock extends AppCompatActivity {
                         }
                     });
         }
-//Screen Pinning
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            startLockTask();
-//        }
 
     }
 
@@ -207,15 +192,6 @@ public class Lock extends AppCompatActivity {
 
                 }.start();
 
-
-//                countDown();
-//                PackageManager packageManager = getPackageManager();
-
-//                ComponentName componentName = new ComponentName(getApplicationContext(),MainActivity.class);
-//                packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//                        PackageManager.DONT_KILL_APP);
-//                finish();
-//                count();
             }
         });
     }
@@ -303,59 +279,6 @@ public class Lock extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             setPassword("69691");
-        }
-    }
-
-
-    private  void countDown(){
-        Boolean  isconnected=MainActivity.isConnected(getApplicationContext());
-        if (isconnected) {
-
-            String deviceId = MainActivity.getDeviceId(this);
-//            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-
-//            db.collection("users").document(deviceId).update("customer_active", false);
-//            finish();
-//            new CountDownTimer(10000, 1000) {
-//                public void onTick(long millisUntilFinished) {
-//                    // Used for formatting digit to be in 2 digits only
-//                    NumberFormat f = new DecimalFormat("00");
-//                    long hour = (millisUntilFinished / 3600000) % 24;
-//                    long min = (millisUntilFinished / 60000) % 60;
-//                    long sec = (millisUntilFinished / 1000) % 60;
-//                    Log.d("Count DOWN", f.format(hour) + ":" + f.format(min) + ":" + f.format(sec));
-//                }
-//
-//                // When the task is over it will print 00:00:00 there
-//                public void onFinish() {
-//                    Log.d("Count DOWN", "finished");
-//                    Random r = new Random();
-//                    int randomNumber =10000 + r.nextInt(90000);
-//                    Log.d("Random number", String.valueOf(randomNumber ));
-//                    db.collection("users").document(deviceId).update("customer_active", true,"customer_pincode",String.valueOf(randomNumber));
-//                    startBgActivity();
-//
-//                }
-//            }.start();
-        }
-        else
-        {
-            startBgActivity();
-        }
-    }
-
-    public void count(){
-        Intent intentService = new Intent(this, BackgroundDelayService.class);
-        startService(intentService);
-    }
-
-    @Override
-    public void finish() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            super.finishAndRemoveTask();
-        }
-        else {
-            super.finish();
         }
     }
 

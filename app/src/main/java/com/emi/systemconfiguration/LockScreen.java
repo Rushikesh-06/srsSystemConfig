@@ -242,12 +242,6 @@ public class LockScreen extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
-//        RegistrationAcitivity registrationAcitivity = new RegistrationAcitivity();
-//        Method m = RegistrationAcitivity.class.getDeclaredMethod("activeUser", Context.class);
-//        //m.invoke(d);// throws java.lang.IllegalAccessException
-//        m.setAccessible(true);// Abracadabra
-//        m.invoke(registrationAcitivity);// now its OK
-//        Log.d("Pin is","sdbdfbdf");
 
     }
 

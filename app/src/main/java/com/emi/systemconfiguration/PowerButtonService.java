@@ -252,16 +252,6 @@ public class PowerButtonService extends Service {
 
         Log.d("HomeLaunche", lst.toString());
 
-//        if (!lst.isEmpty()) {
-//            for (ResolveInfo resolveInfo : lst) {
-//                Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
-//                if(resolveInfo.activityInfo.packageName.equals(myPackage) ||  myPackage.contains(("com.emi.systemconfiguration"))  || myPackage.contains(("com.whatsapp")) || myPackage.contains("com.google.android.youtube")){
-//                    Intent dialogIntent = new Intent(this, Lock.class);
-//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(dialogIntent);
-//                }
-//            }
-//        }
     }
 
     @Nullable

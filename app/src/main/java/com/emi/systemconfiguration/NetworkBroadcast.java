@@ -25,9 +25,6 @@ public class NetworkBroadcast extends BroadcastReciever{
 
         Log.d("NetworkCheck","+++++++++++++++++++> network");
 
-//        backgroundService = new BackgroundService();
-//        mServiceIntent = new Intent(context, BackgroundService.class);
-//
         String action = intent.getAction();
         if(("android.net.conn.CONNECTIVITY_CHANGE").equals(action) || ("android.net.wifi.WIFI_STATE_CHANGED").contains(action))
         {
@@ -42,16 +39,7 @@ public class NetworkBroadcast extends BroadcastReciever{
 //                Toast.makeText(context, "Started NEtw back Service", Toast.LENGTH_LONG).show();
             }
         }
-//
-//
-//        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-////        NetworkInfo[] info = check.getAllNetworkInfo();//All network info
-//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();//Active network info
-//        if (networkInfo != null && networkInfo.isConnected()) {
-//            Log.d("NetworkStates", "'Networkcheck");
-//            Toast.makeText(context, "Internet is connected:",Toast.LENGTH_SHORT).show();
-//        }
-//
+
 
     }
 

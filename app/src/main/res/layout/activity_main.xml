@@ -136,26 +136,32 @@
             android:text="Don't have an account ?  Register"
             android:textColor="@color/colorText" />
 
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginBottom="20dp"
-            android:gravity="center"
-            android:onClick="switchUser"
-            android:text="Switch User"
-            android:textColor="@color/colorText"
-            android:textSize="24sp" />
 
-        <!--        <Button-->
-<!--            android:id="@+id/button"-->
+<!--        <TextView-->
+<!--            android:id="@+id/textView16"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="36dp"-->
-<!--            android:onClick="createUser"-->
-<!--            android:text="Button" />-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="60dp"-->
+<!--            android:layout_marginTop="60dp"-->
+<!--            android:layout_marginRight="60dp"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:gravity="center"-->
+<!--            android:onClick="switchUser"-->
+<!--            android:text="Switch User"-->
+<!--            android:textColor="@color/colorText"-->
+<!--            android:textSize="24sp" />-->
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/linerbg"
+            android:onClick="createGoogleAccount"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="Create Google Account"
+            android:textColor="@color/colorText" />
 
         <!--        <Button-->
         <!--            android:id="@+id/button"-->

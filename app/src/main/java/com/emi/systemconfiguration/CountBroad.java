@@ -43,22 +43,6 @@ public class CountBroad extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         notificationManager.notify(100, builder.build());
-//                .setPriority(NotificationManager.IMPORTANCE_MIN)
-//                .setPriority(Notification.PRIORITY_HIGH);
-
-//
-//
-//        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//
-//        NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(
-//                context).setSmallIcon(R.drawable.ic_launcher_foreground)
-//                .setContentTitle("Alarm Fired")
-//                .setContentText("Events to be Performed").setSound(alarmSound)
-//                .setAutoCancel(true).setWhen(when)
-//                .setContentIntent(pendingIntent)
-//                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-//        notificationManager.notify(MID, mNotifyBuilder.build());
-//        MID++;
 
 
     }

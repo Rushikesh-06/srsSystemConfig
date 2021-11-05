@@ -872,45 +872,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
      String deviceId = MainActivity.getDeviceId(this);
 
         return deviceId;
-//        status[0]= deviceId;
 
-//        DocumentReference documentReference = db.collection("users").document(deviceId);
-//        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if (error != null) {
-//                    // this method is called when error is not null
-//                    // and we gt any error
-//                    // in this cas we are displaying an error message.
-//                    Log.d("Error is","Error found" + error);
-//                    return;
-//                }
-//                if (value != null && value.exists()) {
-//
-//                     userData.add(value.getData());
-//
-//                    Log.d("Found the", value.getData().get("customer_active").toString());
-//
-//                }
-//            }
-//        });
-
-
-//        DocumentReference documentReference = db.collection("users").document(MainActivity.getDeviceId(getApplicationContext()));
-//        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    // Document found in the offline cache
-//                    DocumentSnapshot document = task.getResult();
-//                    Log.d("Active Device", "Cached document data: " + document.getData());
-////                    toastMessage(document.getData().toString());
-//                } else {
-//                    Log.d("Active device", "Cached get failed: ", task.getException());
-//                }
-//
-//            }
-//        });
     };
 
     private boolean CheckAllFields(){
