@@ -709,67 +709,87 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         dbRegister.document(customer_uid).set(registration).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void avoid) {
-                // after the data addition is successful
-                // we are displaying a success toast message.
-                for (int i=0; i < policyDocID.size(); i++) {
-                    DocumentReference documentReference = db.collection("policy").document(policyDocID.get(i));
-                    String policyDocumentsID = policyDocID.get(i);
-                    documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
 
-                        @Override
-                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                // this method is called when error is not null
-                                // and we gt any error
-                                // in this cas we are displaying an error message.
-                                toastMessage("Error found" + error);
-                                return;
+                db.collection("policy").whereEqualTo("policyNo", policy_no).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+//                            toastMessage("Success found");
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+//                                toastMessage(document.getData().toString());
+                                db.collection("policy").document(document.getId()).update("customerUid",customer_uid);
+//                                Log.d("2Success", "Suucfull ofund ==========================");
                             }
-                            if (value != null && value.exists()) {
+                        }
+                       else {
 
-                                if(value.getData().get("policyNo").toString().equals(policy_no)){
+                            Log.d("Game", "Nt fund the vendor");
+                        }
+                    }
+                });
 
-//                           toastMessage( policyDocumentsID.toString());
-                                    CollectionReference dbPolicy = db.collection("policy");
-
-                                    dbPolicy.document( policyDocumentsID.toString()).update("customerUid",customer_uid);
-
-                                    db.collection("vendors").document(vendorID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> vendorDetails) {
-                                            Vendor.number =  vendorDetails.getResult().get("number").toString();
-
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    });
-
-//                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                // after the data addition is successful
+//                // we are displaying a success toast message.
+//                for (int i=0; i < policyDocID.size(); i++) {
+//                    DocumentReference documentReference = db.collection("policy").document(policyDocID.get(i));
+//                    String policyDocumentsID = policyDocID.get(i);
+//                    documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//
+//                        @Override
+//                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                            if (error != null) {
+//                                // this method is called when error is not null
+//                                // and we gt any error
+//                                // in this cas we are displaying an error message.
+//                                toastMessage("Error found" + error);
+//                                return;
+//                            }
+//                            if (value != null && value.exists()) {
+//
+//                                if(value.getData().get("policyNo").toString().equals(policy_no)){
+//
+////                           toastMessage( policyDocumentsID.toString());
+//                                    CollectionReference dbPolicy = db.collection("policy");
+//
+//                                    dbPolicy.document( policyDocumentsID.toString()).update("customerUid", customer_uid);
+//
+//                                    db.collection("vendors").document(vendorID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //                                        @Override
-//                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                            Log.d("VendorId",task.getResult().getData().toString());
-//                                            String vendorId = task.getResult().get("vendorID").toString();
+//                                        public void onComplete(@NonNull Task<DocumentSnapshot> vendorDetails) {
+//                                            Vendor.number =  vendorDetails.getResult().get("number").toString();
 //
 //                                        }
+//                                    }).addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            e.printStackTrace();
+//                                        }
 //                                    });
-
-                                }
-                                else
-                                {
-//                           toastMessage("policyNo not found" + policiesNo);
-                                    Log.e("Not Found : " , "Error no update in policy collection");
-                                }
-
-                            }
-
-                        }
-
-                    });
-
-                }
+//
+////                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+////                                        @Override
+////                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+////                                            Log.d("VendorId",task.getResult().getData().toString());
+////                                            String vendorId = task.getResult().get("vendorID").toString();
+////
+////                                        }
+////                                    });
+//
+//                                }
+//                                else
+//                                {
+////                           toastMessage("policyNo not found" + policiesNo);
+//                                    Log.e("Not Found : " , "Error no update in policy collection");
+//                                }
+//
+//                            }
+//
+//                        }
+//
+//                    });
+//
+//                }
 
                 toastMessage("Registration is done successfully");
                 Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);

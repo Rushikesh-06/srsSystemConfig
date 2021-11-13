@@ -28,6 +28,7 @@ import android.app.admin.DevicePolicyManager;
 
 import android.app.admin.FactoryResetProtectionPolicy;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -110,6 +111,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
@@ -117,12 +119,14 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED;
 import static android.os.UserManager.DISALLOW_BLUETOOTH;
 import static android.os.UserManager.DISALLOW_FACTORY_RESET;
 import static android.os.UserManager.DISALLOW_MODIFY_ACCOUNTS;
 import static android.os.UserManager.DISALLOW_REMOVE_MANAGED_PROFILE;
 import static android.os.UserManager.DISALLOW_REMOVE_USER;
 
+import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION;
 import static android.service.controls.ControlsProviderService.TAG;
 
 public class MainActivity extends AppCompatActivity {
@@ -133,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     public TextView mToggleAdminBtn;
     public static final int REQUEST_CODE = 0, REQUEST_CODE_2 = 2 ;
 
-    Boolean AllPerm = false;
+    Boolean AllPerm = true;
 
 
     Button checkEmailBtn;
@@ -181,7 +185,24 @@ public class MainActivity extends AppCompatActivity {
     String StopPassword;
 
 
-    @SuppressLint("WrongViewCast")
+    String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+            Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR,
+            Manifest.permission.READ_PHONE_STATE
+    };
+
+    @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
         //        Hide the textview and edittext
         registerText =(TextView) findViewById(R.id.registerText);
-        registerText.setEnabled(false);
+        registerText.setEnabled(true);
 
         checkEmailBtn = findViewById(R.id.emailBtn);
         checkEmailBtn.setEnabled(false);
@@ -230,32 +251,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        requestPermissions();
-
-        try {
-            // Initiate DevicePolicyManager.
-            mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-            // Set DeviceAdmin Demo Receiver for active the component with different option
-            mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
-            Intent fromIntent = getIntent();
-            String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
-
-            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
-//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
-            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
-            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
-
-            if (!mDPM.isAdminActive(mDeviceAdmin)) {
-                // try to become active
-                Log.d("note", "request for admin");
-                getDeviceAdminPermsion();
-            }
-        }
-        catch(Exception e) {
-
-
-            e.printStackTrace();
-        }
+//        requestPermissions();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!isAccessGranted()) {
                 getUsagePermission();
@@ -264,6 +260,75 @@ public class MainActivity extends AppCompatActivity {
                 getdrawPermission();
             }
         }
+
+
+        try {
+            // Initiate DevicePolicyManager.
+            mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+            // Set DeviceAdmin Demo Receiver for active the component with different option
+            mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
+
+
+            if(!hasPermissions(this, PERMISSIONS)){
+//                String[] permissions = this.getPackageManager().getPackageInfo(this.getPackageName(),PackageManager.GET_PERMISSIONS).requestedPermissions;
+
+                if (Environment.isExternalStorageManager()){
+                    Log.d("Tag", "OWrking");
+                }else{
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                    loginText.setEnabled(false);
+                }
+
+                for (String permission : PERMISSIONS) {
+                    boolean success = mDPM.setPermissionGrantState(mDeviceAdmin, this.getPackageName(), permission, PERMISSION_GRANT_STATE_GRANTED);
+
+                    if (!success) {
+                        Log.e(TAG, "Failed to auto grant permission to self: " + permission);
+                    }
+                }
+            }
+
+            checkEmailBtn.setEnabled(true);
+            registerText.setEnabled(true);
+            permissionText.setVisibility(View.GONE);
+//            Intent fromIntent = getIntent();
+//            String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
+
+            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
+//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
+            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
+//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
+
+            if (!mDPM.isAdminActive(mDeviceAdmin)) {
+                // try to become active
+                Log.d("note", "request for admin");
+                getDeviceAdminPermsion();
+            }
+
+            Bundle bundle = new Bundle();
+            String recoveryAccount[] = {
+                    "101251806639257169134",
+                    "104806275544500277760",
+            };
+
+            bundle.putStringArray("factoryResetProtectionAdmin", recoveryAccount);
+            mDPM.setApplicationRestrictions(mDeviceAdmin, "com.google.android.gms", bundle);
+
+            Intent broadcastIntent =new Intent("com.google.android.gms.auth.FRP_CONFIG_CHANGED");
+            broadcastIntent.setPackage("com.google.android.gms");
+            broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            sendBroadcast(broadcastIntent);
+
+        }
+        catch(Exception e) {
+            Log.d("Error", e.toString());
+            e.printStackTrace();
+        }
+
 
 
         Boolean isconnected = MainActivity.isConnected(getApplicationContext());
@@ -434,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
 //            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
-            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
+//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
         }
 
@@ -504,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG)
                                             .show();
 
-                                    updateVendor();
+
 
                                     startAllServices();
                                 } else {
@@ -538,6 +603,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateVendor() {
+      try {
+
         String deviceID = getDeviceId(this);
 
         db.collection("policy").whereEqualTo("customerUid", deviceID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -572,6 +639,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+      }
+      catch(Exception e){
+          e.printStackTrace();
+      }
     }
 
     // Function to check and request permission
@@ -593,6 +664,23 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
+
+    public static boolean hasPermissions(Context context, String... permissions)
+    {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null)
+        {
+            for (String permission : permissions)
+            {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
 
     @SuppressLint({"HardwareIds", "MissingPermission"})
@@ -617,18 +705,6 @@ public class MainActivity extends AppCompatActivity {
         return deviceId;
     }
 
-
-    public Boolean checkPermission(String permission, int requestCode) {
-        // Checking if permission is not granted
-        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
-            return false;
-        } else {
-
-            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-    }
 
 
     @Override

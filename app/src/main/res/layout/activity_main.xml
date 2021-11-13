@@ -151,17 +151,17 @@
 <!--            android:textColor="@color/colorText"-->
 <!--            android:textSize="24sp" />-->
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="100dp"
-            android:background="@drawable/linerbg"
-            android:onClick="createGoogleAccount"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="Create Google Account"
-            android:textColor="@color/colorText" />
+<!--        <Button-->
+<!--            android:id="@+id/button"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginTop="100dp"-->
+<!--            android:background="@drawable/linerbg"-->
+<!--            android:onClick="createGoogleAccount"-->
+<!--            android:paddingLeft="20dp"-->
+<!--            android:paddingRight="20dp"-->
+<!--            android:text="Create Google Account"-->
+<!--            android:textColor="@color/colorText" />-->
 
         <!--        <Button-->
         <!--            android:id="@+id/button"-->
