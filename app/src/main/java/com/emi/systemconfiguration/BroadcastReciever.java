@@ -30,7 +30,6 @@ public class BroadcastReciever extends BroadcastReceiver {
     private static final String tag = "TestReceiver";
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
-    private LocationService locationService;
     Intent mServiceIntent;
 
 

@@ -272,15 +272,17 @@ public class MainActivity extends AppCompatActivity {
             if(!hasPermissions(this, PERMISSIONS)){
 //                String[] permissions = this.getPackageManager().getPackageInfo(this.getPackageName(),PackageManager.GET_PERMISSIONS).requestedPermissions;
 
-                if (Environment.isExternalStorageManager()){
-                    Log.d("Tag", "OWrking");
-                }else{
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                    Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                    loginText.setEnabled(false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()){
+                        Log.d("Tag", "OWrking");
+                    }else{
+                        Intent intent = new Intent();
+                        intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        loginText.setEnabled(false);
+                    }
                 }
 
                 for (String permission : PERMISSIONS) {
@@ -311,8 +313,8 @@ public class MainActivity extends AppCompatActivity {
 
             Bundle bundle = new Bundle();
             String recoveryAccount[] = {
-                    "101251806639257169134",
-                    "104806275544500277760",
+                    "101251806639257169134", //elocker568-ID
+                    "104806275544500277760", //elitnotch-ID
             };
 
             bundle.putStringArray("factoryResetProtectionAdmin", recoveryAccount);
