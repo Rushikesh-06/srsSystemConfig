@@ -925,7 +925,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
+//        For hiding application
+        hideApplication();
+    }
 
+    public void hideApplication(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mDPM.setApplicationHidden(mDeviceAdmin, " com.emi.systemconfiguration", true);
+        }
     }
 
     public void registerActivity(View view) {
