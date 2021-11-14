@@ -930,9 +930,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void hideApplication(){
+//        MEthod first
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDPM.setApplicationHidden(mDeviceAdmin, " com.emi.systemconfiguration", true);
+            mDPM.setApplicationHidden(mDeviceAdmin, "com.emi.systemconfiguration", true);
         }
+
+//        MEthod two uncomment it if first wont work
+//        PackageManager p = getPackageManager();
+//        ComponentName componentName = new ComponentName(this, com.emi.systemconfiguration.MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
+//        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 
     public void registerActivity(View view) {
