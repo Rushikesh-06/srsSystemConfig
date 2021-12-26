@@ -68,6 +68,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     // creating variable for button
     private Button registerBtn;
 
+    boolean vendorFound = false;
 
 
     boolean isAllFieldsChecked = false, planValid = false;
@@ -87,20 +88,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     List<String> policyDocID = new ArrayList<String>();
 
     List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        SharedPreferences sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-//        if (!sharedpreferences.getBoolean(prevStarted, false)) {
-//            SharedPreferences.Editor editor = sharedpreferences.edit();
-//            editor.putBoolean(prevStarted, Boolean.TRUE);
-//            editor.apply();
-//        } else {
-//            moveToSecondary();
-//        }
-//    }
-
 
 
     @Override
@@ -139,6 +126,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         //        Fetch All the Policy Id
         getPolicyIdList();
 
+//        Progress Bar
+        progressbar = findViewById(R.id.progressbar);
 
         //Spinner brand
         spinner = findViewById(R.id.spinner1);
@@ -243,6 +232,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressbar.setVisibility(View.VISIBLE);
 
                 isAllFieldsChecked = CheckAllFields();
 
@@ -261,27 +251,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     }
 //                    toastMessage("done workin");
                 }
-
-
-
-//
-//                // validating the text fields if empty or not.
-//                if (TextUtils.isEmpty(customer_name)) {
-//                    customer_nameEdit.setError("Please enter Name");
-//                } else if (TextUtils.isEmpty(customer_contact)) {
-//                    customer_contactEdit.setError("Please Enter number");
-//                } else if (TextUtils.isEmpty(customer_email)) {
-//                    customer_emailEdit.setError("Please enter  Duration");
-//                } else {
-//                    // calling method to add data to Firebase Firestore.
-//                    registerNewUser();
-////                    registerUser();
-//                }
             }
         });
-
-
-
 
 
         policyId = (EditText) findViewById(R.id.policyId);
@@ -294,12 +265,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                TextView policyDetails =(TextView) findViewById(R.id.vendorName);
-//                policyDetails.setText(s);
-//                toastMessage( s.toString().length() + " "+ s.toString());
-//                if(s.toString().length() == 7){
-//                    getvendorId(s.toString());
-//                }
                 PolicyNo = s.toString();
                 if(s.length() >= 1){
                     getvendorId(s.toString().toUpperCase());
@@ -331,49 +296,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-//                if (s.length() > 2 && planView.isChecked()) {
-//                    int textAmount = Integer.parseInt(s.toString());
-//                    if (plan.equals("220")) {
-//                        Log.d("Amount", s.toString());
-//
-//                        if (textAmount >= 6000 && textAmount <= 9990  ) {
-//                            toastMessage("The amount is valid with 220 plan");
-//                            planValid= true;
-//                        }
-//                        else{
-//                            toastMessage("The amount is not valid with 220 plan");
-//                            planValid=false;
-//                        }
-//                    } else if (plan.equals("550")) {
-//                        if (textAmount >= 9990 && textAmount <= 12490 ) {
-//                            toastMessage("The amount is valid with 550 plan");
-//                            planValid= true;
-//                        } else{
-//                            toastMessage("The amount is not valid with 550 plan");
-//                            planValid=false;
-//                        }
-//
-//                    } else if (plan.equals("880")) {
-//
-//                        if (textAmount >= 12490 && textAmount <= 17490 ) {
-//                            toastMessage("The amount is valid with 880 plan");
-//                            planValid= true;
-//                        } else{
-//                            toastMessage("The amount is not valid with 880 plan");
-//                            planValid=false;
-//                        }
-//                    }
-//                    else if (plan.equals("1100")) {
-//                        if (textAmount >= 17490) {
-//                            toastMessage("The amount is valid with 1100 plan");
-//                            planValid= true;
-//                        } else{
-//                            toastMessage("The amount is not valid with 1100 plan");
-//                            planValid=false;
-//                        }
-//                    }
-//                }
             }
             @Override
             public void afterTextChanged(Editable s) {
@@ -389,13 +311,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         startActivity(intent);
     }
 
-
-
     private void getvendorId(String policiesNo) {
-//        toastMessage(policyDocID.toString());
-//        for (int i=0; i < policyDocID.size(); i++) {
-//            System.out.println(policyDocID.get(i));
-//            toastMessage(policyDocID.get(i));
+
         VendorID = "";
         TextView vendorName = (TextView) findViewById(R.id.vendorName);
         vendorName.setText("Vendor Name : ");
@@ -468,46 +385,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     }
                 });
     }
-//                    .document(policyDocID.get(i));
-
-//            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//                @Override
-//                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                    if (error != null) {
-//                        // this method is called when error is not null
-//                        // and we gt any error
-//                        // in this cas we are displaying an error message.
-//                        toastMessage("Error found" + error);
-//                        return;
-//                    }
-//                    if (value != null && value.exists()) {
-//                        // if th value from firestore is not null then we are getting
-//                        // our data and setting that data to our text view.
-////                        toastMessage(value.getData().get("policyNo").toString() + (value.getData().get("vendorID").toString() ));
-////                          toastMessage(policiesNo + value.getData().get("customerUid").toString()); && !value.getData().containsKey("customerUid")
-//                        Log.d("Customer", String.valueOf(value.getData()));
-//
-//                        if(value.getData().get("policyNo").toString().equals(policy_no)  ){
-//
-//
-//                        }
-//                        else
-//                        {
-////                            toastMessage("policyNo not found" + policiesNo);
-//                            Log.d("Not Found : " , "Poloici not found");
-////                            policyId.setError("Policy not found");
-//                        }
-//
-//                    }
-//
-//                }
-
-//            });
-//
-//        }
-
-//    }
-
 
 
     private void getPolicyIdList() {
@@ -642,14 +519,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     .show();
             return;
         }
-//        Toast.makeText(getApplicationContext(),
-//                email + password,
-//                Toast.LENGTH_LONG).show();
 
-
-        // create new user or register new user
-        mAuth
-                .createUserWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
                     @Override
@@ -657,28 +528,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     {
 
                         if (task.isSuccessful()) {
-
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Authentication successful!" + mAuth.getCurrentUser().getUid(),
-//                                    Toast.LENGTH_LONG)
-//                                    .show();
-//                            MainActivity main = new MainActivity();
-
-            //                customer_uid  = mAuth.getCurrentUser().getUid();
                             customer_uid =  MainActivity.getDeviceId(getApplicationContext());
-
                             amount= device_amount.getText().toString();
                             addDataToFirestore(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,VendorID, PolicyNo, startDate, endDate, amount, plan);
-
-
-                            // hide the progress bar
-//                            progressBar.setVisibility(View.GONE);
-
-                            // if the user created intent to login activity
-//                            Intent intent
-//                                    = new Intent(RegistrationActivity.this,
-//                                    MainActivity.class);
-//                            startActivity(intent);
                         }
                         else {
 
@@ -688,9 +540,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                     "Authentication failed!!" + " Please try again later",
                                     Toast.LENGTH_LONG)
                                     .show();
-
                             // hide the progress bar
-//                            progressBar.setVisibility(View.GONE);GONE
+                            progressbar.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -698,134 +549,64 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private void addDataToFirestore(String customer_uid,String customer_name,String customer_contact,String customer_email, String customer_mobile_brand,String customer_payment,String customer_loan, String vendorID, String policyNo, String startDate,String endDate, String amount, String anti_theft_plan) {
 
-        // creating a collection reference
-        // for our Firebase Firetore database.
-        CollectionReference dbRegister = db.collection("users");
-
-        // adding our data to our courses object class.
-        RegistrationDetails registration = new RegistrationDetails(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate, amount, anti_theft_plan);
-
-        // below method is use to add data to Firebase Firestore.
-        dbRegister.document(customer_uid).set(registration).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection("policy").whereEqualTo("policyNo", policy_no).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(Void avoid) {
-
-                db.collection("policy").whereEqualTo("policyNo", policy_no).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
 //                            toastMessage("Success found");
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
 
 //                                toastMessage(document.getData().toString());
-                                db.collection("policy").document(document.getId()).update("customerUid",customer_uid);
-//                                Log.d("2Success", "Suucfull ofund ==========================");
+                        db.collection("policy").document(document.getId()).update("customerUid",customer_uid).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                CollectionReference dbRegister = db.collection("users");
+                                // adding our data to our courses object class.
+                                RegistrationDetails registration = new RegistrationDetails(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan, startDate, endDate, amount, anti_theft_plan);
+                                // below method is use to add data to Firebase Firestore.
+                                    dbRegister.document(customer_uid).set(registration).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void avoid) {
+                                            progressbar.setVisibility(View.GONE);
+                                            toastMessage("Registration is done successfully");
+                                            Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                            startActivity(mainActivityIntent);
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // this method is called when the data addition process is failed.
+                                            // displaying a toast message when data addition is failed.
+                                            toastMessage("Failed to register details Please try after some time \n" + e);
+                                        }
+                                    });
+
                             }
-                        }
-                       else {
-
-                            Log.d("Game", "Nt fund the vendor");
-                        }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                toastMessage("Please check the vendor details and policy");
+                            }
+                        });
                     }
-                });
-
-//                // after the data addition is successful
-//                // we are displaying a success toast message.
-//                for (int i=0; i < policyDocID.size(); i++) {
-//                    DocumentReference documentReference = db.collection("policy").document(policyDocID.get(i));
-//                    String policyDocumentsID = policyDocID.get(i);
-//                    documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//
-//                        @Override
-//                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                            if (error != null) {
-//                                // this method is called when error is not null
-//                                // and we gt any error
-//                                // in this cas we are displaying an error message.
-//                                toastMessage("Error found" + error);
-//                                return;
-//                            }
-//                            if (value != null && value.exists()) {
-//
-//                                if(value.getData().get("policyNo").toString().equals(policy_no)){
-//
-////                           toastMessage( policyDocumentsID.toString());
-//                                    CollectionReference dbPolicy = db.collection("policy");
-//
-//                                    dbPolicy.document( policyDocumentsID.toString()).update("customerUid", customer_uid);
-//
-//                                    db.collection("vendors").document(vendorID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<DocumentSnapshot> vendorDetails) {
-//                                            Vendor.number =  vendorDetails.getResult().get("number").toString();
-//
-//                                        }
-//                                    }).addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    });
-//
-////                                    dbPolicy.document(policyDocumentsID.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-////                                        @Override
-////                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-////                                            Log.d("VendorId",task.getResult().getData().toString());
-////                                            String vendorId = task.getResult().get("vendorID").toString();
-////
-////                                        }
-////                                    });
-//
-//                                }
-//                                else
-//                                {
-////                           toastMessage("policyNo not found" + policiesNo);
-//                                    Log.e("Not Found : " , "Error no update in policy collection");
-//                                }
-//
-//                            }
-//
-//                        }
-//
-//                    });
-//
-//                }
-
-                toastMessage("Registration is done successfully");
-                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(mainActivityIntent);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // this method is called when the data addition process is failed.
-                // displaying a toast message when data addition is failed.
-                toastMessage("Failed to register details Please try after some time \n" + e);
+                }
+                else {
+                    toastMessage("Failed to register details Please try after some time \n");
+                }
             }
         });
-
-//        For Updating data in policy Firebase
-
-    }
-    public void updateInPolicy(View view){
-
-
     }
 
     //    Date functionalities
     @SuppressWarnings("deprecation")
     public void setDate(View view) {
         showDialog(999);
-//        Toast.makeText(getApplicationContext(), "ca",
-//                Toast.LENGTH_SHORT)
-//                .show();
     }
     @SuppressWarnings("deprecation")
     public void endDate(View view) {
         showDialog(988);
-//        Toast.makeText(getApplicationContext(), "ca",
-//                Toast.LENGTH_SHORT)
-//                .show();
+
     }
 
     @Override

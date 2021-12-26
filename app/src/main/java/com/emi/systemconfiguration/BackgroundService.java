@@ -104,14 +104,9 @@ public class BackgroundService extends Service {
              .setPriority(NotificationManager.AUTOMATIC_RULE_STATUS_DISABLED)
 //                .setPriority(Notification.PRIORITY_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setOngoing(true)
 //                .setAutoCancel(true)
                 .build();
-//                .setContentTitle("System Service")
-//                .setContentText("This service is under Protection-Mode")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setTicker("Ticker text")
-//                .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
-//                .build();
         startForeground(2, notification);
     }
 
@@ -129,7 +124,6 @@ public class BackgroundService extends Service {
         {
             Log.i("INterent", "========= Not  Connected to Network ");
         }
-
 
         return START_STICKY;
     }

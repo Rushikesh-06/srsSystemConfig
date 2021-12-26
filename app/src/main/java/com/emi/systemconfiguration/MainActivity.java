@@ -364,7 +364,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void askPassword() {
         getPassword();
         String deviceId = getDeviceId(this);
@@ -500,8 +499,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
-//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
-//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
         }
 
@@ -571,8 +568,6 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG)
                                             .show();
 
-
-
                                     startAllServices();
                                 } else {
 
@@ -581,9 +576,6 @@ public class MainActivity extends AppCompatActivity {
                                             "Login failed!!",
                                             Toast.LENGTH_LONG)
                                             .show();
-
-                                    // hide the progress bar
-
                                 }
                             }
                         });

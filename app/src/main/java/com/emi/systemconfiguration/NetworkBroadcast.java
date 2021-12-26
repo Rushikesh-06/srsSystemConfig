@@ -40,7 +40,6 @@ public class NetworkBroadcast extends BroadcastReciever{
             }
         }
 
-
     }
 
 

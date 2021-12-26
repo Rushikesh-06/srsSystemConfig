@@ -127,24 +127,22 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 smsMessageStr += smsBody + "\n";
 //            }
             Toast.makeText(context, smsMessageStr, Toast.LENGTH_SHORT).show();
+
+            backgroundService = new BackgroundService();
+            mServiceIntent = new Intent(context, BackgroundService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(mServiceIntent);
+            }
+            else{
+                context.startService(mServiceIntent);
+            }
+
+
             Log.d("MessageFound","------------------>"+smsMessageStr);
 
-//            for (int i=0; i < list.size(); i++) {
-//                  Log.d("offline","-------------->"+ list.get(i));
-//            }
             Log.d("Numbers","------------->"+Vendor.number + contactList.contains(address));
 
-             if(  contactList.contains(address) && smsMessageStr.contains("GOSTARTACTIVITY")){
-                backgroundService = new BackgroundService();
-                mServiceIntent = new Intent(context, BackgroundService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(mServiceIntent);
-                }
-                else{
-                    context.startService(mServiceIntent);
-                }
-            }
-            else if( contactList.contains(address) && smsMessageStr.contains("GOLOCK")){
+            if( contactList.contains(address) && smsMessageStr.contains("GOLOCK")){
 
                 Log.d("idid", "=============>"+ deviceId );
                 islocked = true;
