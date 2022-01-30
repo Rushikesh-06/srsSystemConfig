@@ -2,6 +2,7 @@ package com.emi.systemconfiguration;
 
 import android.app.admin.DeviceAdminReceiver;
 
+import android.content.ComponentName;
 import android.content.Context;
 
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.emi.systemconfiguration.provision.PostProvisioningTask;
 
 
 public class DeviceAdmin extends DeviceAdminReceiver {
@@ -44,6 +47,23 @@ public class DeviceAdmin extends DeviceAdminReceiver {
 
         return "Warning";
 
+    }
+
+    public void onProfileProvisioningComplete(Context context, Intent intent) {
+        PostProvisioningTask postProvisioningTask = new PostProvisioningTask(context);
+        if (postProvisioningTask.performPostProvisioningOperations(intent)) {
+            Intent postProvisioningLaunchIntent = postProvisioningTask.getPostProvisioningLaunchIntent(intent);
+            if (postProvisioningLaunchIntent != null) {
+                context.startActivity(postProvisioningLaunchIntent);
+                return;
+            }
+            Log.e("txt", "DeviceAdminReceiver.onProvisioningComplete() invoked, but ownership not assigned");
+//            Toast.makeText(context, C0740R.string.device_admin_receiver_failure, 1).show();
+        }
+    }
+
+    public static ComponentName getComponentName(Context context) {
+        return new ComponentName(context.getApplicationContext(), DeviceAdminReceiver.class);
     }
 
 }

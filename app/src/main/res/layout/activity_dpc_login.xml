@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  android:id="@+id/dpc_login"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="12dp" android:gravity="center_horizontal" android:id="@+id/selection_title" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:text="Dpc_login" android:textAlignment="center"
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_vertical_left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+
+        <!--        <RelativeLayout-->
+<!--            android:id="@+id/divider"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="10dp"-->
+<!--            android:paddingTop="10dp"-->
+<!--            android:paddingBottom="10dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:ignore="MissingConstraints">-->
+
+
+        <TextView
+            android:id="@+id/do_selection_detailed_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="dpc_loginSub"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints"
+            />
+
+        <TextView
+            android:id="@+id/do_selection_detailed_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="text"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/breakText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="txt"
+                android:visibility="gone"
+                tools:ignore="MissingConstraints" />
+
+
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:background="?android:attr/listDivider"-->
+<!--                android:visibility="gone"-->
+<!--                tools:ignore="MissingConstraints" />-->
+
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="10dp"-->
+<!--                android:layout_alignParentBottom="true"-->
+<!--                android:layout_marginBottom="10dp"-->
+<!--                android:background="?android:attr/listDivider"-->
+<!--                tools:ignore="MissingConstraints" />-->
+
+<!--        </RelativeLayout>-->
+
+        <TextView android:id="@+id/po_selection_detailed_title"
+            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="text"
+            tools:ignore="MissingConstraints" />
+
+        <TextView android:id="@+id/po_selection_detailed_text"
+            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="txt"
+            tools:ignore="MissingConstraints" />
+
+
+        <Button android:id="@+id/po_selection_button"
+            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="tetx"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/do_selection_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="449dp"
+        android:text="selctionBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
+
+
+</LinearLayout>
+
+
+
+

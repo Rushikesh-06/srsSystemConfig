@@ -1,26 +1,26 @@
-<?xml version="1.1"  encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.emi.systemconfiguration"
     tools:ignore="MissingLeanbackLauncher">
     <!-- Permissions for internet -->
-    <uses-permission android:name="android.permission.DELETE_PACKAGES"
+    <uses-permission
+        android:name="android.permission.DELETE_PACKAGES"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage"/>
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-
     <uses-permission
         android:name="android.permission.BROADCAST_SMS"
         tools:ignore="ProtectedPermissions" />
@@ -62,10 +62,12 @@
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-feature android:name="android.hardware.usb.host" />
-    <uses-permission android:name="android.permission.USB_PERMISSION" />
 
-    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+    <uses-feature android:name="android.hardware.usb.host" />
+
+    <uses-permission android:name="android.permission.USB_PERMISSION" />
+    <uses-permission
+        android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS_PRIVILEGED"
@@ -79,6 +81,7 @@
     <uses-permission
         android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"
         tools:ignore="ProtectedPermissions" />
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -86,25 +89,26 @@
         android:name="android.software.leanback"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/system_icon"
         android:keepScreenOn="true"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:required="true"
         android:sharedUserId="android.uid.system"
         android:showOnLockScreen="true"
         android:showWhenLocked="true"
         android:supportsRtl="true"
+        android:testOnly="false"
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
-        android:testOnly="false"
-        android:requestLegacyExternalStorage="true"
         tools:ignore="MissingTvBanner">
+
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/filepaths" />
@@ -113,14 +117,16 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                 <category android:name="android.intent.category.LAUNCHER" />
-<!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- <category android:name="android.intent.category.LEANBACK_LAUNCHER" /> -->
+
 
                 <!-- <category android:name="android.intent.category.HOME" /> -->
                 <!-- <action android:name="android.intent.action.SEND"/> -->
                 <category android:name="android.intent.category.DEFAULT" />
 
-<!--                <data android:mimeType="*/*" />-->
+                <!-- <data android:mimeType="*/*" /> -->
             </intent-filter>
         </activity>
         <activity android:name=".Aboutus" />
@@ -135,6 +141,31 @@
         <activity android:name=".LockScreen" />
         <activity android:name=".RegistrationAcitivity" />
         <activity android:name=".Script" />
+        <activity
+            android:name=".AdminPolicyCompliance"
+            android:screenOrientation="portrait"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <intent-filter>
+                <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".provision.DpcLoginActivity"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <intent-filter>
+                <action android:name="android.app.action.GET_PROVISIONING_MODE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".provision.ProvisioningSuccessActivity">
+            <intent-filter>
+                <action android:name="android.app.action.PROVISIONING_SUCCESSFUL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name=".BroadcastReciever"
@@ -179,9 +210,12 @@
 
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-            <intent-filter>
+                <action android:name="android.app.action.GET_PROVISIONING_MODE" />
+                <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE" />
                 <action android:name="android.app.action.DISALLOW_FACTORY_RESET" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.app.action.PROFILE_OWNER_CHANGED" />
+                <action android:name="android.app.action.DEVICE_OWNER_CHANGED" />
             </intent-filter>
         </receiver>
         <receiver
@@ -201,17 +235,15 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".ScreenReceiver">
-         <intent-filter>
-         <action android:name="android.intent.
-         action.CLOSE_SYSTEM_DIALOGS" />
-         </intent-filter>
-         </receiver>
+            <intent-filter>
+                <action android:name="android.intent.          action.CLOSE_SYSTEM_DIALOGS" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".ScreenReceiver">
-         <intent-filter>
-         <action android:name="android.intent.
-         action.CLOSE_SYSTEM_DIALOGS" />
-         </intent-filter>
-         </receiver>
+            <intent-filter>
+                <action android:name="android.intent.          action.CLOSE_SYSTEM_DIALOGS" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".StartUpReciever"
             android:directBootAware="true"
@@ -221,7 +253,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
@@ -247,13 +278,12 @@
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" /> <!-- <service -->
-
-
         <service
             android:name=".UninstallService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -264,13 +294,16 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <service android:name=".AuthenticatorService" android:exported="false">
+        <service
+            android:name=".AuthenticatorService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator"/>
+                android:resource="@xml/authenticator" />
         </service>
     </application>
 
