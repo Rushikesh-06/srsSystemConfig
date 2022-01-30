@@ -23,7 +23,7 @@ public class ProvisioningSuccessActivity extends Activity {
             startActivity(postProvisioningLaunchIntent);
         } else {
             Log.e(TAG, "ProvisioningSuccessActivity.onCreate() invoked, but ownership not assigned");
-//            Toast.makeText(this, C0740R.string.device_admin_receiver_failure, 1).show();
+
         }
         finish();
     }

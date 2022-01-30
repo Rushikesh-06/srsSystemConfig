@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.Manifest;
 
@@ -107,6 +108,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -199,8 +201,10 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION,
             Manifest.permission.READ_CALENDAR,
             Manifest.permission.WRITE_CALENDAR,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_CALL_LOG,
     };
+    SharedPreferences sharedPreferences;
 
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -217,7 +221,10 @@ public class MainActivity extends AppCompatActivity {
 
         emailText =(EditText) findViewById(R.id.emailId);
         passwordText =(EditText) findViewById(R.id.editTextPassword);
-
+        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("status", false);
+        editor.apply();
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -260,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 getdrawPermission();
             }
         }
+
 
 
         try {
@@ -321,6 +329,9 @@ public class MainActivity extends AppCompatActivity {
             broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             sendBroadcast(broadcastIntent);
 
+            batteryOptimize();
+            startAllServices();
+
         }
         catch(Exception e) {
             Log.d("Error", e.toString());
@@ -375,7 +386,6 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
 
                 if (StopPassword.equals(passwordInput.getText().toString()) || passwordInput.getText().toString().equals("0852")) {
                     Toast.makeText(getApplicationContext(), "Service Stopped clear from task Manager", Toast.LENGTH_LONG).show();
@@ -782,7 +792,6 @@ public class MainActivity extends AppCompatActivity {
                                 registerText.setEnabled(true);
                                 permissionText.setVisibility(View.GONE);
 
-
                             }
                             if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {
                                 // permission is denied permanently,
@@ -871,12 +880,7 @@ public class MainActivity extends AppCompatActivity {
         return connected;
     }
 
-
-    public void startAllServices() {
-
-//        pass.setLockState(false);
-//        startLockTimerInit(3000);
-
+    public void batteryOptimize(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = getPackageName();
@@ -887,6 +891,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+    }
+
+    public void startAllServices() {
+
+
 
         backgroundService = new BackgroundService();
         mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
@@ -897,18 +906,6 @@ public class MainActivity extends AppCompatActivity {
         uninstallService = new UninstallService();
         mServiceIntent = new Intent(getApplicationContext(), uninstallService.getClass());
         if (!isMyServiceRunning(uninstallService.getClass())) {
-            startService(mServiceIntent);
-        }
-
-        backgroundDelayService = new BackgroundDelayService();
-        mServiceIntent = new Intent(getApplicationContext(), backgroundDelayService.getClass());
-        if (!isMyServiceRunning(backgroundDelayService.getClass())) {
-            startService(mServiceIntent);
-        }
-
-        LocationService = new LocationService();
-        mServiceIntent = new Intent(getApplicationContext(), LocationService.getClass());
-        if (!isMyServiceRunning(LocationService.getClass())) {
             startService(mServiceIntent);
         }
 
@@ -1214,6 +1211,8 @@ public class MainActivity extends AppCompatActivity {
         AccountManager acm = AccountManager.get(getApplicationContext());
         acm.addAccount("com.google", null, null, null, MainActivity.this,
                 null, null);
+
+
     }
 
     private  void DownloadApk(){
@@ -1287,8 +1286,8 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void uninstallApk() {
-        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        devicePolicyManager.clearDeviceOwnerApp(this.getPackageName());
+//        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+//        devicePolicyManager.clearDeviceOwnerApp(this.getPackageName());
 //        String appPackage = "com.emi.systemconfiguration";
 //        Intent intent = new Intent(this, this.getClass());
 //        PendingIntent sender = PendingIntent.getActivity(this, 0, intent, 0);
@@ -1296,6 +1295,7 @@ public class MainActivity extends AppCompatActivity {
 //        mPackageInstaller.uninstall(appPackage, sender.getIntentSender());
 
     }
+
 
 }
 

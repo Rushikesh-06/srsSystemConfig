@@ -1,121 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  android:id="@+id/dpc_login"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/dpc_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/linerbg"
+    android:orientation="vertical">
 
-    <TextView android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="12dp" android:gravity="center_horizontal" android:id="@+id/selection_title" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" android:text="Dpc_login" android:textAlignment="center"
-        />
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <TextView
+        android:id="@+id/selection_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp">
+        android:gravity="center_horizontal"
+        android:text="Dpc_login"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="12dp"
+        android:visibility="gone" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_left"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp" />
-
-
-        <!--        <RelativeLayout-->
-<!--            android:id="@+id/divider"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="10dp"-->
-<!--            android:paddingTop="10dp"-->
-<!--            android:paddingBottom="10dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            tools:ignore="MissingConstraints">-->
-
-
-        <TextView
-            android:id="@+id/do_selection_detailed_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="dpc_loginSub"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints"
-            />
-
-        <TextView
-            android:id="@+id/do_selection_detailed_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="text"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:id="@+id/breakText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="txt"
-                android:visibility="gone"
-                tools:ignore="MissingConstraints" />
-
-
-<!--            <View-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="20dp"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:background="?android:attr/listDivider"-->
-<!--                android:visibility="gone"-->
-<!--                tools:ignore="MissingConstraints" />-->
-
-<!--            <View-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="10dp"-->
-<!--                android:layout_alignParentBottom="true"-->
-<!--                android:layout_marginBottom="10dp"-->
-<!--                android:background="?android:attr/listDivider"-->
-<!--                tools:ignore="MissingConstraints" />-->
-
-<!--        </RelativeLayout>-->
-
-        <TextView android:id="@+id/po_selection_detailed_title"
-            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="text"
-            tools:ignore="MissingConstraints" />
-
-        <TextView android:id="@+id/po_selection_detailed_text"
-            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="txt"
-            tools:ignore="MissingConstraints" />
-
-
-        <Button android:id="@+id/po_selection_button"
-            android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="tetx"
-            tools:ignore="MissingConstraints" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/do_selection_button"
+    <TextView
+        android:id="@+id/do_selection_detailed_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="449dp"
-        android:text="selctionBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="24dp"
+        android:text="text"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/breakText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="txt"
+        android:visibility="gone"
         tools:ignore="MissingConstraints" />
 
 
+    <ImageButton
+        android:id="@+id/action_bar_back"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/goelectrnoicog" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:shadowColor="@color/colorPrimary"
+        android:shadowDx="-2"
+        android:shadowDy="-2"
+        android:shadowRadius="10"
+        android:text="@string/app_name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/colorText"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="Warm Welcome"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/colorText"
+        android:textSize="20dp" />
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Protection mode"
+        android:textColor="@color/colorText"
+        android:textSize="16dp" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/multiAutoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:text="This device is under Emi protection period which includes that your device setting will be locked till the end of this period. You may not able to access the device setting until special permission is allowed."
+        android:textColor="@color/colorHint" />
+
+    <TextView
+        android:id="@+id/po_selection_detailed_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="text"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/po_selection_detailed_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="txt"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+
+    <Button
+        android:id="@+id/po_selection_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="tetx"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+
+    <Button
+        android:id="@+id/do_selection_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/input_bg"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:shadowColor="#323232"
+        android:text="Activate"
+        android:textColor="@color/colorHint"
+        android:visibility="visible"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:gravity="bottom|center"
+        android:paddingLeft="30dp"
+        android:paddingTop="30dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="0dp"
+        android:text=" © 2021 GoElectronix All Rights reserved"
+        android:textColor="@color/colorText"
+        app:layout_constraintBottom_toTopOf="@+id/textelitnotch" />
+
+    <TextView
+        android:id="@+id/textelitnotch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:gravity="bottom|center"
+        android:onClick="aboutusBtn"
+        android:text="Developed &amp; Designed by Elitnotch"
+        android:textColor="@color/colorText"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
 </LinearLayout>
+
+
+
+
+
+
 
 
 

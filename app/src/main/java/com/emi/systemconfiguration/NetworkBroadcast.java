@@ -30,16 +30,30 @@ public class NetworkBroadcast extends BroadcastReciever{
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(mServiceIntent);
+                startService(context, intent);
                 Log.d("NetworStates", "'sdbsdfvdfvdbndsvdsvd Netwrk found");
+
 //                Toast.makeText(context, "Started NEtwpr fore Service", Toast.LENGTH_LONG).show();
             }
             else{
                 context.startService(mServiceIntent);
+                startService(context, intent);
                 Log.d("NetworStates", "'sdbsdfvdfvdbndsvdsvd Netwrk found");
 //                Toast.makeText(context, "Started NEtw back Service", Toast.LENGTH_LONG).show();
             }
         }
 
+    }
+
+    public void startService(Context context, Intent intent){
+        backgroundService = new BackgroundService();
+        mServiceIntent = new Intent(context, BackgroundService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mServiceIntent);
+        }
+        else{
+            context.startService(mServiceIntent);
+        }
     }
 
 

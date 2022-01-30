@@ -56,7 +56,10 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
     private LocationService locationService;
+    private UninstallService uninstallService;
     Intent mServiceIntent;
+    Intent getServiceIntent;
+
 
     DevicePolicyManager dpm;
 
@@ -126,16 +129,10 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 smsMessageStr += "SMS From: " + address + "\n";
                 smsMessageStr += smsBody + "\n";
 //            }
+            startService(context, intent);
             Toast.makeText(context, smsMessageStr, Toast.LENGTH_SHORT).show();
 
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(context, BackgroundService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(mServiceIntent);
-            }
-            else{
-                context.startService(mServiceIntent);
-            }
+
 
 
             Log.d("MessageFound","------------------>"+smsMessageStr);
@@ -148,6 +145,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 islocked = true;
 //                db.collection("users").document(deviceId).update("isLocked",true);
                 handler.post(runnableCode);
+                dpm.lockNow();
             }
             else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
 //                    Intent dialogIntent = new Intent(context, MainActivity.class);
@@ -157,6 +155,8 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 Log.d("ServiceLocked", "------------------>"+ islocked);
 //                db.collection("users").document(deviceId).update("isLocked",false);
                 handler.removeCallbacks(runnableCode);
+                startService(context, intent);
+
             }
             else if(contactList.contains(address) && smsMessageStr.contains("SYSTEMUPDATE")){
                     startDownload(context);
@@ -244,6 +244,25 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         context.startActivity(intent);
     }
 
+    public void startService(Context context, Intent intent){
+        backgroundService = new BackgroundService();
+        mServiceIntent = new Intent(context, BackgroundService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mServiceIntent);
+        }
+        else{
+            context.startService(mServiceIntent);
+        }
+
+        uninstallService = new UninstallService();
+        getServiceIntent = new Intent(context, uninstallService.getClass());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(getServiceIntent);
+        }
+        else{
+            context.startService(getServiceIntent);
+        }
+    }
 
 }
 

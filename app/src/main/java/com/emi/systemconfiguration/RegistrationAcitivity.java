@@ -1,5 +1,6 @@
 package com.emi.systemconfiguration;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -41,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.internal.JsonReaderInternalAccess;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -269,7 +271,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 if(s.length() >= 1){
                     getvendorId(s.toString().toUpperCase());
                     policy_no = s.toString().toUpperCase();
-//                    toastMessage(s.toString());
+
                 }
 
             }
@@ -343,8 +345,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                                     String vendorId = document.getData().get("vendorID").toString();
                                     VendorID = vendorId;
-
+//                                    toastMessage("Succ" + vendorId);
                                     db.collection("vendors").document(vendorId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @SuppressLint("SetTextI18n")
                                         @Override
                                         public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                             if (error != null) {
@@ -354,9 +357,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                 toastMessage("Error found" + error);
                                                 return;
                                             }
+//                                            Log.d("-------->",VendorID +"===="+ value.toString() );
                                             if (value != null && value.exists()) {
                                                 if(value.getId().equals(VendorID)) {
-                                                    //   toastMessage(value.getData().toString());
+//                                                     toastMessage(value.getData().toString());
                                                     TextView vendorName = (TextView) findViewById(R.id.vendorName);
                                                     vendorName.setText("Vendor Name : " + value.getData().get("contactperson").toString());
                                                     TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
@@ -369,6 +373,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                     vendorEmail.setText("Email Id : " + value.getData().get("email").toString());
                                                     TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
                                                     vendorAddress.setText("Shop Address : " + value.getData().get("address").toString() + "," + value.getData().get("location").toString());
+//                                                    Log.d("-------->1",VendorID +"===="+ value.toString() );
                                                 }
                                             }
 
@@ -408,31 +413,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 }
             }
         });
-
-//        db.collection("policy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot documentSnapshots) {
-//                if (documentSnapshots.isEmpty()) {
-//                    toastMessage("onSuccess: LIST EMPTY");
-//                    return;
-//                } else {
-//                    // Convert the whole Query Snapshot to a list
-//                    // of objects directly! No need to fetch each
-//                    // document.
-//                    toastMessage("its work");
-//
-////                    List String = documentSnapshots.toObjects();
-////                    // Add all to your list
-////                    mArrayList.addAll(types);
-////                    Log.d("List of elemets", "onSuccess: " + mArrayList);
-//                }
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                toastMessage("Error getting data!!!");
-//            }
-//        });
     }
 
     public void toastMessage(String message){
@@ -460,39 +440,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-//    private void registerUser(){
-//
-//        String email, password;
-//        email = customer_emailEdit.getText().toString();
-//        password = customer_contactEdit.getText().toString();
-//
-//        //creating a new user
-//        mAuth.createUserWithEmailAndPassword(email,password )
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//                        //checking if success
-//                        if(task.isSuccessful()){
-//
-//                            //display some message here
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Authenticationn Successful",
-//                                    Toast.LENGTH_LONG)
-//                                    .show();
-//                        }else{
-//                            //display some message here
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Authenticationn faillll",
-//                                    Toast.LENGTH_LONG)
-//                                    .show();
-//                        }
-//
-//                    }
-//                });
-//
-//    }
 
     private void registerNewUser()
     {

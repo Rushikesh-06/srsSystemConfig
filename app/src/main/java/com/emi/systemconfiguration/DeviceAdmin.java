@@ -44,7 +44,6 @@ public class DeviceAdmin extends DeviceAdminReceiver {
     public CharSequence onDisableRequested(@NonNull Context context, @NonNull Intent intent) {
         Log.d("Device Admin","Disable Requested");
 
-
         return "Warning";
 
     }

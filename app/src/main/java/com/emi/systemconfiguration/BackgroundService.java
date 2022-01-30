@@ -8,8 +8,10 @@ import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
@@ -21,7 +23,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -33,6 +35,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
@@ -47,6 +52,7 @@ public class BackgroundService extends Service {
 
     public int counter=0;
     private FirebaseFirestore db;
+    ComponentName back;
 
     public Boolean activeUser = false, userAlert = true, playState = false;
 
@@ -56,21 +62,30 @@ public class BackgroundService extends Service {
     MediaPlayer mPlayer ;
 
     password pass;
+    SharedPreferences sharedPreferences;
+
+    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         super.onCreate();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        back = DeviceAdmin.getComponentName(getApplication());
         db = FirebaseFirestore.getInstance();
         pass = password.getInstance();
+
+        mPlayer = MediaPlayer.create(this, R.raw.emisound);
+
+        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+
 //comment it out for hiding the notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
         else
             startForeground(1, new Notification());
 
-        mPlayer = MediaPlayer.create(this, R.raw.emisound);
+
 
     }
 
@@ -158,12 +173,27 @@ public class BackgroundService extends Service {
 //                sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 //            }
 
+            if(readData().equals("true")){
+                dpm.lockNow();
+                Log.d("Lock----->", "LOcked by read write" + readData());
+            }
+            else {
+                Log.d("Lock----->", "LOcked by read write" + readData());
+            }
+
             if(activeUser) {
                 if(userAlert){
                     userAlert = false;
                 }
-                continuesLock();
                 playSound();
+                continuesLock();
+                try{
+                    dpm.setDeviceOwnerLockScreenInfo(back, "Please pay Emi Contact your Retailer ");
+                    dpm.setKeyguardDisabled(back, true);
+                }
+                catch(Exception e){
+                    Log.e("dpmNotfoun", "===> Error pf dpm");
+                }
 
 
             }
@@ -179,6 +209,8 @@ public class BackgroundService extends Service {
     }
 
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void continuesLock(){
 
@@ -189,6 +221,7 @@ public class BackgroundService extends Service {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
             String currentLauncherName= resolveInfo.activityInfo.packageName;
 //|| activityName.equals(currentLauncherName)
             if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller")){
@@ -346,6 +379,13 @@ public class BackgroundService extends Service {
                     if (value != null && value.exists()) {
                         Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
                         Log.d("Lock", customerActiveFeild.toString());
+
+                        writeData(customerActiveFeild.toString());
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("status", customerActiveFeild);
+                        editor.apply();
+
                         if (!customerActiveFeild) {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus", activeUser.toString());
@@ -357,6 +397,7 @@ public class BackgroundService extends Service {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
                             documentReference.update("lockStatus",true);
+
                         }
                         Log.d("Found the" + activeUser, value.getData().get("customer_active").toString());
                     }
@@ -401,10 +442,45 @@ public class BackgroundService extends Service {
         }
         catch (Exception e){
             e.printStackTrace();
+
         }
     }
 
+    private void writeData(String status)
+    {
+        try
+        {
+            FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            String data = status;
+            fos.write(data.getBytes());
+            fos.flush();
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
+    }
 
+    private String readData() {
+        try {
+            FileInputStream fin = openFileInput(filename);
+            int a;
+            StringBuilder temp = new StringBuilder();
+            while ((a = fin.read()) != -1) {
+                temp.append((char) a);
+            }
+
+            // setting text from the file.
+            String data = temp.toString();
+            fin.close();
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }
