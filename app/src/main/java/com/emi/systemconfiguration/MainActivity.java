@@ -297,13 +297,9 @@ public class MainActivity extends AppCompatActivity {
             checkEmailBtn.setEnabled(true);
             registerText.setEnabled(true);
             permissionText.setVisibility(View.GONE);
-//            Intent fromIntent = getIntent();
-//            String flag = fromIntent.hasExtra("flag") ? fromIntent.getStringExtra("flag") : "";
 
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
-//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_BLUETOOTH);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
-//            mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_MODIFY_ACCOUNTS);
 
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
                 // try to become active

@@ -183,6 +183,7 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
 
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
             <intent-filter>
@@ -212,10 +213,17 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
                 <action android:name="android.app.action.GET_PROVISIONING_MODE" />
                 <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.app.action.DISALLOW_FACTORY_RESET" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.app.action.PROFILE_OWNER_CHANGED" />
                 <action android:name="android.app.action.DEVICE_OWNER_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.app.action.ACTION_GET_PROVISIONING_MODE" />
+                <action android:name="android.app.action.ACTION_ADMIN_POLICY_COMPLIANCE " />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
         <receiver
@@ -236,12 +244,12 @@
         </receiver>
         <receiver android:name=".ScreenReceiver">
             <intent-filter>
-                <action android:name="android.intent.          action.CLOSE_SYSTEM_DIALOGS" />
+                <action android:name="android.intent.action.CLOSE_SYSTEM_DIALOGS" />
             </intent-filter>
         </receiver>
         <receiver android:name=".ScreenReceiver">
             <intent-filter>
-                <action android:name="android.intent.          action.CLOSE_SYSTEM_DIALOGS" />
+                <action android:name="android.intent.action.CLOSE_SYSTEM_DIALOGS" />
             </intent-filter>
         </receiver>
         <receiver
@@ -272,6 +280,26 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".AdminPolicyComplianceActivity"
+            android:screenOrientation="portrait"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <intent-filter>
+                <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ProvisioningModeActivity"
+            android:screenOrientation="portrait"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <intent-filter>
+                <action android:name="android.app.action.GET_PROVISIONING_MODE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
 
         <service
             android:name=".BackgroundService"
