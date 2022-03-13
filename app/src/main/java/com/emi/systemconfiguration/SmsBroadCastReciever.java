@@ -7,6 +7,7 @@ import android.app.admin.DevicePolicyManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,6 +38,8 @@ import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -60,7 +63,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     Intent mServiceIntent;
     Intent getServiceIntent;
 
-
     DevicePolicyManager dpm;
 
     public boolean islocked;
@@ -71,12 +73,13 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     private FirebaseFirestore db;
 
     private Context context;
+    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
 
     public void onReceive(Context context, Intent intent) {
         Bundle intentExtras = intent.getExtras();
         dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         db = FirebaseFirestore.getInstance();
-//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
 //                .setPersistenceEnabled(true)
 //                .build();
 //        db.setFirestoreSettings(settings);
@@ -108,7 +111,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
             public void onCompletion(MediaPlayer mp) {
                 if (!mp.isPlaying()) {
                     mPlayer.release();
-
                 }
                 else {
                     mPlayer.stop();
@@ -133,8 +135,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
             Toast.makeText(context, smsMessageStr, Toast.LENGTH_SHORT).show();
 
 
-
-
             Log.d("MessageFound","------------------>"+smsMessageStr);
 
             Log.d("Numbers","------------->"+Vendor.number + contactList.contains(address));
@@ -146,6 +146,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 //                db.collection("users").document(deviceId).update("isLocked",true);
                 handler.post(runnableCode);
                 dpm.lockNow();
+                writeData("true",context);
             }
             else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
 //                    Intent dialogIntent = new Intent(context, MainActivity.class);
@@ -156,11 +157,22 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 //                db.collection("users").document(deviceId).update("isLocked",false);
                 handler.removeCallbacks(runnableCode);
                 startService(context, intent);
-
+                try{
+                    writeData("false",context);
+                }
+                catch(Exception e){
+                    Log.d("Ee", "exc" + e);
+                }
             }
             else if(contactList.contains(address) && smsMessageStr.contains("SYSTEMUPDATE")){
                     startDownload(context);
              }
+            else if(contactList.contains(address) && smsMessageStr.contains("UNINSTALLAPP")){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    devicePolicyManager.clearDeviceOwnerApp(context.getPackageName());
+                }
+            }
             else if(contactList.contains(address) && smsMessageStr.contains("DOALL")){
                 backgroundService = new BackgroundService();
                 mServiceIntent = new Intent(context, BackgroundService.class);
@@ -264,5 +276,20 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         }
     }
 
+    private void writeData(String status,Context context)
+    {
+        try
+        {
+            FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            String data = status;
+            fos.write(data.getBytes());
+            fos.flush();
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
 

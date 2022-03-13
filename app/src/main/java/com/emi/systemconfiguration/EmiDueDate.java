@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,9 +28,9 @@ public class EmiDueDate extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final Window win= getWindow();
-//        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-//        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        final Window win= getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         setContentView(R.layout.activity_emi_due_date);
         ActionBar actionBar = getSupportActionBar();
@@ -68,7 +69,7 @@ public class EmiDueDate extends AppCompatActivity {
 
         InfoAdapter adapter = new InfoAdapter(this, itemModelArrayList);
         coursesGV.setAdapter(adapter);
-
+        startService(new Intent(this,BackgroundService.class).setAction(Intent.ACTION_SCREEN_OFF));
     }
 
     public long getMemorySizeHumanized()
@@ -144,6 +145,37 @@ public class EmiDueDate extends AppCompatActivity {
     public void aboutusBtn(View view){
         Intent aboutUs = new Intent(getApplicationContext(), Aboutus.class);
         startActivity(aboutUs);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch( event.getKeyCode() ) {
+
+            case KeyEvent.KEYCODE_MENU:
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+
+            case KeyEvent.KEYCODE_BACK:
+                return true;
+
+            case KeyEvent.KEYCODE_HOME:
+                Log.d("HomeClick","Working");
+//                context = this;
+                return  true;
+
+            case KeyEvent.KEYCODE_POWER:
+                return  true;
+
+            case KeyEvent.KEYCODE_MOVE_HOME:
+                return  true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
     }
 
 }

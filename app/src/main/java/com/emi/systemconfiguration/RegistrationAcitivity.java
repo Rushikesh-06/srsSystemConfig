@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -44,6 +45,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.internal.JsonReaderInternalAccess;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -91,6 +95,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
 
+    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +129,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         // getting our instance
         // from Firebase Firestore.
         db = FirebaseFirestore.getInstance();
+
+        try{
+            writeData("false");
+        }
+        catch(Exception e){
+            Log.d("Erro", "eror" +e);
+        }
+
 
         //        Fetch All the Policy Id
         getPolicyIdList();
@@ -670,6 +683,42 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         return true;
     };
 
+    private void writeData(String status)
+    {
+        try
+        {
+            FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            String data = status;
+            fos.write(data.getBytes());
+            fos.flush();
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String readData() {
+        try {
+            FileInputStream fin = openFileInput(filename);
+            int a;
+            StringBuilder temp = new StringBuilder();
+            while ((a = fin.read()) != -1) {
+                temp.append((char) a);
+            }
+
+            // setting text from the file.
+            String data = temp.toString();
+            fin.close();
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }
 

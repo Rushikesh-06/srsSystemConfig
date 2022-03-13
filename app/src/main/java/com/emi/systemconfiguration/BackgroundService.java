@@ -34,11 +34,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MetadataChanges;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,8 +75,12 @@ public class BackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        back = DeviceAdmin.getComponentName(getApplication());
+        back = new ComponentName(this,DeviceAdmin.class);
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
         pass = password.getInstance();
 
         mPlayer = MediaPlayer.create(this, R.raw.emisound);
@@ -84,8 +92,6 @@ public class BackgroundService extends Service {
             startMyOwnForeground();
         else
             startForeground(1, new Notification());
-
-
 
     }
 
@@ -157,29 +163,24 @@ public class BackgroundService extends Service {
     private TimerTask timerTask;
     Handler handler = new Handler();
     private Runnable runnableCode = new Runnable() {
-        int day = 3;
-        int count = 0;
         @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public void run() {
             // Do something here on the main thread
-            Log.d("Handlers", "Called on main thread");
-            Log.i("Count", "=========  "+ (counter++));
-//
-//            if(day <= counter) {
-                Log.i("Count", "========= Workingggg  ");
+            try{
+                if(readData().equals("true")){
+                    dpm.lockNow();
+                    Log.d("Lock----->", "LOcked by read write" + readData());
+                }
+                else {
+                    Log.d("Lock----->", "LOcked by read write" + readData());
+                }
 
-//            if(MainActivity.multiFound){
-//                sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-//            }
+            }
+            catch(Exception e){
+                Log.d("Erro", "Ee" +e);
+            }
 
-            if(readData().equals("true")){
-                dpm.lockNow();
-                Log.d("Lock----->", "LOcked by read write" + readData());
-            }
-            else {
-                Log.d("Lock----->", "LOcked by read write" + readData());
-            }
 
             if(activeUser) {
                 if(userAlert){
@@ -188,16 +189,12 @@ public class BackgroundService extends Service {
                 playSound();
                 continuesLock();
                 try{
-                    dpm.setDeviceOwnerLockScreenInfo(back, "Please pay Emi Contact your Retailer ");
-                    dpm.setKeyguardDisabled(back, true);
+                    dpm.setKeyguardDisabled( back, true);
                 }
                 catch(Exception e){
                     Log.e("dpmNotfoun", "===> Error pf dpm");
                 }
-
-
             }
-
             handler.postDelayed(runnableCode, 100);
         }
     };
@@ -223,16 +220,14 @@ public class BackgroundService extends Service {
             ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
 
             String currentLauncherName= resolveInfo.activityInfo.packageName;
-//|| activityName.equals(currentLauncherName)
+
             if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller")){
                 Log.e("USer","Vendor is on activity");
 //            startActivity(new Intent(this, Lock.class));
 //            dialog.show();
-
             }
             else {
                 dpm.lockNow();
-
             }
             Log.e("Locking", " *********************** THi is woking properly"+ activityName );
         }
@@ -365,6 +360,10 @@ public class BackgroundService extends Service {
             String deviceId = MainActivity.getDeviceId(getApplicationContext());
             Log.d("deviceUid", deviceId);
             DocumentReference documentReference = db.collection("users").document(deviceId);
+            DocumentReference drLock = db.collection("users_status").document(deviceId);
+            Map<String, Object> status = new HashMap<>();
+
+
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -380,8 +379,6 @@ public class BackgroundService extends Service {
                         Boolean customerActiveFeild = (Boolean) value.getData().get("customer_active");
                         Log.d("Lock", customerActiveFeild.toString());
 
-                        writeData(customerActiveFeild.toString());
-
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("status", customerActiveFeild);
                         editor.apply();
@@ -390,14 +387,17 @@ public class BackgroundService extends Service {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus", activeUser.toString());
                             playState= true;
-                            documentReference.update("lockStatus",false);
+                            status.put("lockStatus",false);
+                            drLock.set(status);
 
+                            writeData(customerActiveFeild.toString());
 
                         } else {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
-                            documentReference.update("lockStatus",true);
-
+                            status.put("lockStatus",true);
+                            drLock.set(status);
+                            writeData(customerActiveFeild.toString());
                         }
                         Log.d("Found the" + activeUser, value.getData().get("customer_active").toString());
                     }
@@ -455,12 +455,12 @@ public class BackgroundService extends Service {
             fos.write(data.getBytes());
             fos.flush();
             fos.close();
+            Log.d("---->12","COunt");
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-
     }
 
     private String readData() {
@@ -475,6 +475,7 @@ public class BackgroundService extends Service {
             // setting text from the file.
             String data = temp.toString();
             fin.close();
+
             return data;
         } catch (IOException e) {
             e.printStackTrace();

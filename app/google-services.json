@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "741955552131",
+    "firebase_url": "https://emi-locker-e99c1-default-rtdb.firebaseio.com",
     "project_id": "emi-locker-e99c1",
     "storage_bucket": "emi-locker-e99c1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:741955552131:android:46e414569afb006e2decb6",
+        "mobilesdk_app_id": "1:741955552131:android:0285173add5600672decb6",
         "android_client_info": {
           "package_name": "com.emi.systemconfiguration"
         }
@@ -20,7 +21,36 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCv9uRksmssCqnVkxOVqszEAvI7pti25Dg"
+          "current_key": "AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741955552131:android:46b0b42ccd4b63f42decb6",
+        "android_client_info": {
+          "package_name": "com.gexl.login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8"
         }
       ],
       "services": {

@@ -27,6 +27,7 @@ import androidx.annotation.RequiresApi;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class BroadcastReciever extends BroadcastReceiver {
@@ -72,38 +73,53 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.intent.action.ACTION_SHUTDOWN").contains((action)) ||
                 ("android.intent.action.AIRPLANE_MODE").contains((action)) ||
                 ("android.intent.action.SCREEN_ON").contains((action)) ||
+                ("android.intent.action.SCREEN_OFF").contains((action)) ||
                 ("android.intent.action.CONFIGURATION_CHANGED").contains((action)) ||
                 ("android.intent.action.REBOOT").contains((action)) ||
                 ("BackgroundProcess").equals(action) ||
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
 
-//            context.startForegroundService(new Intent(context, BackgroundService.class));
-//            context.startForegroundService(new Intent(context, LocationService.class));
+            Log.d("---------->d", Objects.requireNonNull(readData(context)));
 
-            if(readData(context).equals("true")){
+            startService();
+            try{
+                try{
+                    if(Objects.requireNonNull(readData(context)).equals("true") ){
 
-                handler.post(runnableCode);
-                backgroundService = new BackgroundService();
-                mServiceIntent = new Intent(context, BackgroundService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(mServiceIntent);
+                        Log.d("---------->d1", readData(context));
+                        dpm.lockNow();
+                        handler.post(runnableCode);
+                        backgroundService = new BackgroundService();
+                        mServiceIntent = new Intent(context, BackgroundService.class);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(mServiceIntent);
+                        }
+                        else{
+                            context.startService(mServiceIntent);
+                        }
+                    }
                 }
-                else{
-                    context.startService(mServiceIntent);
+                catch(Exception e){
+                    Log.d("Ex", "Ex"+ e);
+
+                }
+                if(status) {
+                    dpm.lockNow();
+                    backgroundService = new BackgroundService();
+                    mServiceIntent = new Intent(context, BackgroundService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(mServiceIntent);
+                    }
+                    else{
+                        context.startService(mServiceIntent);
+                    }
                 }
             }
-
-            if(status) {
-                dpm.lockNow();
-                backgroundService = new BackgroundService();
-                mServiceIntent = new Intent(context, BackgroundService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(mServiceIntent);
-                }
-                else{
-                    context.startService(mServiceIntent);
-                }
+            catch(Exception e){
+                Log.d("Err","Error"+ e);
             }
+
+
 
             backgroundService = new BackgroundService();
             mServiceIntent = new Intent(context, BackgroundService.class);

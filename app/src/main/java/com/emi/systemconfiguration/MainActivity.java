@@ -94,6 +94,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
@@ -114,6 +115,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
@@ -206,6 +208,9 @@ public class MainActivity extends AppCompatActivity {
     };
     SharedPreferences sharedPreferences;
 
+    private ArrayList<LockModal> courseModalArrayList;
+    private Context context;
+
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -217,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         emailText =(EditText) findViewById(R.id.emailId);
         passwordText =(EditText) findViewById(R.id.editTextPassword);
@@ -368,6 +372,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
 
     }
 
@@ -704,7 +709,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return deviceId;
     }
-
 
 
     @Override
@@ -1196,7 +1200,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createUser(View v) {
@@ -1211,8 +1214,6 @@ public class MainActivity extends AppCompatActivity {
         AccountManager acm = AccountManager.get(getApplicationContext());
         acm.addAccount("com.google", null, null, null, MainActivity.this,
                 null, null);
-
-
     }
 
     private  void DownloadApk(){
