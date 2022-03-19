@@ -146,7 +146,7 @@
 <!--            android:layout_marginRight="60dp"-->
 <!--            android:layout_marginBottom="20dp"-->
 <!--            android:gravity="center"-->
-<!--            android:onClick="switchUser"-->
+<!--            android:onClick="installApk"-->
 <!--            android:text="Switch User"-->
 <!--            android:textColor="@color/colorText"-->
 <!--            android:textSize="24sp" />-->

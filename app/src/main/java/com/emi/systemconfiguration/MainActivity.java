@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
 
 import android.Manifest;
@@ -35,6 +36,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -55,6 +57,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.os.RemoteException;
@@ -115,6 +118,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -132,6 +136,7 @@ import static android.os.UserManager.DISALLOW_REMOVE_USER;
 
 import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION;
 import static android.service.controls.ControlsProviderService.TAG;
+import static com.emi.systemconfiguration.BuildConfig.DEBUG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -143,13 +148,13 @@ public class MainActivity extends AppCompatActivity {
 
     Boolean AllPerm = true;
 
-
     Button checkEmailBtn;
     TextView permissionText;
 
     private FirebaseFirestore db;
 
     public static Boolean multiFound = true;
+    String generatedString;
 
     //For Permission
     private static final int CAMERA_PERMISSION_CODE = 100;
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
-    private LocationService LocationService;
+    private UpdateService updateService;
     private UninstallService uninstallService;
 
     Intent mServiceIntent;
@@ -187,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
 
     String MultiUser;
     String StopPassword;
+
+    String PathURL;
 
 
     String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS,
@@ -210,6 +217,20 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<LockModal> courseModalArrayList;
     private Context context;
+
+//    APp install device admin
+
+
+    public static final int MSG_DOWNLOAD_COMPLETE = 1;
+    public static final int MSG_DOWNLOAD_TIMEOUT = 2;
+    public static final int MSG_INSTALL_COMPLETE = 3;
+
+    private static final int DOWNLOAD_TIMEOUT_MILLIS = 120_000;
+
+    public static final String ACTION_INSTALL_COMPLETE
+            = "com.emi.systemconfiguration.INSTALL_COMPLETE";
+
+
 
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -906,12 +927,18 @@ public class MainActivity extends AppCompatActivity {
         if (!isMyServiceRunning(backgroundService.getClass())) {
             startService(mServiceIntent);
         }
+        updateService = new UpdateService();
+        mServiceIntent = new Intent(getApplicationContext(), updateService.getClass());
+        if (!isMyServiceRunning(updateService.getClass())) {
+            startService(mServiceIntent);
+        }
 
         uninstallService = new UninstallService();
         mServiceIntent = new Intent(getApplicationContext(), uninstallService.getClass());
         if (!isMyServiceRunning(uninstallService.getClass())) {
             startService(mServiceIntent);
         }
+
 
         Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
 //        For hiding application
@@ -1211,13 +1238,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createGoogleAccount(View v) {
-        AccountManager acm = AccountManager.get(getApplicationContext());
-        acm.addAccount("com.google", null, null, null, MainActivity.this,
-                null, null);
-    }
+//        AccountManager acm = AccountManager.get(getApplicationContext());
+//        acm.addAccount("com.google", null, null, null, MainActivity.this,
+//                null, null);
 
-    private  void DownloadApk(){
-        Toast.makeText(this, "Started to Download", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "StartetdDownload", Toast.LENGTH_SHORT).show();
         String url = "https://goelectronix.s3.us-east-2.amazonaws.com/AntiTheftV1.apk";
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
@@ -1225,64 +1250,67 @@ public class MainActivity extends AppCompatActivity {
         request.setDescription("Downloading EmiLocker");
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"AntiTheftV1.apk");
+
+        generatedString = getSaltString(9);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,generatedString+".apk");
         DownloadManager manager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
+        //Registering receiver in Download Manager
+        registerReceiver(onCompleted, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         manager.enqueue(request);
+
     }
 
-    private void installApk() {
-//
-        try
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                PackageInstaller pi = this.getPackageManager().getPackageInstaller();
-                int sessId = pi.createSession(new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL));
+    BroadcastReceiver onCompleted = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context.getApplicationContext(), "Download Finish", Toast.LENGTH_SHORT).show();
+            try{
 
-                PackageInstaller.Session session = pi.openSession(sessId);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    File root=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS.toString() + "/"+generatedString+".apk");
+                    InputStream inputStream =new FileInputStream(root.getAbsolutePath());
+                    PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+                    int sessionId = 0;
+                    sessionId = packageInstaller.createSession(new PackageInstaller
+                            .SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL));
 
-                // .. write updated APK file to out
-                long sizeBytes = 0;
-                final File file = new File("/storage/emulated/0/Download/AntiTheftV1.apk");
-                if (file.isFile()) {
-                    sizeBytes = file.length();
-                }
+                    PackageInstaller.Session session = packageInstaller.openSession(sessionId);
 
-                InputStream in = null;
-                OutputStream out = null;
+                    long sizeBytes = 0;
 
-                in = new FileInputStream("/storage/emulated/0/Download/AntiTheftV1.apk");
-                out = session.openWrite("my_app_session", 0, sizeBytes);
+                    OutputStream out = null;
+                    out = session.openWrite("my_app_session", 0, sizeBytes);
 
-                int total = 0;
-                byte[] buffer = new byte[65536];
-                int c;
-                while ((c = in.read(buffer)) != -1) {
-                    total += c;
-                    out.write(buffer, 0, c);
-                }
-
+                    int total = 0;
+                    byte[] buffer = new byte[65536];
+                    int c;
+                    while ((c = inputStream.read(buffer)) != -1) {
+                        total += c;
+                        out.write(buffer, 0, c);
+                    }
                     session.fsync(out);
+                    inputStream.close();
+                    out.close();
 
-                in.close();
-                out.close();
-
-                System.out.println("InstallApkViaPackageInstaller - Success: streamed apk " + total + " bytes");
-                // fake intent
-                Context app = this;
-                Intent intent = new Intent(app, DeviceAdmin.class);
-                PendingIntent alarmtest = PendingIntent.getBroadcast(app,
-                        1337111117, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                session.commit(alarmtest.getIntentSender());
-
-                session.close();
+                    session.commit(createIntentSender(sessionId));
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
+            catch(Exception e){
 
+                Log.d("errp", e+"dfhfdh"+ Environment.DIRECTORY_DOWNLOADS +PathURL);
+            }
+
+
+        }
+    };
+
+    private IntentSender createIntentSender(int sessionId) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                sessionId,
+                new Intent(LauncherReceiver.START_INTENT),
+                0);
+        return pendingIntent.getIntentSender();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -1297,6 +1325,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private  void DownloadApk(){
+        Toast.makeText(this, "Started to Download", Toast.LENGTH_SHORT).show();
+        String url = "https://goelectronix.s3.us-east-2.amazonaws.com/AntiTheftV1.apk";
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        request.setTitle("Download EmiLocker");
+        request.setDescription("Downloading EmiLocker");
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"AntiTheftV1.apk");
+
+        DownloadManager manager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+
+    }
+
+    protected static String getSaltString(int lenght) {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < lenght) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
+    }
 
 }
 

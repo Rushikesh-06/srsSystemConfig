@@ -119,16 +119,9 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!-- <category android:name="android.intent.category.LEANBACK_LAUNCHER" /> -->
-
-
-                <!-- <category android:name="android.intent.category.HOME" /> -->
-                <!-- <action android:name="android.intent.action.SEND"/> -->
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <!-- <data android:mimeType="*/*" /> -->
             </intent-filter>
         </activity>
         <activity android:name=".Aboutus" />
@@ -287,16 +280,32 @@
 
         <receiver android:name=".LockBroadcast">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".LauncherReceiver" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="com.aaa.aaa.action.START" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
         <service
             android:name=".BackgroundService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="false" /> <!-- <service -->
+            android:stopWithTask="false" />
         <service
             android:name=".UninstallService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false" />
+        <service
+            android:name=".UpdateService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />

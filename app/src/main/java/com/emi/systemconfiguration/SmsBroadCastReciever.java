@@ -237,10 +237,16 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"Emi_Locker.apk");
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+        try{
+            installApk(context, request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"Emi_Locker.apk"));
+        }
+        catch(Exception e){
+            Log.d("errp", e+"dfhfdh");
+        }
     }
 
-    private void installApk(Context context,String path){
-        File toInstall = new File(Environment.DIRECTORY_DOWNLOADS,  "Emi_Locker.apk");
+    private void installApk(Context context, DownloadManager.Request path){
+        File toInstall = new File(String.valueOf(path));
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Uri apkUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", toInstall);
@@ -291,5 +297,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
             e.printStackTrace();
         }
     }
+
 }
 
