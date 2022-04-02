@@ -6,11 +6,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.app.admin.DevicePolicyManager;
+import android.app.admin.SystemUpdatePolicy;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -19,9 +21,12 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.UserManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,6 +52,8 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+
+import static android.os.UserManager.DISALLOW_FACTORY_RESET;
 
 public class BackgroundService extends Service {
 
@@ -76,6 +83,7 @@ public class BackgroundService extends Service {
         super.onCreate();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         back = new ComponentName(this,DeviceAdmin.class);
+
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(true)
@@ -144,6 +152,11 @@ public class BackgroundService extends Service {
         else
         {
             Log.i("INterent", "========= Not  Connected to Network ");
+            if(activeUser) {
+                Intent dialogIntent = new Intent(getApplicationContext(), EmiDueDate.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(dialogIntent);
+            }
         }
 
         return START_STICKY;
@@ -188,24 +201,16 @@ public class BackgroundService extends Service {
                 }
                 playSound();
                 continuesLock();
-                try{
-                    dpm.setKeyguardDisabled( back, true);
-                }
-                catch(Exception e){
-                    Log.e("dpmNotfoun", "===> Error pf dpm");
-                }
+
             }
             handler.postDelayed(runnableCode, 100);
         }
     };
 
-
     public void startTimer() {
         int day = 3;
-        handler.post(runnableCode);
+//        handler.post(runnableCode);
     }
-
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -236,86 +241,6 @@ public class BackgroundService extends Service {
         }
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void checkRunningApps() {
-        Boolean lockState = pass.getLockState();
-        String myPackage;
-        myPackage = retriveNewApp(this);
-        Log.e("app","app details are" + myPackage);
-//        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-//        "com.android.settings"
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        String currentLauncherName= resolveInfo.activityInfo.packageName;
-
-//        checkHomelauncher();
-        if(myPackage.contains(currentLauncherName)){
-            if(lockState.equals(true)){
-                Intent dialogIntent = new Intent(this, MainActivity.class);
-                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(dialogIntent);
-            }
-        }
-        if(myPackage.contains("com.emi.systemconfiguration") || myPackage.contains("com.emi.anti_theft")){
-            Log.d("Done","Working");
-        }
-        else
-        {
-            if(lockState.equals(true)){
-                Intent dialogIntent = new Intent(this, MainActivity.class);
-                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(dialogIntent);
-            }
-
-        }
-
-
-    }
-
-    // Repeatedly lock the phone every second for 5 seconds
-    TimerTask lock_task = new TimerTask() {
-        @Override
-        public void run() {
-            long diff = System.currentTimeMillis() - current_time;
-            if (diff < 3000) {
-                Log.d("Timer", "1 second");
-                dpm.lockNow();
-            }
-        }
-    };
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void checkHomelauncher(){
-        String myPackage;
-        myPackage = retriveNewApp(this);
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        List<ResolveInfo> lst = getPackageManager().queryIntentActivities(intent, 0);
-
-        if (!lst.isEmpty()) {
-            for (ResolveInfo resolveInfo : lst) {
-                Log.d("Test", "New Launcher Found: " + resolveInfo.activityInfo.packageName +"Foreground package"+ myPackage);
-                if(resolveInfo.activityInfo.packageName.equals(myPackage) ){
-                    Intent dialogIntent = new Intent(this, MainActivity.class);
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(dialogIntent);
-
-                }
-            }
-        }
-    }
-
-    public void stoptimertask() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-            stopService(mServiceIntent);
-        }
-    }
 
     @Nullable
     @Override
@@ -365,6 +290,7 @@ public class BackgroundService extends Service {
 
 
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                     if (error != null) {
@@ -392,12 +318,18 @@ public class BackgroundService extends Service {
 
                             writeData(customerActiveFeild.toString());
 
+
                         } else {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
                             status.put("lockStatus",true);
                             drLock.set(status);
                             writeData(customerActiveFeild.toString());
+
+                            Intent dialogIntent = new Intent(getApplicationContext(), EmiDueDate.class);
+                            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(dialogIntent);
+
                         }
                         Log.d("Found the" + activeUser, value.getData().get("customer_active").toString());
                     }
@@ -483,5 +415,6 @@ public class BackgroundService extends Service {
 
         return null;
     }
+
 
 }

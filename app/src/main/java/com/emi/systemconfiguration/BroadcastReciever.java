@@ -85,10 +85,9 @@ public class BroadcastReciever extends BroadcastReceiver {
             try{
                 try{
                     if(Objects.requireNonNull(readData(context)).equals("true") ){
-
                         Log.d("---------->d1", readData(context));
-                        dpm.lockNow();
-                        handler.post(runnableCode);
+                     //   dpm.lockNow();
+                       // handler.post(runnableCode);
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(context, BackgroundService.class);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -104,7 +103,7 @@ public class BroadcastReciever extends BroadcastReceiver {
 
                 }
                 if(status) {
-                    dpm.lockNow();
+//                    dpm.lockNow();
                     backgroundService = new BackgroundService();
                     mServiceIntent = new Intent(context, BackgroundService.class);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -117,17 +116,6 @@ public class BroadcastReciever extends BroadcastReceiver {
             }
             catch(Exception e){
                 Log.d("Err","Error"+ e);
-            }
-
-
-
-            backgroundService = new BackgroundService();
-            mServiceIntent = new Intent(context, BackgroundService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(mServiceIntent);
-            }
-            else{
-                context.startService(mServiceIntent);
             }
 
         }
@@ -166,19 +154,6 @@ public class BroadcastReciever extends BroadcastReceiver {
 
         return null;
     }
-
-    Handler handler = new Handler();
-    private Runnable runnableCode = new Runnable() {
-        @RequiresApi(api = Build.VERSION_CODES.Q)
-        @Override
-        public void run() {
-            // Do something here on the main thread
-            Log.d("Handler------>", "Called on main thread");
-            dpm.lockNow();
-            handler.postDelayed(runnableCode, 100);
-            startService();
-        }
-    };
 
     public void startService(){
         backgroundService = new BackgroundService();

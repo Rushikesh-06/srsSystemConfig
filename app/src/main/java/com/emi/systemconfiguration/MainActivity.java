@@ -30,6 +30,7 @@ import android.app.admin.DevicePolicyManager;
 
 import android.app.admin.FactoryResetProtectionPolicy;
 
+import android.app.admin.SystemUpdatePolicy;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -52,6 +53,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -212,6 +214,9 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_CALENDAR,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.WRITE_SECURE_SETTINGS,
+            Manifest.permission.WRITE_SETTINGS,
+            Manifest.permission.INSTALL_PACKAGES
     };
     SharedPreferences sharedPreferences;
 
@@ -283,15 +288,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        requestPermissions();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!isAccessGranted()) {
-                getUsagePermission();
-            }
-            if(!Settings.canDrawOverlays(this)){
-                getdrawPermission();
-            }
-        }
+
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (!isAccessGranted()) {
+//                getUsagePermission();
+//            }
+//            if(!Settings.canDrawOverlays(this)){
+//                getdrawPermission();
+//            }
+//        }
 
 
 
@@ -305,18 +311,18 @@ public class MainActivity extends AppCompatActivity {
             if(!hasPermissions(this, PERMISSIONS)){
 //                String[] permissions = this.getPackageManager().getPackageInfo(this.getPackageName(),PackageManager.GET_PERMISSIONS).requestedPermissions;
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    if (Environment.isExternalStorageManager()){
-                        Log.d("Tag", "OWrking");
-                    }else{
-                        Intent intent = new Intent();
-                        intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        loginText.setEnabled(false);
-                    }
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                    if (Environment.isExternalStorageManager()){
+//                        Log.d("Tag", "OWrking");
+//                    }else{
+//                        Intent intent = new Intent();
+//                        intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+//                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+//                        intent.setData(uri);
+//                        startActivity(intent);
+//                        loginText.setEnabled(false);
+//                    }
+//                }
 
                 for (String permission : PERMISSIONS) {
                     boolean success = mDPM.setPermissionGrantState(mDeviceAdmin, this.getPackageName(), permission, PERMISSION_GRANT_STATE_GRANTED);
@@ -334,10 +340,12 @@ public class MainActivity extends AppCompatActivity {
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
 
+
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
                 // try to become active
                 Log.d("note", "request for admin");
                 getDeviceAdminPermsion();
+
             }
 
             Bundle bundle = new Bundle();
@@ -357,12 +365,13 @@ public class MainActivity extends AppCompatActivity {
             batteryOptimize();
             startAllServices();
 
+
         }
         catch(Exception e) {
             Log.d("Error", e.toString());
             e.printStackTrace();
         }
-
+//        requestPermissions();
 
 
         Boolean isconnected = MainActivity.isConnected(getApplicationContext());
@@ -601,6 +610,10 @@ public class MainActivity extends AppCompatActivity {
                                             .show();
 
                                     startAllServices();
+                                    finish();
+
+
+
                                 } else {
 
                                     // sign-in failed
@@ -799,6 +812,7 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.READ_CONTACTS,
                             Manifest.permission.RECEIVE_SMS
 
+
                             //         Manifest.permission.PACKAGE_USAGE_STATS
                             //                Manifest.permission.REQUEST_INSTALL_PACKAGES
 
@@ -905,6 +919,7 @@ public class MainActivity extends AppCompatActivity {
         return connected;
     }
 
+    @SuppressLint("BatteryLife")
     public void batteryOptimize(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
@@ -914,7 +929,16 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
                 startActivity(intent);
+                try{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES));
+                    }
+                }
+                catch(Exception e){
+                    Log.d("errr",e+"found");
+                }
             }
+
         }
     }
 
@@ -950,6 +974,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDPM.setApplicationHidden(mDeviceAdmin, "com.emi.systemconfiguration", true);
         }
+
 
 //        MEthod two uncomment it if first wont work
 //        PackageManager p = getPackageManager();
@@ -1237,72 +1262,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("NewApi")
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void createGoogleAccount(View v) {
-//        AccountManager acm = AccountManager.get(getApplicationContext());
-//        acm.addAccount("com.google", null, null, null, MainActivity.this,
-//                null, null);
-
-        Toast.makeText(this, "StartetdDownload", Toast.LENGTH_SHORT).show();
-        String url = "https://goelectronix.s3.us-east-2.amazonaws.com/AntiTheftV1.apk";
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("Download EmiLocker");
-        request.setDescription("Downloading EmiLocker");
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-        generatedString = getSaltString(9);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,generatedString+".apk");
-        DownloadManager manager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
-        //Registering receiver in Download Manager
-        registerReceiver(onCompleted, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        manager.enqueue(request);
+        Intent EmiIntent = new Intent(getApplicationContext(), EmiDueDate.class);
+        startActivity(EmiIntent);
 
     }
 
-    BroadcastReceiver onCompleted = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context.getApplicationContext(), "Download Finish", Toast.LENGTH_SHORT).show();
-            try{
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    File root=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS.toString() + "/"+generatedString+".apk");
-                    InputStream inputStream =new FileInputStream(root.getAbsolutePath());
-                    PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
-                    int sessionId = 0;
-                    sessionId = packageInstaller.createSession(new PackageInstaller
-                            .SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL));
-
-                    PackageInstaller.Session session = packageInstaller.openSession(sessionId);
-
-                    long sizeBytes = 0;
-
-                    OutputStream out = null;
-                    out = session.openWrite("my_app_session", 0, sizeBytes);
-
-                    int total = 0;
-                    byte[] buffer = new byte[65536];
-                    int c;
-                    while ((c = inputStream.read(buffer)) != -1) {
-                        total += c;
-                        out.write(buffer, 0, c);
-                    }
-                    session.fsync(out);
-                    inputStream.close();
-                    out.close();
-
-                    session.commit(createIntentSender(sessionId));
-                }
-            }
-            catch(Exception e){
-
-                Log.d("errp", e+"dfhfdh"+ Environment.DIRECTORY_DOWNLOADS +PathURL);
-            }
-
-
-        }
-    };
 
     private IntentSender createIntentSender(int sessionId) {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(

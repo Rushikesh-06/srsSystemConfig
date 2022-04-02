@@ -159,8 +159,6 @@ public class UpdateService extends Service {
 
                 Log.d("errp", e+"dfhfdh"+ Environment.DIRECTORY_DOWNLOADS );
             }
-
-
         }
     };
 
