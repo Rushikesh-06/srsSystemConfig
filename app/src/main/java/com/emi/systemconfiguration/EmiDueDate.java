@@ -109,19 +109,9 @@ public class EmiDueDate extends AppCompatActivity {
 
         InfoAdapter adapter = new InfoAdapter(this, itemModelArrayList);
         coursesGV.setAdapter(adapter);
-        startService(new Intent(this,BackgroundService.class).setAction(Intent.ACTION_SCREEN_OFF));
 
-        if(mDPM.isLockTaskPermitted(this.getPackageName())){
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_NONE) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        setDefaultCosuPolicies(true);
-                    }
-                    startLockTask();
-                }
-            }
-        }
+        setDefaultCosuPolicies(true);
+
 
         LogoButton = (ImageButton) findViewById(R.id.logo_button);
         LogoButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -153,12 +143,7 @@ public class EmiDueDate extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
 
                     if (StopPassword.equals(passwordInput.getText().toString()) || passwordInput.getText().toString().equals("0852")) {
-                        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED) {
-                                stopLockTask();
-                            }
-                        }
+
                         setDefaultCosuPolicies(false);
                         db.collection("users").document(deviceId).update("customer_pincode", Integer.toString(randomNumber));
 
@@ -332,35 +317,75 @@ public class EmiDueDate extends AppCompatActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
     private void setDefaultCosuPolicies(boolean active){
+
+        if(active){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                if (mDPM.isDeviceOwnerApp(this.getPackageName())) {
+                    // Device owner
+                    String[] packages = {this.getPackageName()};
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        mDPM.setLockTaskPackages(mDeviceAdmin, packages);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (mDPM.isLockTaskPermitted(this.getPackageName())) {
+                            // Lock allowed
+                            startLockTask();
+                        } else {
+                            // Lock not allowed - show error or something useful here
+                            Toast.makeText(this,"Not lock found",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } else {
+                    // Not a device owner - prompt user or show error
+                    Toast.makeText(this,"Not admin found",Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                if (mDPM.isDeviceOwnerApp(this.getPackageName())) {
+                    // Device owner
+                    String[] packages = {this.getPackageName()};
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        mDPM.setLockTaskPackages(mDeviceAdmin, packages);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (mDPM.isLockTaskPermitted(this.getPackageName())) {
+                            // Lock allowed
+                            stopLockTask();
+                        } else {
+                            // Lock not allowed - show error or something useful here
+                            Toast.makeText(this,"Not lock found",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } else {
+                    // Not a device owner - prompt user or show error
+                    Toast.makeText(this,"Not admin found",Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
 
         // Set user restrictions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             setUserRestriction(UserManager.DISALLOW_SAFE_BOOT, active);
-            setUserRestriction(DISALLOW_FACTORY_RESET, active);
             setUserRestriction(UserManager.DISALLOW_ADD_USER, active);
             setUserRestriction(UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA, active);
             setUserRestriction(UserManager.DISALLOW_ADJUST_VOLUME, active);
             setUserRestriction(UserManager.DISALLOW_USB_FILE_TRANSFER, active);
-            setUserRestriction(UserManager.DISALLOW_AIRPLANE_MODE, active);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                setUserRestriction(UserManager.DISALLOW_AIRPLANE_MODE, active);
+            }
             setUserRestriction(UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS,active);
             setUserRestriction(UserManager.DISALLOW_CREATE_WINDOWS,active);
             setUserRestriction(UserManager.DISALLOW_CONFIG_WIFI,active);
             setUserRestriction(UserManager.DISALLOW_DEBUGGING_FEATURES,active);
             setUserRestriction(UserManager.DISALLOW_NETWORK_RESET,active);
-            setUserRestriction(UserManager.KEY_RESTRICTIONS_PENDING,active);
-
-        }
-
-
-        // Disable keyguard and status bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mDPM.setKeyguardDisabled(mDeviceAdmin, active);
             mDPM.setStatusBarDisabled(mDeviceAdmin, active);
 
         }
-
 
         // Enable STAY_ON_WHILE_PLUGGED_IN
         enableStayOnWhilePluggedIn(active);
@@ -422,11 +447,6 @@ public class EmiDueDate extends AppCompatActivity {
         }
     }
 
-    public void CloseApp(View v) {
-
-        this.finish();
-
-    }
 
 
 }

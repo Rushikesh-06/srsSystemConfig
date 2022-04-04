@@ -185,49 +185,21 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         spinnerPlan.setOnItemSelectedListener(this);
         spinnerPlan.setVisibility(View.GONE);
 
-
-//        planView = (CheckBox)findViewById(R.id.cashBox);
-//        planView.setVisibility(View.GONE);
         loanView = (CheckBox)findViewById(R.id.loanBox);
         loanView.setVisibility(View.GONE);
         costLabel =(TextView) findViewById(R.id.costLabel);
         device_amount = (EditText) findViewById(R.id.amount);
 
-//        planView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(((CompoundButton) view).isChecked()){
-//                    spinner2.setVisibility(View.GONE);
-//                    loanView.setChecked(false);
-//                    customer_payment = planView.getText().toString();
-//                    spinnerPlan.setVisibility(View.VISIBLE);
-//                    costLabel.setVisibility(View.VISIBLE);
-//                    device_amount.setVisibility(View.VISIBLE);
-//                }
-//                else {
-//                    spinner2.setVisibility(View.VISIBLE);
-//                    spinnerPlan.setVisibility(View.GONE);
-//                    loanView.setChecked(true);
-//                }
-//            }
-//        });
         loanView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(((CompoundButton) view).isChecked()){
                     spinner2.setVisibility(View.VISIBLE);
-//                    planView.setChecked(false);
-//                    spinnerPlan.setVisibility(View.GONE);
-//                    customer_payment = planView.getText().toString();
                     planValid = true;
-//                    costLabel.setVisibility(View.GONE);
-//                    device_amount.setVisibility(View.GONE);
                 }
                 else
                 {
                     spinner2.setVisibility(View.GONE);
-//                    spinnerPlan.setVisibility(View.VISIBLE);
-//                    planView.setChecked(true);
                     costLabel.setVisibility(View.VISIBLE);
                     device_amount.setVisibility(View.VISIBLE);
                 }
@@ -482,18 +454,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task)
                     {
-
                         if (task.isSuccessful()) {
                             customer_uid =  MainActivity.getDeviceId(getApplicationContext());
                             amount= device_amount.getText().toString();
                             addDataToFirestore(customer_uid,customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,VendorID, PolicyNo, startDate, endDate, amount, plan);
                         }
                         else {
-
                             // Registration failed
                             Toast.makeText(
                                     getApplicationContext(),
@@ -513,10 +482,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-//                            toastMessage("Success found");
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
-//                                toastMessage(document.getData().toString());
                         db.collection("policy").document(document.getId()).update("customerUid",customer_uid).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -558,8 +525,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         });
     }
 
-    //    Date functionalities
-    @SuppressWarnings("deprecation")
+
     public void setDate(View view) {
         showDialog(999);
     }
@@ -608,16 +574,18 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 }
             };
 
+    @SuppressLint("SetTextI18n")
     private void showDate(int year, int month, int day) {
-        dateView.setText("Start Date : "+ new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
-        startDate =  new StringBuilder().append(day).append("/").append(month).append("/").append(year).toString();
+        dateView.setText("Start Date : "+ day + "/" +
+                month + "/" + year);
+        startDate = day + "/" + month + "/" + year;
     }
+    @SuppressLint("SetTextI18n")
     private void showEndDate(int year, int month, int day) {
-        endDateView.setText("End Date : "+ new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
-        endDate =  new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year).toString();
+        endDateView.setText("End Date : "+ day + "/" +
+                month + "/" + year);
+        endDate = day + "/" +
+                month + "/" + year;
     }
 
 
@@ -626,15 +594,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
-
-    private Object activeUser(){
-        final String[] status = new String[1];
-
-     String deviceId = MainActivity.getDeviceId(this);
-
-        return deviceId;
-
-    };
 
     private boolean CheckAllFields(){
         if(customer_nameEdit.length() == 0){

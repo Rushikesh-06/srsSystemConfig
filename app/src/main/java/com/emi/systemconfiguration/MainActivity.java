@@ -6,32 +6,20 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.preference.PreferenceManager;
 
 import android.Manifest;
 
-import android.accounts.AccountManager;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
 
 import android.app.DownloadManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 
-import android.app.admin.FactoryResetProtectionPolicy;
-
 import android.app.admin.SystemUpdatePolicy;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,11 +32,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 
-import android.content.pm.PackageInstaller;
-
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -59,22 +43,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 
 import android.os.Environment;
-import android.os.Handler;
-import android.os.PersistableBundle;
 import android.os.PowerManager;
-import android.os.RemoteException;
-import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -82,25 +59,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -111,34 +80,14 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
 
 import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED;
-import static android.os.UserManager.DISALLOW_BLUETOOTH;
 import static android.os.UserManager.DISALLOW_FACTORY_RESET;
-import static android.os.UserManager.DISALLOW_MODIFY_ACCOUNTS;
-import static android.os.UserManager.DISALLOW_REMOVE_MANAGED_PROFILE;
-import static android.os.UserManager.DISALLOW_REMOVE_USER;
 
-import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION;
 import static android.service.controls.ControlsProviderService.TAG;
-import static com.emi.systemconfiguration.BuildConfig.DEBUG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -287,18 +236,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (!isAccessGranted()) {
-//                getUsagePermission();
-//            }
-//            if(!Settings.canDrawOverlays(this)){
-//                getdrawPermission();
-//            }
-//        }
-
 
 
         try {
@@ -1262,12 +1199,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @SuppressLint("NewApi")
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void createGoogleAccount(View v) {
-        Intent EmiIntent = new Intent(getApplicationContext(), EmiDueDate.class);
-        startActivity(EmiIntent);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (mDPM.isDeviceOwnerApp(this.getPackageName())) {
+                // Device owner
+                String[] packages = {this.getPackageName()};
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDPM.setLockTaskPackages(mDeviceAdmin, packages);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (mDPM.isLockTaskPermitted(this.getPackageName())) {
+                        // Lock allowed
+                        startLockTask();
+                    } else {
+                        // Lock not allowed - show error or something useful here
+                        Toast.makeText(this,"Not lock found",Toast.LENGTH_LONG).show();
+                    }
+                }
+            } else {
+                // Not a device owner - prompt user or show error
+                Toast.makeText(this,"Not admin found",Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 
@@ -1322,6 +1275,93 @@ public class MainActivity extends AppCompatActivity {
         return saltStr;
 
     }
+
+    private void setDefaultCosuPolicies(boolean active){
+
+        // Set user restrictions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setUserRestriction(UserManager.DISALLOW_SAFE_BOOT, active);
+            setUserRestriction(DISALLOW_FACTORY_RESET, active);
+            setUserRestriction(UserManager.DISALLOW_ADD_USER, active);
+            setUserRestriction(UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA, active);
+            setUserRestriction(UserManager.DISALLOW_ADJUST_VOLUME, active);
+        }
+
+        // Disable keyguard and status bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mDPM.setKeyguardDisabled(mDeviceAdmin, active);
+            mDPM.setStatusBarDisabled(mDeviceAdmin, active);
+        }
+
+        // Enable STAY_ON_WHILE_PLUGGED_IN
+        enableStayOnWhilePluggedIn(active);
+
+        // Set system update policy
+        if (active){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mDPM.setSystemUpdatePolicy(mDeviceAdmin,SystemUpdatePolicy.createWindowedInstallPolicy(60, 120));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mDPM.setSystemUpdatePolicy(mDeviceAdmin,null);
+            }
+        }
+
+        // set this Activity as a lock task package
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{getPackageName()});
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (mDPM.isDeviceOwnerApp(getPackageName())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{getPackageName()});
+                }
+            } else {
+                Log.e("Kiosk Mode Error", "383843");
+            }
+        }
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MAIN);
+        intentFilter.addCategory(Intent.CATEGORY_HOME);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        if (active) {
+            // set Cosu activity as home intent receiver so that it is started
+            // on reboot
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.addPersistentPreferredActivity(mDeviceAdmin, intentFilter, new ComponentName(getPackageName(), MainActivity.class.getName()));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.clearPackagePersistentPreferredActivities(mDeviceAdmin, getPackageName());
+            }
+        }
+    }
+
+    private void setUserRestriction(String restriction, boolean disallow){
+        if (disallow) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.addUserRestriction(mDeviceAdmin,restriction);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.clearUserRestriction(mDeviceAdmin,restriction);
+            }
+        }
+    }
+
+    private void enableStayOnWhilePluggedIn(boolean enabled){
+        if (enabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.setGlobalSetting(mDeviceAdmin,Settings.Global.STAY_ON_WHILE_PLUGGED_IN,Integer.toString(BatteryManager.BATTERY_PLUGGED_AC| BatteryManager.BATTERY_PLUGGED_USB| BatteryManager.BATTERY_PLUGGED_WIRELESS));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mDPM.setGlobalSetting(mDeviceAdmin,Settings.Global.STAY_ON_WHILE_PLUGGED_IN,"0");
+            }
+        }
+    }
+
 
 }
 
