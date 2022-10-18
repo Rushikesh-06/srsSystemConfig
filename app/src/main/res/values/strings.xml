@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">System Configuration</string>
+    <string-array name="brands">
+        <item>Select brand</item>
+        <item>Samsung</item>
+        <item>Oppo</item>
+        <item>Vivo</item>
+        <item>Xiaomi</item>
+        <item>Realme</item>
+        <item>One Plus</item>
+        <item>Poco</item>
+        <item>Nokia</item>
+        <item>Infinix</item>
+        <item>Gionee</item>
+        <item>Coolpad</item>
+        <item>Sony</item>
+        <item>HTC</item>
+        <item>Iball</item>
+        <item>honor</item>
+        <item>LYF</item>
+        <item>Motorola</item>
+        <item>LG</item>
+        <item>Micromax</item>
+        <item>Other Android phone</item>
+    </string-array>
+
+    <string-array name="loan">
+        <item>Select Financer</item>
+        <item>Bajaj Finance</item>
+        <item>IDFC First Bank</item>
+        <item>Home credit</item>
+        <item>HDFC</item>
+        <item>Kotak</item>
+        <item>Tata Capital</item>
+        <item>Private finance</item>
+        <item>Other finance</item>
+    </string-array>
+
+    <string-array name="plans">
+        <item>Select Plan</item>
+        <item>220</item>
+        <item>550</item>
+        <item>880</item>
+        <item>1100</item>
+    </string-array>
+
+    <string name="selector_title">How will you use this phone?</string>
+    <string name="do_selection_subtitle">Work</string>
+    <string name="do_selection_detailed_text">
+        <li>This phone will be managed by your IT admin</li>\n\n
+        <li>Your data won\'t be private and can be erased at any time</li>
+    </string>
+    <string name="do_selection_button_text">Use for work only</string>
+
+</resources>
