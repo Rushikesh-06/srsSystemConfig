@@ -7,12 +7,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
 
-        compileSdkVersion 32
+        compileSdkVersion 33
         buildToolsVersion "30.0.3"
         defaultConfig {
             applicationId "com.emi.systemconfiguration"
             minSdkVersion 28
-            targetSdkVersion 32
+            targetSdkVersion 33
             versionCode 1
             versionName "1.1"
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

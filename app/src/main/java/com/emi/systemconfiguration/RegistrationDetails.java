@@ -9,7 +9,7 @@ public class RegistrationDetails {
     // variables for storing our data.
     public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorID, policyNo , startDate,endDate,device_amount,anti_theft_plan;
 
-    public  Boolean customer_active, uninstall_status;
+    public  Boolean customer_active, uninstall_status , lockStatus;
 
     public RegistrationDetails() {
         // empty constructor
@@ -39,6 +39,7 @@ public class RegistrationDetails {
         this.device_amount = device_amount;
         this.anti_theft_plan= anti_theft_plan;
         this.uninstall_status = false;
+        this.lockStatus = false;
     }
 
 

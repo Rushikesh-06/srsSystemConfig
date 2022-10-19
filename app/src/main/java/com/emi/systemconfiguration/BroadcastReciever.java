@@ -53,8 +53,8 @@ public class BroadcastReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         String action = intent.getAction();
-        sharedPreferences = context. getSharedPreferences("LockingState",Context.MODE_PRIVATE);
-        Boolean status = sharedPreferences.getBoolean("status", false);
+//        sharedPreferences = context.getSharedPreferences("LockingState",Context.MODE_PRIVATE);
+//        Boolean status = sharedPreferences.getBoolean("status", false);
         dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         context1 = context;
@@ -89,21 +89,20 @@ public class BroadcastReciever extends BroadcastReceiver {
                         Log.d("---------->d1", readData(context));
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(context, BackgroundService.class);
-                            context.startService(mServiceIntent);
-
+                        context.startService(mServiceIntent);
                     }
                 }
                 catch(Exception e){
                     Log.d("Ex", "Ex"+ e);
 
                 }
-                if(status) {
+//                if(status) {
 //                    dpm.lockNow();
                     backgroundService = new BackgroundService();
                     mServiceIntent = new Intent(context, BackgroundService.class);
-                        context.startService(mServiceIntent);
+                    context.startService(mServiceIntent);
 
-                }
+//                }
             }
             catch(Exception e){
                 Log.d("Err","Error"+ e);
@@ -136,13 +135,13 @@ public class BroadcastReciever extends BroadcastReceiver {
         backgroundService = new BackgroundService();
         mServiceIntent = new Intent(context1, BackgroundService.class);
 
-            context1.startService(mServiceIntent);
+        context1.startService(mServiceIntent);
 
         uninstallService = new UninstallService();
         getmServiceIntent = new Intent(context1, uninstallService.getClass());
 
 
-            context1.startService(getmServiceIntent);
+        context1.startService(getmServiceIntent);
 
     }
 

@@ -86,34 +86,12 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         contactList = new ArrayList<String>();
 //        fetchNumber();
         contactList.add("9892580308");
-        contactList.add("9619361016");
+//        contactList.add("9619361016");
         contactList.add("8828877104");
         contactList.add("9004949483");
 
         contactList.add(Vendor.number);
         Log.d("Numbers","------------->"+Vendor.number + contactList);
-        if (mPlayer != null && mPlayer.isPlaying()) {
-            mPlayer.stop();
-            mPlayer.release();
-            mPlayer=null;
-        }
-        else {
-            mPlayer = null;
-        }
-
-        mPlayer = MediaPlayer.create(context, R.raw.emisound);
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (!mp.isPlaying()) {
-                    mPlayer.release();
-                }
-                else {
-                    mPlayer.stop();
-                    mPlayer.release();
-                }
-            }
-        });
         startService(context, intent);
         String deviceId= MainActivity.getDeviceId(context);
         if (intentExtras != null) {

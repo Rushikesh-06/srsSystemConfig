@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -516,12 +517,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             public void onSuccess(Void avoid) {
                                                                 progressbar.setVisibility(View.GONE);
                                                                 toastMessage("Registration is done successfully");
-
-                                                                Intent mainActivityIntent = new Intent(
-                                                                        getApplicationContext(), MainActivity.class);
+                                                                Intent mainActivityIntent = new Intent(getApplicationContext(), com.emi.systemconfiguration.MainActivity.class);
+                                                                mainActivityIntent.putExtra("minimize",1);
                                                                 startActivity(mainActivityIntent);
                                                                 finish();
-
                                                             }
                                                         }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
