@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,6 +38,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -60,6 +62,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     String prevStarted = "yes";
@@ -67,8 +71,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private DatePicker datePicker;
     private Calendar calendar;
     private SharedPreferences sharedPreferences;
-    private TextView dateView, endDateView, costLabel,spinner;
+    private TextView dateView, endDateView, costLabel, spinner;
     private int year, month, day;
+
+    private CircleImageView img_profile;
+    private FloatingActionButton btn_click;
+    private final int CAMERA_REQ_CODE = 101;
+    public static final int PICK_IMAGE = 1;
+    private Dialog dialog;
 
 
     // Firebase auth
@@ -77,7 +87,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     // creating variables for our edit text
     private EditText policyId, device_amount, customer_uidEdit, customer_nameEdit, customer_contactEdit,
-            customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit;
+            customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit, etdownpayment, etemitenure;
 
     // creating variable for button
     private Button registerBtn;
@@ -89,7 +99,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     // creating a strings for storing
     // our values from edittext fields.
     private String plan, policy_no, customer_uid, customer_name, customer_contact, customer_email,
-            customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate, amount;
+            customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate, amount, downpayment, emi_tenure, photo;
 
     // creating a variable
     // for firebasefirestore.
@@ -110,6 +120,21 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
 
+        img_profile = findViewById(R.id.img_profile);
+        btn_click = findViewById(R.id.btn_click);
+        btn_click.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(icamera, CAMERA_REQ_CODE);
+                dialog.dismiss();
+
+            }
+        });
+
+        etdownpayment = findViewById(R.id.downpayment);
+        etemitenure = findViewById(R.id.emi_tenure);
+
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -129,7 +154,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         showDate(year, month + 1, day);
-        dateView.setText("Start Date : " +new SimpleDateFormat("dd MMMM yyyy").format(new Date()));
+        dateView.setText("Start Date : " + new SimpleDateFormat("dd MMMM yyyy").format(new Date()));
 
         // taking FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
@@ -224,9 +249,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 if (isAllFieldsChecked) {
                     if (VendorID.length() > 0) {
                         registerNewUser();
-                    }
-
-                    else {
+                    } else {
                         toastMessage("Policy is empty");
                     }
                     // toastMessage("done workin");
@@ -451,15 +474,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         // Validations for input email and password
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter email!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter email!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter password!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter password!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
@@ -473,13 +496,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                             amount = device_amount.getText().toString();
                             addDataToFirestore(customer_uid, customer_name, customer_contact, customer_email,
                                     customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo,
-                                    startDate, endDate, amount, plan);
+                                    startDate, endDate, amount, plan, downpayment, emi_tenure, photo );
                         } else {
                             // Registration failed
                             Toast.makeText(
-                                    getApplicationContext(),
-                                    "Authentication failed!!" + " Please try again later",
-                                    Toast.LENGTH_LONG)
+                                            getApplicationContext(),
+                                            "Authentication failed!!" + " Please try again later",
+                                            Toast.LENGTH_LONG)
                                     .show();
                             // hide the progress bar
                             progressbar.setVisibility(View.GONE);
@@ -490,7 +513,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private void addDataToFirestore(String customer_uid, String customer_name, String customer_contact,
                                     String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan,
-                                    String vendorId, String policyNo, String startDate, String endDate, String amount, String anti_theft_plan) {
+                                    String vendorId, String policyNo, String startDate, String endDate, String amount, String anti_theft_plan, String downpayment, String emi_tenure, String photo) {
 
         db.collection("policy").whereEqualTo("policyNo", policy_no).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -508,7 +531,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                 RegistrationDetails registration = new RegistrationDetails(customer_uid,
                                                         customer_name, customer_contact, customer_email,
                                                         customer_mobile_brand, customer_payment, customer_loan,
-                                                        startDate, endDate, amount, anti_theft_plan,vendorId);
+                                                        startDate, endDate, amount, anti_theft_plan, vendorId,downpayment,emi_tenure,photo);
                                                 // below method is use to add data to Firebase Firestore.
                                                 dbRegister.document(customer_uid).set(registration)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -524,25 +547,25 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                                                             }
                                                         }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        // this method is called when the data addition process
-                                                        // is failed.
-                                                        // displaying a toast message when data addition is
-                                                        // failed.
-                                                        toastMessage(
-                                                                "Failed to register details Please try after some time \n"
-                                                                        + e);
-                                                    }
-                                                });
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // this method is called when the data addition process
+                                                                // is failed.
+                                                                // displaying a toast message when data addition is
+                                                                // failed.
+                                                                toastMessage(
+                                                                        "Failed to register details Please try after some time \n"
+                                                                                + e);
+                                                            }
+                                                        });
 
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        toastMessage("Please check the vendor details and policy");
-                                    }
-                                });
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                toastMessage("Please check the vendor details and policy");
+                                            }
+                                        });
                             }
                         } else {
                             toastMessage("Failed to register details Please try after some time \n");
