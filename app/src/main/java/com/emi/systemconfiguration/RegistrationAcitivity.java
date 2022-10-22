@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,7 +79,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private FloatingActionButton btn_click;
     private final int CAMERA_REQ_CODE = 101;
     public static final int PICK_IMAGE = 1;
-    private Dialog dialog;
 
 
     // Firebase auth
@@ -127,8 +127,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             public void onClick(View view) {
                 Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(icamera, CAMERA_REQ_CODE);
-                dialog.dismiss();
-
             }
         });
 
@@ -713,4 +711,19 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         return null;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode){
+            case RESULT_OK:
+                switch (requestCode){
+                    case CAMERA_REQ_CODE:
+                        Bitmap img = (Bitmap) (data.getExtras().get("data"));
+                        img_profile.setImageBitmap(img);
+                        break;
+                }
+                break;
+
+        }
+    }
 }
