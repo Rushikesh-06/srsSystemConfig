@@ -1,5 +1,6 @@
 package com.emi.systemconfiguration;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -34,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +54,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +69,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -113,7 +125,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
 
-    private final String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
+    private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,10 +137,16 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         btn_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(icamera, CAMERA_REQ_CODE);
+                if (ContextCompat.checkSelfPermission(RegistrationAcitivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(icamera, CAMERA_REQ_CODE);
+                }else{
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},111);
+                }
+
             }
         });
+
 
         etdownpayment = findViewById(R.id.downpayment);
         etemitenure = findViewById(R.id.emi_tenure);
@@ -303,6 +321,32 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             }
         });
 
+    }
+
+    private void uploadImage(String filepath) {
+        File file = new File(filepath);
+
+        Retrofit retrofit = NetworkClient.getRetrofit();
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"),file);
+        MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
+
+        RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
+        RequestBody cache = RequestBody.create(MediaType.parse("text/plain"),"true");
+        FileUploadService fileUploadService = retrofit.create(FileUploadService.class);
+        Call call = fileUploadService.uplpadImage(parts ,somedata,cache);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+
+                Log.e("TAG", "onResponse: "+response );
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.e("TAG", "onFailure: "+t.getMessage() );
+            }
+        });
     }
 
     public void moveToSecondary() {
@@ -720,6 +764,26 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     case CAMERA_REQ_CODE:
                         Bitmap img = (Bitmap) (data.getExtras().get("data"));
                         img_profile.setImageBitmap(img);
+                        File f = new File(getCacheDir(), filename);
+                        try {
+                            f.createNewFile();
+                            Bitmap bitmap = img;
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                            byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                            FileOutputStream fos = new FileOutputStream(f);
+                            fos.write(bitmapdata);
+                            fos.flush();
+                            fos.close();
+                            uploadImage(f.getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+//Convert bitmap to byte array
+
                         break;
                 }
                 break;
