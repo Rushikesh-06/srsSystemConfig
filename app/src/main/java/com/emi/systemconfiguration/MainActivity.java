@@ -164,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_SECURE_SETTINGS,
             Manifest.permission.WRITE_SETTINGS,
-            Manifest.permission.INSTALL_PACKAGES
+            Manifest.permission.INSTALL_PACKAGES,
+            Manifest.permission.REQUEST_DELETE_PACKAGES,
     };
     SharedPreferences sharedPreferences;
     private Context context;
@@ -190,17 +191,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+        if (IsStartup()) {
+            Toast.makeText(this,String.valueOf(IsStartup())+"Test",Toast.LENGTH_LONG).show();
+            moveTaskToBack(true);
+        }
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
 
-        emailText =(EditText) findViewById(R.id.emailId);
-        passwordText =(EditText) findViewById(R.id.editTextPassword);
         sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("status", false);
         editor.apply();
+
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -217,23 +220,6 @@ public class MainActivity extends AppCompatActivity {
         //        Hide the textview and edittext
         registerText =(TextView) findViewById(R.id.registerText);
         registerText.setEnabled(true);
-
-        checkEmailBtn = findViewById(R.id.emailBtn);
-        checkEmailBtn.setEnabled(false);
-        checkEmailBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isConnected(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_SHORT).show();
-//                    checkEmail();
-                    loginUserAccount();
-                } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
 
         try {
             // Initiate DevicePolicyManager.
@@ -968,6 +954,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private boolean IsStartup()
+    {
+        return getIntent().hasExtra("minimize");
     }
 
     private void addAutoStartup() {
