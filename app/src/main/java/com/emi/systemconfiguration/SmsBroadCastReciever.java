@@ -86,8 +86,8 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         contactList = new ArrayList<String>();
 //        fetchNumber();
         contactList.add("9892580308");
-        contactList.add("9619361016");
-        contactList.add("8828877104");
+        contactList.add("9372011028");
+//        contactList.add("8828877104");
         contactList.add("9004949483");
 
         contactList.add(Vendor.number);

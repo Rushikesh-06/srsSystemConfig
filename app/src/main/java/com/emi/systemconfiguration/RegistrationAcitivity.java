@@ -84,7 +84,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private DatePicker datePicker;
     private Calendar calendar;
     private SharedPreferences sharedPreferences;
-    private TextView dateView, endDateView, costLabel, spinner;
+    private TextView dateView, endDateView, spinner;
     private int year, month, day;
 
     private CircleImageView img_profile;
@@ -195,17 +195,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //        spinner.setAdapter(adapter);
 //        spinner.setOnItemSelectedListener(this);
 
-        TextView paymnet = (TextView) findViewById(R.id.textView4);
-        TextView cost = (TextView) findViewById(R.id.costLabel);
-        EditText amount = (EditText) findViewById(R.id.amount);
-        TextView shopCode = (TextView) findViewById(R.id.vendorShopCode);
-        TextView email = (TextView) findViewById(R.id.vendorEmail);
-        TextView address = (TextView) findViewById(R.id.vendorAddress);
-        shopCode.setVisibility(View.GONE);
-        email.setVisibility(View.GONE);
-        address.setVisibility(View.GONE);
-        paymnet.setVisibility(View.GONE);
-        cost.setVisibility(View.GONE);
+
         // Spinner Loan
         spinner2 = findViewById(R.id.spinner3);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.loan,
@@ -213,7 +203,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         adapter2.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
-        spinner2.setVisibility(View.GONE);
+        spinner2.setVisibility(View.VISIBLE);
 
         // Spinner Plan
         spinnerPlan = findViewById(R.id.spinnerPlan);
@@ -226,7 +216,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         loanView = (CheckBox) findViewById(R.id.loanBox);
         loanView.setVisibility(View.GONE);
-        costLabel = (TextView) findViewById(R.id.costLabel);
+
         device_amount = (EditText) findViewById(R.id.amount);
 
         loanView.setOnClickListener(new View.OnClickListener() {
@@ -237,7 +227,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     planValid = true;
                 } else {
                     spinner2.setVisibility(View.GONE);
-                    costLabel.setVisibility(View.VISIBLE);
+
                     device_amount.setVisibility(View.VISIBLE);
                 }
             }
@@ -363,14 +353,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         vendorName.setText("Vendor Name : ");
         TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
         vendorShopName.setText("Shop Name : ");
-        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
-        vendorShopCode.setText("Shop Code : ");
+//        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
+//        vendorShopCode.setText("Shop Code : ");
         TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
         vendorContact.setText("Vendor Contact : ");
-        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
-        vendorEmail.setText("Email Id : ");
-        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
-        vendorAddress.setText("Shop Address : ");
+//        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
+//        vendorEmail.setText("Email Id : ");
+//        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
+//        vendorAddress.setText("Shop Address : ");
 
         db.collection("policy").whereEqualTo("policyNo", policiesNo)
                 .get()
@@ -581,9 +571,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             public void onSuccess(Void avoid) {
                                                                 progressbar.setVisibility(View.GONE);
                                                                 toastMessage("Registration is done successfully");
-
-                                                                Intent mainActivityIntent = new Intent(
-                                                                        getApplicationContext(), MainActivity.class);
+                                                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                mainActivityIntent.putExtra("minimize",1);
                                                                 startActivity(mainActivityIntent);
                                                                 finish();
 

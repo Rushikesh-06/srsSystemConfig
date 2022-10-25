@@ -9,7 +9,7 @@ public class RegistrationDetails {
     // variables for storing our data.
     public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorID, policyNo , startDate,endDate,device_amount,anti_theft_plan,downpaymet,emi_tenure,photo;
 
-    public  Boolean customer_active, uninstall_status;
+    public  Boolean customer_active, uninstall_status , lockStatus;
 
     public RegistrationDetails(String customer_uid, String customer_name, String customer_contact, String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan, String startDate, String endDate, String amount, String anti_theft_plan, String vendorId, String downpayment) {
         // empty constructor
@@ -44,6 +44,7 @@ public class RegistrationDetails {
         this.device_amount = device_amount;
         this.anti_theft_plan= anti_theft_plan;
         this.uninstall_status = false;
+        this.lockStatus = false;
     }
 
 
