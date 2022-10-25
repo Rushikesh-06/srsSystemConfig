@@ -24,12 +24,6 @@
         <item>Other Android phone</item>
     </string-array>
 
-    <string-array name="payment">
-        <item>Select payment mode</item>
-        <item>Cash</item>
-        <item>Loan</item>
-    </string-array>
-
     <string-array name="loan">
         <item>Select Financer</item>
         <item>Bajaj Finance</item>
@@ -50,5 +44,18 @@
         <item>1100</item>
     </string-array>
 
-    <string name="developer">--Designed &amp; Developed--\nBy</string>
+    <string name="selector_title">How will you use this phone?</string>
+    <string name="do_selection_subtitle">Work</string>
+    <string name="do_selection_detailed_text">
+        <li>This phone will be managed by your IT admin</li>\n\n
+        <li>Your data won\'t be private and can be erased at any time</li>
+    </string>
+    <string name="do_selection_button_text">Use for work only</string>
+    <string name="textview">TextView</string>
+    <string name="protection_mode">Protection mode</string>
+    <string name="system_informaton">System Informaton</string>
+    <string name="please_pay_the_emi_on_time_n_to_unlock_your_device_contact_your_retailer_or_shopkeeper">Please pay the Emi on time. \n To unlock your device contact your retailer or shopkeeper</string>
+    <string name="offline_unlock">Offline Unlock</string>
+    <string name="textviewsp">TextView</string>
+
 </resources>

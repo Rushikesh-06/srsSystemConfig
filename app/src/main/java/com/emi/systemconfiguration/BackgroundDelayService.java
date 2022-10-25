@@ -30,6 +30,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.SortedMap;
@@ -148,21 +149,6 @@ public class BackgroundDelayService extends Service {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void checkRunningApps() {
-        String myPackage;
-        myPackage = retriveNewApp(this);
-        Log.e("app","app details are" + myPackage);
-        if(myPackage.contains("com.android.settings")){
-            Log.e("Tag", " THi is woking properly");
-
-            Intent dialogIntent = new Intent(this, Lock.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(dialogIntent);
-//            startActivity(new Intent(this, Lock.class));
-//            dialog.show();
-        }
-    }
 
     public void stoptimertask() {
         if (timer != null) {
@@ -275,5 +261,28 @@ public class BackgroundDelayService extends Service {
             }
         }
         return false;
+    }
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
     }
 }

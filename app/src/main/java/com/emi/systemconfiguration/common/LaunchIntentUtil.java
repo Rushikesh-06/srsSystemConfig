@@ -19,13 +19,6 @@ public class LaunchIntentUtil {
         return (intent == null || intent.getExtras() == null || intent.getExtras().get(EXTRA_IS_SETUP_WIZARD) == null) ? false : true;
     }
 
-//    public static boolean isCosuLaunch(PersistableBundle persistableBundle) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            return (persistableBundle == null || persistableBundle.get(EnableCosuActivity.BUNDLE_KEY_COSU_CONFIG) == null) ? false : true;
-//        }
-//        return false;
-//    }
-
     public static boolean isSynchronousAuthLaunch(PersistableBundle persistableBundle) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return (persistableBundle == null || persistableBundle.get(EXTRA_IS_SETUP_WIZARD) == null) ? false : true;

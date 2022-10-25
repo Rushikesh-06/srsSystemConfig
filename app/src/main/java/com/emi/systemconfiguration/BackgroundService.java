@@ -1,5 +1,4 @@
 package com.emi.systemconfiguration;
-
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -30,10 +29,13 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -42,9 +44,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.MetadataChanges;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.spec.ECField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +56,12 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import com.emi.systemconfiguration.EmiDueDate.*;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import static android.os.UserManager.DISALLOW_FACTORY_RESET;
 
@@ -59,54 +69,59 @@ public class BackgroundService extends Service {
 
     DevicePolicyManager dpm;
     long current_time;
-    private Context context ;
+    private Context context;
 
-    public int counter=0;
+    public int counter = 0;
     private FirebaseFirestore db;
     ComponentName back;
 
-    public Boolean activeUser = false, userAlert = true, playState = false;
 
+    public Boolean activeUser = false, userAlert = true, playState = false;
+    ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
     private BackgroundService backgroundService;
     Intent mServiceIntent;
 
-    MediaPlayer mPlayer ;
+    MediaPlayer mPlayer;
 
     password pass;
     SharedPreferences sharedPreferences;
 
-    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
+    private final String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         super.onCreate();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        back = new ComponentName(this,DeviceAdmin.class);
+        back = new ComponentName(this, DeviceAdmin.class);
 
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
         pass = password.getInstance();
 
         mPlayer = MediaPlayer.create(this, R.raw.emisound);
 
-        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
 
-//comment it out for hiding the notification
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-            startMyOwnForeground();
-        else
-            startForeground(1, new Notification());
+        es.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                heart_beat_function_start(context);
+            }
+        },0,1,TimeUnit.MINUTES);
+
+        es.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                deleteCache(context);
+            }
+        },0,15,TimeUnit.MINUTES);
+
+        heart_beat_function_start(context);
 
     }
 
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private void startMyOwnForeground()
-    {
+    private void startMyOwnForeground() {
         String NOTIFICATION_CHANNEL_ID = "example.permanence";
         String channelName = "Background Service";
         NotificationChannel chan = null;
@@ -127,16 +142,12 @@ public class BackgroundService extends Service {
         notificationBuilder.setPriority(Notification.PRIORITY_MIN);
         Notification notification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.system_icon)
-                .setContentTitle( "System Service")
+                .setContentTitle("System Service")
                 .setContentText("This service is under Protection-Mode")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-             .setPriority(NotificationManager.AUTOMATIC_RULE_STATUS_DISABLED)
-//                .setPriority(Notification.PRIORITY_MAX)
+                .setPriority(NotificationManager.AUTOMATIC_RULE_STATUS_DISABLED)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setOngoing(true)
-//                .setAutoCancel(true)
                 .build();
-        startForeground(2, notification);
     }
 
     @Override
@@ -145,14 +156,12 @@ public class BackgroundService extends Service {
 
         startTimer();
 
-        if(isConnected()){
+        if (isConnected()) {
             Log.i("INterent", "========= Connected to  Network ");
             activeDevice();
-        }
-        else
-        {
+        } else {
             Log.i("INterent", "========= Not  Connected to Network ");
-            if(activeUser) {
+            if (activeUser) {
                 Intent dialogIntent = new Intent(getApplicationContext(), EmiDueDate.class);
                 dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(dialogIntent);
@@ -165,8 +174,9 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        stoptimertask();
+        // stoptimertask();
         Intent broadcastIntent = new Intent();
+        // heart_beat_function_stop();
         broadcastIntent.setAction("restart.service");
         broadcastIntent.setClass(this, BackgroundService.class);
         this.sendBroadcast(broadcastIntent);
@@ -175,28 +185,26 @@ public class BackgroundService extends Service {
     private Timer timer;
     private TimerTask timerTask;
     Handler handler = new Handler();
-    private Runnable runnableCode = new Runnable() {
+    private final Runnable runnableCode = new Runnable() {
         @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public void run() {
             // Do something here on the main thread
-            try{
-                if(readData().equals("true")){
+            try {
+                if (readData().equals("true")) {
                     dpm.lockNow();
+//                    dpm.setLockTaskFeatures();
+                    Log.d("Lock----->", "LOcked by read write" + readData());
+                } else {
                     Log.d("Lock----->", "LOcked by read write" + readData());
                 }
-                else {
-                    Log.d("Lock----->", "LOcked by read write" + readData());
-                }
 
-            }
-            catch(Exception e){
-                Log.d("Erro", "Ee" +e);
+            } catch (Exception e) {
+                Log.d("Erro", "Ee" + e);
             }
 
-
-            if(activeUser) {
-                if(userAlert){
+            if (activeUser) {
+                if (userAlert) {
                     userAlert = false;
                 }
                 playSound();
@@ -209,38 +217,32 @@ public class BackgroundService extends Service {
 
     public void startTimer() {
         int day = 3;
-//        handler.post(runnableCode);
+        // handler.post(runnableCode);
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void continuesLock(){
+    public void continuesLock() {
 
-        try{
-//            ActivityManager mActivityManager =(ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
-            String activityName= retriveNewApp(this);
-            Log.d("PackageName",activityName);
+        try {
+            String activityName = retriveNewApp(this);
+            Log.d("PackageName", activityName);
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
 
-            String currentLauncherName= resolveInfo.activityInfo.packageName;
+            String currentLauncherName = resolveInfo.activityInfo.packageName;
 
-            if(activityName.contains("contacts") || activityName.contains("call") || activityName.contains("com.truecaller")){
-                Log.e("USer","Vendor is on activity");
-//            startActivity(new Intent(this, Lock.class));
-//            dialog.show();
-            }
-            else {
+            if (activityName.contains("contacts") || activityName.contains("call")
+                    || activityName.contains("com.truecaller")) {
+                Log.e("USer", "Vendor is on activity");
+            } else {
                 dpm.lockNow();
             }
-            Log.e("Locking", " *********************** THi is woking properly"+ activityName );
-        }
-        catch (Exception e){
+            Log.e("Locking", " *********************** THi is woking properly" + activityName);
+        } catch (Exception e) {
             dpm.lockNow();
         }
     }
-
 
     @Nullable
     @Override
@@ -250,7 +252,8 @@ public class BackgroundService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static final String retriveNewApp(Context context) {
-//        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+        // startActivity(new
+        // Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
         if (Build.VERSION.SDK_INT >= 21) {
             String currentApp = null;
             UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
@@ -258,7 +261,7 @@ public class BackgroundService extends Service {
             List<UsageStats> applist = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
             List<ProviderInfo> providers = context.getPackageManager()
                     .queryContentProviders(null, 0, 0);
-//            Log.d("List Inndor",providers.toString());
+            // Log.d("List Inndor",providers.toString());
             if (applist != null && applist.size() > 0) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
                 for (UsageStats usageStats : applist) {
@@ -280,14 +283,13 @@ public class BackgroundService extends Service {
         }
     }
 
-    private void activeDevice(){
+    private void activeDevice() {
         try {
             String deviceId = MainActivity.getDeviceId(getApplicationContext());
             Log.d("deviceUid", deviceId);
             DocumentReference documentReference = db.collection("users").document(deviceId);
             DocumentReference drLock = db.collection("users_status").document(deviceId);
             Map<String, Object> status = new HashMap<>();
-
 
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -312,17 +314,16 @@ public class BackgroundService extends Service {
                         if (!customerActiveFeild) {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus", activeUser.toString());
-                            playState= true;
-                            status.put("lockStatus",false);
+                            playState = true;
+                            status.put("lockStatus", false);
                             drLock.set(status);
 
                             writeData(customerActiveFeild.toString());
 
-
                         } else {
                             activeUser = customerActiveFeild;
                             Log.d("LockStatus2", activeUser.toString());
-                            status.put("lockStatus",true);
+                            status.put("lockStatus", true);
                             drLock.set(status);
                             writeData(customerActiveFeild.toString());
 
@@ -335,17 +336,17 @@ public class BackgroundService extends Service {
                     }
                 }
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-//        return deviceId;
+        // return deviceId;
     }
 
     public boolean isConnected() {
         boolean connected = false;
         try {
-            ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
@@ -365,32 +366,27 @@ public class BackgroundService extends Service {
         return false;
     }
 
-    private void playSound(){
-        try{
-            if(playState.equals(true)){
+    private void playSound() {
+        try {
+            if (playState.equals(true)) {
                 mPlayer.start();
-//                mPlayer.setLooping(true);
+                // mPlayer.setLooping(true);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
 
-    private void writeData(String status)
-    {
-        try
-        {
+    private void writeData(String status) {
+        try {
             FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
             String data = status;
             fos.write(data.getBytes());
             fos.flush();
             fos.close();
-            Log.d("---->12","COunt");
-        }
-        catch (IOException e)
-        {
+            Log.d("---->12", "COunt");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -416,5 +412,67 @@ public class BackgroundService extends Service {
         return null;
     }
 
+    private void heart_beat_function_start(Context context){
+                String deviceId = MainActivity.getDeviceId(getApplicationContext());
+                try{
+                    db.collection("users").whereEqualTo("customer_uid",deviceId)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Boolean customerActiveFeild = (Boolean) document.getData().get("customer_active");
+                                            if(customerActiveFeild){
+                                                Intent dialogIntent = new Intent(getApplicationContext(), EmiDueDate.class);
+                                                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(dialogIntent);
+                                            }
+                                        }
+                                    } else {
+                                        Log.w("Error", "Error getting documents.", task.getException());
+                                    }
+                                }
+                            });
+                }catch (Exception e){
+                    Log.d("Exception",e.toString());
+                }
+    }
+
+    public static boolean isAppRunning(final Context context, final String packageName) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+        if (procInfos != null) {
+            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
+                if (processInfo.processName.equals(packageName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
 
 }

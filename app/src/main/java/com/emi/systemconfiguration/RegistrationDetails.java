@@ -4,9 +4,10 @@ import java.util.Random;
 
 public class RegistrationDetails {
 
+
     //    private final customer_active Boolean;
     // variables for storing our data.
-    public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorId, policyNo , startDate,endDate,device_amount,anti_theft_plan;
+    public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorID, policyNo , startDate,endDate,device_amount,anti_theft_plan;
 
     public  Boolean customer_active, uninstall_status;
 
@@ -19,7 +20,7 @@ public class RegistrationDetails {
 
     public RegistrationDetails(String customer_uid,String customer_name, String customer_contact,
                                String customer_email, String customer_mobile_brand, String customer_payment,String customer_loan,
-                               String startDate, String endDate, String device_amount, String anti_theft_plan ) {
+                               String startDate, String endDate, String device_amount, String anti_theft_plan,String vendorId) {
         Random r = new Random();
         int randomNumber =10000 + r.nextInt(90000);
         this.customer_uid = customer_uid;
@@ -31,14 +32,13 @@ public class RegistrationDetails {
         this.customer_loan = customer_loan;
         this.customer_active = Boolean.FALSE;
         this.customer_pincode = Integer.toString(randomNumber);
-        this.vendorId = vendorId;
+        this.vendorID = vendorId;
         this.policyNo = policyNo;
         this.startDate = startDate;
         this.endDate = endDate;
         this.device_amount = device_amount;
         this.anti_theft_plan= anti_theft_plan;
         this.uninstall_status = false;
-
     }
 
 
@@ -163,5 +163,20 @@ public class RegistrationDetails {
     public void setUninstall_status(Boolean uninstall_status) {
         this.uninstall_status = uninstall_status;
     }
+
+    public String getVendorID() {
+        return vendorID;
+    }
+    public void setVendorID(String vendorID) {
+        this.vendorID = vendorID;
+    }
+
+//    public String getVendorID() {
+//        return vendorID;
+//    }
+//    public void setVendorID(String data) {
+//        this.vendorId = data;
+//    }
+
 }
 

@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.PowerManager;
 
-public class AppContext  extends Application {
+public class AppContext extends Application {
     private AppContext instance;
     private PowerManager.WakeLock wakeLock;
     private Kisko onScreenOffReceiver;

@@ -171,7 +171,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:gravity="bottom|center"
-        android:onClick="aboutusBtn"
         android:text="Developed &amp; Designed by Elitnotch"
         android:textColor="@color/colorText"
         app:layout_constraintBottom_toBottomOf="parent" />

@@ -7,6 +7,10 @@
     <uses-permission
         android:name="android.permission.DELETE_PACKAGES"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REBOOT"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
@@ -15,7 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
@@ -60,16 +64,17 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
     <uses-permission
         android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
@@ -118,66 +123,98 @@
 
         <meta-data
             android:name="com.google.android.actions"
+            android:exported="true"
             android:resource="@xml/filepaths" />
 
-        <activity android:name=".Welcome" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+
+            >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.HOME"/>
+                <action
+                    android:name="android.intent.action.MAIN"
+                    android:exported="true"
+
+                    />
+
+                <category
+                    android:name="android.intent.category.LAUNCHER"
+                    android:exported="true" />
+                <category
+                    android:name="android.intent.category.HOME"
+                    android:exported="true" />
             </intent-filter>
         </activity>
-        <activity android:name=".Aboutus" />
-        <activity android:name=".EmiDueDate" />
-        <activity android:name=".Lock">
-
-            <!-- <intent-filter> -->
-            <!-- &lt;!&ndash;<category android:name="android.intent.category.HOME" />&ndash;&gt; -->
-            <!-- &lt;!&ndash;                <category android:name="android.intent.category.DEFAULT" />&ndash;&gt; -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity android:name=".LockScreen" />
-        <activity android:name=".RegistrationAcitivity" />
-        <activity android:name=".Script" />
+        <activity
+            android:name=".EmiDueDate"
+            android:exported="true" />
+        <activity
+            android:name=".RegistrationAcitivity"
+            android:exported="true" />
+        <activity
+            android:name=".Script"
+            android:exported="true" />
         <activity
             android:name=".AdminPolicyCompliance"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <intent-filter>
                 <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".provision.DpcLoginActivity"
             android:exported="true"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            >
             <intent-filter>
                 <action android:name="android.app.action.GET_PROVISIONING_MODE" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".provision.ProvisioningSuccessActivity">
+        <activity
+            android:name=".provision.ProvisioningSuccessActivity"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.app.action.PROVISIONING_SUCCESSFUL" />
+                <action
+                    android:name="android.app.action.PROVISIONING_SUCCESSFUL"
+                    android:exported="true" />
             </intent-filter>
         </activity>
 
         <receiver
             android:name=".DeviceAdmin"
+            android:exported="true"
             android:label="Android admin"
+
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
+                android:exported="true"
+
                 android:resource="@xml/device_admin" />
             <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DISALLOW_FACTORY_RESET" />
-                <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.app.action.PROFILE_OWNER_CHANGED" />
-                <action android:name="android.app.action.DEVICE_OWNER_CHANGED" />
+                <action
+                    android:name="android.app.action.DEVICE_ADMIN_ENABLED"
+                    android:exported="true" />
+                <action
+                    android:name="android.app.action.DISALLOW_FACTORY_RESET"
+                    android:exported="true" />
+                <action
+                    android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.app.action.PROFILE_OWNER_CHANGED"
+                    android:exported="true" />
+                <action
+                    android:name="android.app.action.DEVICE_OWNER_CHANGED"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
 
@@ -188,64 +225,106 @@
             android:exported="true"
             android:installLocation="internalOnly">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.QUICKBOOT_POWERON"
+                    android:exported="true" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category
+                    android:name="android.intent.category.DEFAULT"
+                    android:exported="true" />
 
-                <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.BATTERY_CHANGED"/>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN " />
-                <action android:name="android.intent.action.AIRPLANE_MODE"/>
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.BATTERY_OKAY" />
-                <action android:name="android.intent.action.CONFIGURATION_CHANGED"/>
-                <action android:name="android.intent.action.REBOOT"/>
+                <action
+                    android:name="android.intent.action.ACTION_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.LOCKED_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_POWER_CONNECTED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.BATTERY_CHANGED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_SHUTDOWN "
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.AIRPLANE_MODE"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.SCREEN_ON"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.BATTERY_OKAY"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.CONFIGURATION_CHANGED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.REBOOT"
+                    android:exported="true" />
 
-                <category android:name="android.intent.category.HOME" />
+                <category
+                    android:name="android.intent.category.HOME"
+                    android:exported="true" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action
+                    android:name="android.intent.action.PACKAGE_REPLACED"
+                    android:exported="true" />
 
-                <data android:scheme="package" />
+                <data
+                    android:exported="true"
+                    android:scheme="package" />
             </intent-filter>
             <intent-filter>
-                <action android:name="BackgroundProcess" />
+                <action
+                    android:name="BackgroundProcess"
+                    android:exported="true" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_INSTALL" />
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action
+                    android:name="android.intent.action.PACKAGE_INSTALL"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.PACKAGE_ADDED"
+                    android:exported="true" />
 
-                <data android:scheme="package" />
+                <data
+                    android:exported="true"
+                    android:scheme="package" />
             </intent-filter>
         </receiver>
 
         <receiver
             android:name=".NetworkBroadcast"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    android:exported="true" />
+                <action
+                    android:name="android.net.wifi.WIFI_STATE_CHANGED"
+                    android:exported="true" />
+                <action
+                    android:name="android.net.wifi.STATE_CHANGE"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".SmsBroadCastReciever"
             android:exported="true">
             <intent-filter android:priority="999">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".ScreenReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.CLOSE_SYSTEM_DIALOGS" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".ScreenReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.CLOSE_SYSTEM_DIALOGS" />
+                <action
+                    android:name="android.provider.Telephony.SMS_RECEIVED"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
         <receiver
@@ -255,50 +334,68 @@
             android:exported="true"
             android:installLocation="internalOnly">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.QUICKBOOT_POWERON"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.LOCKED_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_POWER_CONNECTED"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".UpdateReciever"
             android:enabled="true"
             android:exported="true"
-            android:installLocation="internalOnly"
-            >
+            android:installLocation="internalOnly">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.QUICKBOOT_POWERON"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.LOCKED_BOOT_COMPLETED"
+                    android:exported="true" />
+                <action
+                    android:name="android.intent.action.ACTION_POWER_CONNECTED"
+                    android:exported="true" />
+                <action
+                    android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".IncomingCall">
+        <receiver
+            android:name=".LauncherReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action
+                    android:name="com.aaa.aaa.action.START"
+                    android:exported="true" />
+                <category
+                    android:name="android.intent.category.DEFAULT"
+                    android:exported="true" />
+            </intent-filter>
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.MY_PACKAGE_REPLACED"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".LockBroadcast">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
-                    tools:ignore="BatteryLife" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".LauncherReceiver" android:enabled="true" android:exported="true">
-            <intent-filter>
-                <action android:name="com.aaa.aaa.action.START" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
         <service
             android:name=".BackgroundService"
             android:enabled="true"
@@ -322,20 +419,9 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
+                android:exported="true"
                 android:resource="@xml/filepaths" />
         </provider>
-
-        <service
-            android:name=".AuthenticatorService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
     </application>
 
 </manifest>

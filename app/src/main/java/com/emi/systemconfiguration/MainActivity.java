@@ -64,7 +64,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -165,11 +164,9 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_SECURE_SETTINGS,
             Manifest.permission.WRITE_SETTINGS,
-            Manifest.permission.INSTALL_PACKAGES
-    };
+            Manifest.permission.INSTALL_PACKAGES,
+            Manifest.permission.BATTERY_STATS};
     SharedPreferences sharedPreferences;
-
-    private ArrayList<LockModal> courseModalArrayList;
     private Context context;
 
 //    APp install device admin
@@ -246,20 +243,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             if(!hasPermissions(this, PERMISSIONS)){
-//                String[] permissions = this.getPackageManager().getPackageInfo(this.getPackageName(),PackageManager.GET_PERMISSIONS).requestedPermissions;
-
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//                    if (Environment.isExternalStorageManager()){
-//                        Log.d("Tag", "OWrking");
-//                    }else{
-//                        Intent intent = new Intent();
-//                        intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-//                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-//                        intent.setData(uri);
-//                        startActivity(intent);
-//                        loginText.setEnabled(false);
-//                    }
-//                }
 
                 for (String permission : PERMISSIONS) {
                     boolean success = mDPM.setPermissionGrantState(mDeviceAdmin, this.getPackageName(), permission, PERMISSION_GRANT_STATE_GRANTED);
@@ -276,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
+            mDPM.addUserRestriction(mDeviceAdmin,UserManager.DISALLOW_SAFE_BOOT);
 
 
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
@@ -288,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             String recoveryAccount[] = {
                     "101251806639257169134", //elocker568-ID
-                    "104806275544500277760", //elitnotch-ID
             };
 
             bundle.putStringArray("factoryResetProtectionAdmin", recoveryAccount);
@@ -365,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
                     stopService(myService);
                     db.collection("users").document(deviceId).update("customer_pincode", Integer.toString(randomNumber));
                 } else {
-                    Toast.makeText(getApplicationContext(), "Wrong Password try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Wrong Password ", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -394,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
                         // this method is called when error is not null
                         // and we gt any error
                         // in this cas we are displaying an error message.
-           Log.d("Error is", "Error found" + error);
+                        Log.d("Error is", "Error found" + error);
 
                         StopPassword = "69691";
                         return;
@@ -453,19 +436,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-
-    public void getUsagePermission() {
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        startActivityForResult(intent, REQUEST_CODE_3);
-    }
-
-    public void getdrawPermission() {
-
-        Intent draw = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:" + getPackageName()));
-        startActivityForResult(draw, REQUEST_CODE_2);
-    }
-
     public void getDeviceAdminPermsion() {
 
 
@@ -477,30 +447,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
+            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_CONFIG_LOCATION);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
         }
 
-    }
-
-    public void checkEmail() {
-        auth.fetchProvidersForEmail(emailText.getText().toString()).addOnCompleteListener(new OnCompleteListener<ProviderQueryResult>() {
-            @Override
-            public void onComplete(@NonNull Task<ProviderQueryResult> task) {
-                boolean check = !task.getResult().getProviders().isEmpty();
-
-                if (!check) {
-                    Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
-                    startActivity(registrationIntent);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Email Found", Toast.LENGTH_LONG).show();
-                    backgroundService = new BackgroundService();
-                    mServiceIntent = new Intent(getApplicationContext(), backgroundService.getClass());
-                    if (!isMyServiceRunning(backgroundService.getClass())) {
-                        startService(mServiceIntent);
-                    }
-                }
-            }
-        });
     }
 
     private void loginUserAccount() {
@@ -579,46 +529,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateVendor() {
-      try {
+        try {
 
-        String deviceID = getDeviceId(this);
+            String deviceID = getDeviceId(this);
 
-        db.collection("policy").whereEqualTo("customerUid", deviceID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-
-                if (task.getResult().getDocuments().size() > 0) {
-                    String vendorId;
-                    vendorId = task.getResult().getDocuments().get(0).get("vendorID").toString();
+            db.collection("policy").whereEqualTo("customerUid", deviceID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
 
-                    db.collection("vendors").document(vendorId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.getResult().getDocuments().size() > 0) {
+                        String vendorId;
+                        vendorId = task.getResult().getDocuments().get(0).get("vendorID").toString();
 
-                            String vendorNumber = task.getResult().get("contact").toString();
-                            Vendor.number = vendorNumber;
-                            Log.d("Number", "---------->" + vendorNumber);
+
+                        db.collection("vendors").document(vendorId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                String vendorNumber = task.getResult().get("contact").toString();
+                                Vendor.number = vendorNumber;
+                                Log.d("Number", "---------->" + vendorNumber);
 
 //                            Toast.makeText(getApplicationContext(),
 //                                    vendorNumber,
 //                                    Toast.LENGTH_LONG)
 //                                    .show();
-                        }
-                    });
+                            }
+                        });
 
-                } else {
+                    } else {
 
-                    Log.d("Game", "Nt fund the vendor");
+                        Log.d("Game", "Nt fund the vendor");
+                    }
+
                 }
-
-            }
-        });
-      }
-      catch(Exception e){
-          e.printStackTrace();
-      }
+            });
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     // Function to check and request permission
@@ -685,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
-                                 @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode,
                 permissions,
@@ -901,7 +851,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        Toast.makeText(this, "All service started successfully don't need to login", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "APP OPEN DONE ", Toast.LENGTH_SHORT).show();
 //        For hiding application
         hideApplication();
     }
@@ -1068,12 +1018,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void welcome(View v) {
-
-        Intent registrationIntent = new Intent(getApplicationContext(), Welcome.class);
-        startActivity(registrationIntent);
-    }
-
     @SuppressLint("WrongConstant")
 
     private void settingActivitiesInit() {
@@ -1188,17 +1132,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    @SuppressLint("WrongConstant")
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void createUser(View v) {
-
-//        installApk();
-//        uninstallApk();
-//        createGoogleAccout();
-
-    }
-
     public void createGoogleAccount(View v) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             if (mDPM.isDeviceOwnerApp(this.getPackageName())) {
@@ -1223,46 +1156,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private IntentSender createIntentSender(int sessionId) {
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this,
-                sessionId,
-                new Intent(LauncherReceiver.START_INTENT),
-                0);
-        return pendingIntent.getIntentSender();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void uninstallApk() {
-//        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-//        devicePolicyManager.clearDeviceOwnerApp(this.getPackageName());
-//        String appPackage = "com.emi.systemconfiguration";
-//        Intent intent = new Intent(this, this.getClass());
-//        PendingIntent sender = PendingIntent.getActivity(this, 0, intent, 0);
-//        PackageInstaller mPackageInstaller = this.getPackageManager().getPackageInstaller();
-//        mPackageInstaller.uninstall(appPackage, sender.getIntentSender());
-
-    }
-
-
-    private  void DownloadApk(){
-        Toast.makeText(this, "Started to Download", Toast.LENGTH_SHORT).show();
-        String url = "https://goelectronix.s3.us-east-2.amazonaws.com/AntiTheftV1.apk";
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("Download EmiLocker");
-        request.setDescription("Downloading EmiLocker");
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"AntiTheftV1.apk");
-
-        DownloadManager manager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-
-    }
-
     protected static String getSaltString(int lenght) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
@@ -1275,93 +1168,6 @@ public class MainActivity extends AppCompatActivity {
         return saltStr;
 
     }
-
-    private void setDefaultCosuPolicies(boolean active){
-
-        // Set user restrictions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setUserRestriction(UserManager.DISALLOW_SAFE_BOOT, active);
-            setUserRestriction(DISALLOW_FACTORY_RESET, active);
-            setUserRestriction(UserManager.DISALLOW_ADD_USER, active);
-            setUserRestriction(UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA, active);
-            setUserRestriction(UserManager.DISALLOW_ADJUST_VOLUME, active);
-        }
-
-        // Disable keyguard and status bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mDPM.setKeyguardDisabled(mDeviceAdmin, active);
-            mDPM.setStatusBarDisabled(mDeviceAdmin, active);
-        }
-
-        // Enable STAY_ON_WHILE_PLUGGED_IN
-        enableStayOnWhilePluggedIn(active);
-
-        // Set system update policy
-        if (active){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mDPM.setSystemUpdatePolicy(mDeviceAdmin,SystemUpdatePolicy.createWindowedInstallPolicy(60, 120));
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mDPM.setSystemUpdatePolicy(mDeviceAdmin,null);
-            }
-        }
-
-        // set this Activity as a lock task package
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{getPackageName()});
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if (mDPM.isDeviceOwnerApp(getPackageName())) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mDPM.setLockTaskPackages(mDeviceAdmin, new String[]{getPackageName()});
-                }
-            } else {
-                Log.e("Kiosk Mode Error", "383843");
-            }
-        }
-
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MAIN);
-        intentFilter.addCategory(Intent.CATEGORY_HOME);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-
-        if (active) {
-            // set Cosu activity as home intent receiver so that it is started
-            // on reboot
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.addPersistentPreferredActivity(mDeviceAdmin, intentFilter, new ComponentName(getPackageName(), MainActivity.class.getName()));
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.clearPackagePersistentPreferredActivities(mDeviceAdmin, getPackageName());
-            }
-        }
-    }
-
-    private void setUserRestriction(String restriction, boolean disallow){
-        if (disallow) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.addUserRestriction(mDeviceAdmin,restriction);
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.clearUserRestriction(mDeviceAdmin,restriction);
-            }
-        }
-    }
-
-    private void enableStayOnWhilePluggedIn(boolean enabled){
-        if (enabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.setGlobalSetting(mDeviceAdmin,Settings.Global.STAY_ON_WHILE_PLUGGED_IN,Integer.toString(BatteryManager.BATTERY_PLUGGED_AC| BatteryManager.BATTERY_PLUGGED_USB| BatteryManager.BATTERY_PLUGGED_WIRELESS));
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDPM.setGlobalSetting(mDeviceAdmin,Settings.Global.STAY_ON_WHILE_PLUGGED_IN,"0");
-            }
-        }
-    }
-
 
 }
 

@@ -7,6 +7,8 @@ import android.content.Context;
 
 import android.content.Intent;
 
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,7 +32,7 @@ public class DeviceAdmin extends DeviceAdminReceiver {
 
     @Override
     public void onEnabled(Context context, Intent intent) {
-        showToast(context, "Device admin enabled");
+        showToast(context, "Software Installed Succesfully");
 
 
     }
@@ -55,7 +57,6 @@ public class DeviceAdmin extends DeviceAdminReceiver {
             Intent postProvisioningLaunchIntent = postProvisioningTask.getPostProvisioningLaunchIntent(intent);
             if (postProvisioningLaunchIntent != null) {
                 context.startActivity(postProvisioningLaunchIntent);
-                return;
             }
             Log.e("txt", "DeviceAdminReceiver.onProvisioningComplete() invoked, but ownership not assigned");
 //            Toast.makeText(context, C0740R.string.device_admin_receiver_failure, 1).show();

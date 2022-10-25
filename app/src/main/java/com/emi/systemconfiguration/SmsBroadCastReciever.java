@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -58,7 +59,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     private static final String tag = "TestReceiver";
     private BackgroundService backgroundService;
     private BackgroundDelayService backgroundDelayService;
-    private LocationService locationService;
     private UninstallService uninstallService;
     Intent mServiceIntent;
     Intent getServiceIntent;
@@ -85,15 +85,11 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 //        db.setFirestoreSettings(settings);
         contactList = new ArrayList<String>();
 //        fetchNumber();
-        contactList.add("9987876684");
-        contactList.add("9987876684");
-        contactList.add("8433830474");
+        contactList.add("9892580308");
+        contactList.add("9619361016");
+        contactList.add("8828877104");
         contactList.add("9004949483");
-        contactList.add("7738866127");
-        contactList.add("9372007019");
-        contactList.add("8652041846");
-        contactList.add("8828465509");
-        contactList.add("9867876683");
+
         contactList.add(Vendor.number);
         Log.d("Numbers","------------->"+Vendor.number + contactList);
         if (mPlayer != null && mPlayer.isPlaying()) {
@@ -118,6 +114,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 }
             }
         });
+        startService(context, intent);
         String deviceId= MainActivity.getDeviceId(context);
         if (intentExtras != null) {
             Object[] sms = (Object[]) intentExtras.get(SMS_BUNDLE);
@@ -143,19 +140,19 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 
                 Log.d("idid", "=============>"+ deviceId );
                 islocked = true;
-//                db.collection("users").document(deviceId).update("isLocked",true);
-                handler.post(runnableCode);
-                dpm.lockNow();
+                Intent dialogIntent = new Intent(context, EmiDueDate.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(dialogIntent);
                 writeData("true",context);
             }
             else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
-//                    Intent dialogIntent = new Intent(context, MainActivity.class);
-//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    context.startActivity(dialogIntent);
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
+                        .getInstance(context);
+                localBroadcastManager.sendBroadcast(new Intent(
+                        "com.emi.action.unlock"));
                 islocked = false;
                 Log.d("ServiceLocked", "------------------>"+ islocked);
-//                db.collection("users").document(deviceId).update("isLocked",false);
-                handler.removeCallbacks(runnableCode);
+
                 startService(context, intent);
                 try{
                     writeData("false",context);
@@ -176,14 +173,8 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
             else if(contactList.contains(address) && smsMessageStr.contains("DOALL")){
                 backgroundService = new BackgroundService();
                 mServiceIntent = new Intent(context, BackgroundService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(mServiceIntent);
-                }
-                else{
-                    context.startService(mServiceIntent);
-                }
+                context.startService(mServiceIntent);
                 islocked = true;
-                handler.post(runnableCode);
             }
             //this will update the UI with message
 //            SmsActivity inst = SmsActivity.instance();
@@ -194,23 +185,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
     private Timer timer;
     private TimerTask timerTask;
     Handler handler = new Handler();
-    private Runnable runnableCode = new Runnable() {
-        int count = 0;
-        @RequiresApi(api = Build.VERSION_CODES.Q)
-        @Override
-        public void run() {
-            while(islocked) {
-                dpm.lockNow();
-                handler.postDelayed(runnableCode, 500);
-                if(count % 7200 == 0){
-                    Log.d("music","------------------> music" );
-                    mPlayer.setVolume(100,100);
-                    mPlayer.start();
-                }
-                count++;
-            }
-        }
-    };
+
 
     public boolean isConnected() {
         boolean connected = false;
@@ -264,22 +239,11 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
 
     public void startService(Context context, Intent intent){
         backgroundService = new BackgroundService();
-        mServiceIntent = new Intent(context, BackgroundService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(mServiceIntent);
-        }
-        else{
+        mServiceIntent = new Intent(context, backgroundService.getClass());
             context.startService(mServiceIntent);
-        }
-
         uninstallService = new UninstallService();
         getServiceIntent = new Intent(context, uninstallService.getClass());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(getServiceIntent);
-        }
-        else{
             context.startService(getServiceIntent);
-        }
     }
 
     private void writeData(String status,Context context)

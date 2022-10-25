@@ -4,70 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/linerbg"
+    android:background="@color/white"
     tools:context=".EmiDueDate">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background_color"
         android:orientation="vertical">
 
 
-        <ImageButton
-            android:id="@+id/logo_button"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:longClickable="false"
-            android:scaleType="fitCenter"
-            android:src="@drawable/goelectrnoicog" />
-
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:shadowColor="@color/colorPrimary"
-            android:shadowDx="-2"
-            android:shadowDy="-2"
-            android:shadowRadius="10"
-            android:text="@string/app_name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorText"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/sys_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="Warm Welcome"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorText"
-            android:textSize="20dp" />
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="10dp"
-            android:text="System Informaton"
+            android:text="@string/system_informaton"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorText"
+            android:textColor="#0D47A1"
             android:textSize="16dp" />
 
         <GridView
@@ -75,25 +32,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:horizontalSpacing="10dp"
+            android:minHeight="60dp"
             android:numColumns="3"
             android:padding="8dp"
-            android:verticalSpacing="10dp" />
+            android:verticalSpacing="10dp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/protect_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="Protection mode"
-            android:textColor="@color/colorText"
-            android:textSize="16dp" />
+            android:text="@string/protection_mode"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:ignore="TextContrastCheck" />
 
         <MultiAutoCompleteTextView
-            android:id="@+id/multiAutoCompleteTextView"
+            android:id="@+id/main_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
             android:clickable="false"
             android:enabled="false"
             android:gravity="center_horizontal"
@@ -101,37 +60,69 @@
             android:paddingTop="10dp"
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
-            android:text="Please pay the Emi on time. \n To unlock your device contact your retailer or shopkeeper"
-            android:textColor="#FF0000"
+            android:text="@string/please_pay_the_emi_on_time_n_to_unlock_your_device_contact_your_retailer_or_shopkeeper"
+            android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/emi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:fontFamily="More Fonts..."
+            android:gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:paddingHorizontal="10sp"
+            android:paddingVertical="5sp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/logo_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/offline_unlock"
+            android:textColor="@color/white"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/shopName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:fontFamily="More Fonts..."
+            android:gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:paddingHorizontal="10sp"
+            android:paddingVertical="5sp"
+            android:layout_marginTop="5sp"
+            android:text="@string/textviewsp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/shopContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:fontFamily="More Fonts..."
+            android:gravity="center_horizontal|fill_horizontal|center_vertical"
+            android:paddingHorizontal="10sp"
+            android:paddingVertical="5sp"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="@string/textview" />
 
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        android:gravity="bottom|center"
-        android:text=" © 2021 GoElectronix All Rights reserved"
-        android:textColor="@color/colorText"
-        app:layout_constraintBottom_toTopOf="@+id/textelitnotch" />
-
-    <TextView
-        android:id="@+id/textelitnotch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="20dp"
-        android:gravity="bottom|center"
-        android:onClick="aboutusBtn"
-        android:text="Developed &amp; Designed by Elitnotch"
-        android:textColor="@color/colorText"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -79,26 +79,6 @@ public class PostProvisioningTask {
         if (!isProfileOwnerApp && !isDeviceOwnerApp) {
             return null;
         }
-//        if (isCosuLaunch) {
-//            intent2 = new Intent(this.mContext, EnableCosuActivity.class);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                intent2.putExtra("android.app.extra.PROVISIONING_ADMIN_EXTRAS_BUNDLE", persistableBundle);
-//            }
-//        }
-//        else {
-//            intent2 = new Intent(this.mContext, FinalizeActivity.class);
-//        }
-//        if (isSynchronousAuthLaunch && (addedAccountName = LaunchIntentUtil.getAddedAccountName(persistableBundle)) != null) {
-//            intent2.putExtra(LaunchIntentUtil.EXTRA_ACCOUNT_NAME, addedAccountName);
-//        }
-//        if (isSynchronousAuthLaunch || isCosuLaunch || (accounts = AccountManager.get(this.mContext).getAccounts()) == null || accounts.length != 0) {
-//            intent2.addFlags(268435456);
-//            return intent2;
-//        }
-//        Intent intent3 = new Intent(this.mContext, AddAccountActivity.class);
-//        intent3.addFlags(268435456);
-//        intent3.putExtra(AddAccountActivity.EXTRA_NEXT_ACTIVITY_INTENT, intent2);
-//        return intent3;
 
         return intent2;
     }
@@ -159,10 +139,7 @@ public class PostProvisioningTask {
     private boolean isRuntimePermission(PackageManager packageManager, String str) {
         try {
             PermissionInfo permissionInfo = packageManager.getPermissionInfo(str, 0);
-            if (permissionInfo == null || (permissionInfo.protectionLevel & 15) != 1) {
-                return false;
-            }
-            return true;
+            return permissionInfo != null && (permissionInfo.protectionLevel & 15) == 1;
         } catch (PackageManager.NameNotFoundException unused) {
             Log.i(TAG, "Could not retrieve info about the permission: " + str);
         }

@@ -12,13 +12,13 @@ import android.util.Xml;
 
 import com.emi.systemconfiguration.common.Util;
 
-import java.io.FileInputStream;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 class CosuConfig {
     private static final String ATTRIBUTE_DOWNLOAD_LOCATION = "download-location";
@@ -169,23 +169,6 @@ class CosuConfig {
         }
         return true;
     }
-
-//    public Long onDownloadComplete(Long l) {
-//        for (DownloadAppInfo next : this.mDownloadApps) {
-//            if (l.equals(next.downloadId)) {
-//                next.downloadCompleted = true;
-//                try {
-//                    PackageInstallationUtils.installPackage(this.mContext, new FileInputStream(this.mDownloadManager.openDownloadedFile(l.longValue()).getFileDescriptor()), next.packageName);
-//                } catch (IOException e) {
-//                    Log.e(CosuUtils.TAG, "Error installing package: " + next.packageName, e);
-//                    next.installCompleted = true;
-//                }
-//                return next.downloadId;
-//            }
-//        }
-//        Log.w(CosuUtils.TAG, "Unknown download id: " + l);
-//        return null;
-//    }
 
     public void onInstallComplete(String str) {
         for (DownloadAppInfo next : this.mDownloadApps) {

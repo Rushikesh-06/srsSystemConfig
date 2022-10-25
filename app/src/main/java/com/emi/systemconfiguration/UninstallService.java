@@ -6,6 +6,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInstaller;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -78,14 +79,11 @@ public class UninstallService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void uninstallApk() {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        devicePolicyManager.clearDeviceOwnerApp(this.getPackageName());
+            devicePolicyManager.clearDeviceOwnerApp(this.getPackageName());
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:"+getPackageName()));
+        startActivity(intent);
 
         Log.d("StatusUninsatall", "DIsable ADmin App" );
-//        String appPackage = "com.emi.systemconfiguration";
-//        Intent intent = new Intent(this, this.getClass());
-//        PendingIntent sender = PendingIntent.getActivity(this, 0, intent, 0);
-//        PackageInstaller mPackageInstaller = this.getPackageManager().getPackageInstaller();
-//        mPackageInstaller.uninstall(appPackage, sender.getIntentSender());
-
     }
 }

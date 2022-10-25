@@ -115,7 +115,8 @@
             android:onClick="forgetPassword"
             android:paddingLeft="10dp"
             android:text="Forget Password?"
-            android:textColor="@color/colorText" />
+            android:textColor="@color/colorText"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <Button
             android:id="@+id/emailBtn"
@@ -129,12 +130,18 @@
         <TextView
             android:id="@+id/registerText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
+            android:autoText="true"
+            android:background="#FFEB3B"
+            android:backgroundTint="#FFFFFF"
+            android:clickable="true"
+            android:minHeight="48dp"
             android:onClick="registerActivity"
-            android:text="Don't have an account ?  Register"
-            android:textColor="@color/colorText" />
+            android:text="New Account  Register"
+            android:textColor="@color/colorPrimary"
+            tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
 
 <!--        <TextView-->

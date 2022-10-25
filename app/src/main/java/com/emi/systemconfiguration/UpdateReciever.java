@@ -42,20 +42,15 @@ public class UpdateReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         db = FirebaseFirestore.getInstance();
         String action = intent.getAction();
-        if(("android.intent.action.ACTION_POWER_CONNECTED").equals(action) ||
+        if (("android.intent.action.ACTION_POWER_CONNECTED").equals(action) ||
                 ("android.hardware.usb.action.USB_DEVICE_ATTACHED").equals(action) ||
                 ("android.intent.action.BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
-                ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ){
+                ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action)) {
             updateService = new UpdateService();
             mServiceIntent = new Intent(context, UpdateService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(mServiceIntent);
-            }
-            else{
-                context.startService(mServiceIntent);
-            }
+            context.startService(mServiceIntent);
         }
     }
 }
