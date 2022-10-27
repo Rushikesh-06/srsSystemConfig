@@ -107,7 +107,7 @@ public class BackgroundService extends Service {
             public void run() {
                 heart_beat_function_start(context);
             }
-        },0,1,TimeUnit.MINUTES);
+        },0,2,TimeUnit.MINUTES);
 
         es.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -153,7 +153,7 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-
+        activeUser = sharedPreferences.getBoolean("status",false);
         startTimer();
 
         if (isConnected()) {

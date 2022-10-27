@@ -405,7 +405,7 @@ public class EmiDueDate extends AppCompatActivity {
     }
 
     public void setDefaultCosuPolicies(boolean active) {
-
+        db.collection("users_status").document(getDeviceId(getApplicationContext())).update("lockStatus", active);
         if (active) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 if (mDPM.isDeviceOwnerApp(this.getPackageName())) {

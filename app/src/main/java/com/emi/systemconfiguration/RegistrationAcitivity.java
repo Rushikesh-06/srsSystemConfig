@@ -1,5 +1,6 @@
 package com.emi.systemconfiguration;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -34,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +54,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +69,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -72,7 +84,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private DatePicker datePicker;
     private Calendar calendar;
     private SharedPreferences sharedPreferences;
-    private TextView dateView, endDateView, costLabel, spinner;
+    private TextView dateView, endDateView, spinner;
     private int year, month, day;
 
     private CircleImageView img_profile;
@@ -113,7 +125,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
 
-    private final String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
+    private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,10 +137,16 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         btn_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(icamera, CAMERA_REQ_CODE);
+                if (ContextCompat.checkSelfPermission(RegistrationAcitivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(icamera, CAMERA_REQ_CODE);
+                }else{
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},111);
+                }
+
             }
         });
+
 
         etdownpayment = findViewById(R.id.downpayment);
         etemitenure = findViewById(R.id.emi_tenure);
@@ -177,17 +195,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //        spinner.setAdapter(adapter);
 //        spinner.setOnItemSelectedListener(this);
 
-        TextView paymnet = (TextView) findViewById(R.id.textView4);
-        TextView cost = (TextView) findViewById(R.id.costLabel);
-        EditText amount = (EditText) findViewById(R.id.amount);
-        TextView shopCode = (TextView) findViewById(R.id.vendorShopCode);
-        TextView email = (TextView) findViewById(R.id.vendorEmail);
-        TextView address = (TextView) findViewById(R.id.vendorAddress);
-        shopCode.setVisibility(View.GONE);
-        email.setVisibility(View.GONE);
-        address.setVisibility(View.GONE);
-        paymnet.setVisibility(View.GONE);
-        cost.setVisibility(View.GONE);
+
         // Spinner Loan
         spinner2 = findViewById(R.id.spinner3);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.loan,
@@ -195,7 +203,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         adapter2.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
-        spinner2.setVisibility(View.GONE);
+        spinner2.setVisibility(View.VISIBLE);
 
         // Spinner Plan
         spinnerPlan = findViewById(R.id.spinnerPlan);
@@ -208,7 +216,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         loanView = (CheckBox) findViewById(R.id.loanBox);
         loanView.setVisibility(View.GONE);
-        costLabel = (TextView) findViewById(R.id.costLabel);
+
         device_amount = (EditText) findViewById(R.id.amount);
 
         loanView.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +227,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     planValid = true;
                 } else {
                     spinner2.setVisibility(View.GONE);
-                    costLabel.setVisibility(View.VISIBLE);
+
                     device_amount.setVisibility(View.VISIBLE);
                 }
             }
@@ -305,6 +313,32 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
+    private void uploadImage(String filepath) {
+        File file = new File(filepath);
+
+        Retrofit retrofit = NetworkClient.getRetrofit();
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"),file);
+        MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
+
+        RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
+        RequestBody cache = RequestBody.create(MediaType.parse("text/plain"),"true");
+        FileUploadService fileUploadService = retrofit.create(FileUploadService.class);
+        Call call = fileUploadService.uplpadImage(parts ,somedata,cache);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+
+                Log.e("TAG", "onResponse: "+response );
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.e("TAG", "onFailure: "+t.getMessage() );
+            }
+        });
+    }
+
     public void moveToSecondary() {
         // use an intent to travel from one activity to another.
         Intent intent;
@@ -319,14 +353,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         vendorName.setText("Vendor Name : ");
         TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
         vendorShopName.setText("Shop Name : ");
-        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
-        vendorShopCode.setText("Shop Code : ");
+//        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
+//        vendorShopCode.setText("Shop Code : ");
         TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
         vendorContact.setText("Vendor Contact : ");
-        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
-        vendorEmail.setText("Email Id : ");
-        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
-        vendorAddress.setText("Shop Address : ");
+//        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
+//        vendorEmail.setText("Email Id : ");
+//        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
+//        vendorAddress.setText("Shop Address : ");
 
         db.collection("policy").whereEqualTo("policyNo", policiesNo)
                 .get()
@@ -374,24 +408,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             vendorShopName.setText("Shop Name : "
                                                                     + value.getData().get("shopname").toString());
                                                             vendorShopName.setTypeface(vendorShopName.getTypeface(), Typeface.BOLD);
-                                                            TextView vendorShopCode = (TextView) findViewById(
-                                                                    R.id.vendorShopCode);
-                                                            vendorShopCode.setText("Shop Code : "
-                                                                    + value.getData().get("vendorcode").toString());
                                                             TextView vendorContact = (TextView) findViewById(
                                                                     R.id.vendorContact);
                                                             vendorContact.setText("Vendor Contact : "
                                                                     + value.getData().get("contact").toString());
                                                             vendorContact.setTypeface(vendorContact.getTypeface(), Typeface.BOLD);
-                                                            TextView vendorEmail = (TextView) findViewById(
-                                                                    R.id.vendorEmail);
-                                                            vendorEmail.setText("Email Id : "
-                                                                    + value.getData().get("email").toString());
-                                                            TextView vendorAddress = (TextView) findViewById(
-                                                                    R.id.vendorAddress);
-                                                            vendorAddress.setText("Shop Address : "
-                                                                    + value.getData().get("address").toString() + ","
-                                                                    + value.getData().get("location").toString());
                                                             // editor.commit();
                                                             TextView email = findViewById(R.id.customerMail);
                                                             email.setText(
@@ -537,9 +558,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             public void onSuccess(Void avoid) {
                                                                 progressbar.setVisibility(View.GONE);
                                                                 toastMessage("Registration is done successfully");
-
-                                                                Intent mainActivityIntent = new Intent(
-                                                                        getApplicationContext(), MainActivity.class);
+                                                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                mainActivityIntent.putExtra("minimize",1);
                                                                 startActivity(mainActivityIntent);
                                                                 finish();
 
@@ -720,6 +740,26 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     case CAMERA_REQ_CODE:
                         Bitmap img = (Bitmap) (data.getExtras().get("data"));
                         img_profile.setImageBitmap(img);
+                        File f = new File(getCacheDir(), filename);
+                        try {
+                            f.createNewFile();
+                            Bitmap bitmap = img;
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                            byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                            FileOutputStream fos = new FileOutputStream(f);
+                            fos.write(bitmapdata);
+                            fos.flush();
+                            fos.close();
+                            uploadImage(f.getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+//Convert bitmap to byte array
+
                         break;
                 }
                 break;
