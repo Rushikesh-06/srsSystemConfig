@@ -318,7 +318,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         Retrofit retrofit = NetworkClient.getRetrofit();
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"),file);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"),file);
         MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
 
         RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
