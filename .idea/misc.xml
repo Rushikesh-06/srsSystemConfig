@@ -3,14 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_admin_policy_compliance.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_dpc_login.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_emi_due_date.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_get_provisioning_mode.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_main.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_registration_acitivity.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_welcome.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/card_item.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/color_spinner_layout.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/spinner_dropdown_layout.xml" value="0.32135416666666666" />
         <entry key="..\:/Users/pruth/AndroidStudioProjects/gexEMI/app/src/main/res/drawable-v24/btn_bg.xml" value="0.13" />
         <entry key="..\:/Users/pruth/AndroidStudioProjects/gexEMI/app/src/main/res/drawable-v24/input_bg.xml" value="0.13" />
         <entry key="..\:/Users/pruth/AndroidStudioProjects/gexEMI/app/src/main/res/layout/activity_registration_acitivity.xml" value="0.20833333333333334" />
-        <entry key="app/src/main/res/layout/activity_emi_due_date.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main2.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/card_item.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/color_spinner_layout.xml" value="0.1" />
       </map>
     </option>
   </component>

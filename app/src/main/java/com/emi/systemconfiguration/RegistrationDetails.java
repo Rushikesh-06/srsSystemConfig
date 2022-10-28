@@ -17,12 +17,6 @@ public class RegistrationDetails {
     }
 
 
-    public RegistrationDetails(String customer_uid, String customer_name, String customer_contact, String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan, String startDate, String endDate, String amount, String anti_theft_plan, String downpaymet, String emi_tenure, String photo) {
-        this.downpaymet = downpaymet;
-        this.emi_tenure = emi_tenure;
-        this.photo = photo;
-    }
-
     public RegistrationDetails(String customerUid, String customerName, String customerContact, String customer_uid, String customer_name, String customer_contact,
                                String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan,
                                String startDate, String endDate, String device_amount, String anti_theft_plan, String vendorId) {

@@ -38,6 +38,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,6 +60,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,19 +72,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -90,7 +94,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private CircleImageView img_profile;
     private FloatingActionButton btn_click;
     private final int CAMERA_REQ_CODE = 101;
-    public static final int PICK_IMAGE = 1;
+//    public static final int PICK_IMAGE = 1;
+
+
+//    private static final int PICK_IMAGE_REQUEST =1 ;
+
+    private static final String ROOT_URL = "http://goelectronix.in/api/app/UploadFile";
 
 
     // Firebase auth
@@ -313,31 +322,31 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
-    private void uploadImage(String filepath) {
-        File file = new File(filepath);
-
-        Retrofit retrofit = NetworkClient.getRetrofit();
-
-        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"),file);
-        MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
-
-        RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
-        RequestBody cache = RequestBody.create(MediaType.parse("text/plain"),"true");
-        FileUploadService fileUploadService = retrofit.create(FileUploadService.class);
-        Call call = fileUploadService.uplpadImage(parts ,somedata,cache);
-        call.enqueue(new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) {
-
-                Log.e("TAG", "onResponse: "+response );
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                Log.e("TAG", "onFailure: "+t.getMessage() );
-            }
-        });
-    }
+//    private void uploadImage(String filepath) {
+//        File file = new File(filepath);
+//
+//        Retrofit retrofit = NetworkClient.getRetrofit();
+//
+//        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+//        MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
+//
+//        RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
+//        RequestBody cache = RequestBody.create(MediaType.parse("text/plain"),"true");
+//        FileUploadService fileUploadService = retrofit.create(FileUploadService.class);
+//        Call call = fileUploadService.uplpadImage(parts ,somedata,cache);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onResponse(Call call, Response response) {
+//
+//                Log.e("TAG", "onResponse: "+response );
+//            }
+//
+//            @Override
+//            public void onFailure(Call call, Throwable t) {
+//                Log.e("TAG", "onFailure: "+t.getMessage() );
+//            }
+//        });
+//    }
 
     public void moveToSecondary() {
         // use an intent to travel from one activity to another.
@@ -731,6 +740,57 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         return null;
     }
 
+
+
+    private void uploadBitmap(final Bitmap bitmap) {
+
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, ROOT_URL,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        try {
+                            Log.e("TAG", "onResponse: "+response.data );
+                            JSONObject obj = new JSONObject(new String(response.data));
+                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("GotError",""+error.getMessage());
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("apikey", "FAC2B68A-FD0B-4224-9D99-C3309E3D810E");
+                params.put("no-cache", "true");
+                return params;
+            }
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("files", new DataPart("test1" + ".png", getFileDataFromDrawable(bitmap)));
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        Volley.newRequestQueue(this).add(volleyMultipartRequest);
+    }
+
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -740,12 +800,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     case CAMERA_REQ_CODE:
                         Bitmap img = (Bitmap) (data.getExtras().get("data"));
                         img_profile.setImageBitmap(img);
-                        File f = new File(getCacheDir(), filename);
+                        uploadBitmap(img);
+                     /*   File f = new File(getCacheDir(), filename);
                         try {
                             f.createNewFile();
                             Bitmap bitmap = img;
                             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 *//*ignored for PNG*//*, bos);
                             byte[] bitmapdata = bos.toByteArray();
 
 //write the bytes in file
@@ -757,7 +818,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
+*/
 //Convert bitmap to byte array
 
                         break;
