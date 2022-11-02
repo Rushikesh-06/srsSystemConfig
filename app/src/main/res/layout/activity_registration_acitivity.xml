@@ -65,6 +65,7 @@
 
 
             <EditText
+                android:visibility="gone"
                 android:id="@+id/policyId"
                 android:layout_width="match_parent"
                 android:layout_height="49dp"
@@ -81,6 +82,124 @@
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
                 android:textCursorDrawable="@drawable/cursor" />
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/white">
+
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toStartOf="@+id/password_icon"
+                    android:background="@android:color/transparent"
+                    android:hint="Vendor Code"
+                    android:maxLines="1"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textSize="16dp" />
+
+                <ImageView
+                    android:id="@+id/password_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:adjustViewBounds="true"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_verify" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/vendordetail_layout"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:text="Vendor Details"
+                    android:textColor="@color/colorText"
+                    android:textColorHint="@color/colorHint"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/vendorName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:hint="Vendor Name : "
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textColorHint="@color/colorHint" />
+
+                <TextView
+                    android:id="@+id/vendorShopName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="Shop Name :"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textColorHint="@color/colorHint" />
+
+
+                <TextView
+                    android:id="@+id/vendorContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginBottom="10dp"
+                    android:textAlignment="center"
+                    android:hint="Vendor Contact :"
+                    android:textColor="@color/colorText"
+                    android:textColorHint="@color/colorHint" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:onClick="endDate"
+                android:text="Select Policy :"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                android:textSize="18sp" />
+
+
+            <Spinner
+                android:id="@+id/selectpolicy"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:scrollbarStyle="outsideOverlay"
+                android:textAlignment="center"></Spinner>
+
+
 
             <EditText
                 android:id="@+id/customerMail"
@@ -184,7 +303,7 @@
                 android:background="@color/white"
                 android:ems="10"
                 android:maxLength="2"
-                android:hint="EMI Month"
+                android:hint="EMI Months"
                 android:textAlignment="center"
                 android:inputType="number"
                 android:padding="10dp"
@@ -195,6 +314,31 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerName"
                 tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/emi_date"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:hint="EMI Date "
+                android:textAlignment="center"
+                android:inputType="number"
+                android:padding="10dp"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/colorHint"
+                android:textCursorDrawable="@drawable/cursor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/customerName"
+                tools:ignore="MissingConstraints" />
+
 
             <TextView
                 android:id="@+id/spinner1"
@@ -312,59 +456,82 @@
                 android:textColorHint="@color/colorHint"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/textView6"
+
+            <EditText
+                android:id="@+id/comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:text="Vendor Details"
-                android:textColor="@color/colorText"
+                android:background="@color/white"
+                android:hint="Enter Notes /  Comments :"
+                android:textAlignment="center"
+                android:padding="10dp"
+                android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/vendorName"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center_vertical"
-                android:hint="Vendor Name : "
-                android:textAlignment="center"
-                android:textColor="@color/colorText"
-                android:textColorHint="@color/colorHint" />
-
-            <TextView
-                android:id="@+id/vendorShopName"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:hint="Shop Name :"
-                android:textAlignment="center"
-                android:textColor="@color/colorText"
-                android:textColorHint="@color/colorHint" />
+                android:textCursorDrawable="@drawable/cursor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints" />
 
 
-            <TextView
-                android:id="@+id/vendorContact"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:textAlignment="center"
-                android:hint="Vendor Contact :"
+            <!--
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center"
+                            android:text="Vendor Details"
+                            android:textColor="@color/colorText"
+                            android:textColorHint="@color/colorHint"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                android:textColor="@color/colorText"
-                android:textColorHint="@color/colorHint" />
+                        <TextView
+                            android:id="@+id/vendorName"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center"
+                            android:hint="Vendor Name : "
+                            android:textAlignment="center"
+                            android:textColor="@color/colorText"
+                            android:textColorHint="@color/colorHint" />
+
+                        <TextView
+                            android:id="@+id/vendorShopName"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:hint="Shop Name :"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorText"
+                            android:textColorHint="@color/colorHint" />
+
+
+                        <TextView
+                            android:id="@+id/vendorContact"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:textAlignment="center"
+                            android:hint="Vendor Contact :"
+
+                            android:textColor="@color/colorText"
+                            android:textColorHint="@color/colorHint" />
+            -->
 
 
             <!-- ProgressBar for loading time -->

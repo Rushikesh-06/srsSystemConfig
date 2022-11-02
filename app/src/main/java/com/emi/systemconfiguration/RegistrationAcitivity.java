@@ -136,6 +136,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
 
+    Spinner selectpolicy;
+    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
+
+    EditText emi_date;
+    private int mYear, mMonth, mDay;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +163,40 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             }
         });
 
+
+        //select policy drop down list
+        selectpolicy = findViewById(R.id.selectpolicy);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(RegistrationAcitivity.this, android.R.layout.simple_spinner_dropdown_item, policylist);
+        selectpolicy.setAdapter(adapter);
+
+
+        //Emi date
+
+        emi_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get Current Date
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(RegistrationAcitivity.this);
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                emi_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
 
         etdownpayment = findViewById(R.id.downpayment);
         etemitenure = findViewById(R.id.emi_tenure);
