@@ -93,10 +93,10 @@
                 android:background="@android:color/white">
 
                 <EditText
-                    android:id="@+id/et_password"
+                    android:id="@+id/et_vendorcode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toStartOf="@+id/password_icon"
+                    android:layout_toStartOf="@+id/verify_icon"
                     android:background="@android:color/transparent"
                     android:hint="Vendor Code"
                     android:maxLines="1"
@@ -105,7 +105,7 @@
                     android:textSize="16dp" />
 
                 <ImageView
-                    android:id="@+id/password_icon"
+                    android:id="@+id/verify_icon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
@@ -121,7 +121,7 @@
                 android:visibility="gone"
                 android:id="@+id/vendordetail_layout"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center">
                 <TextView
@@ -136,39 +136,88 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/vendorName"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:gravity="center"
                     android:hint="Vendor Name : "
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
                     android:textColorHint="@color/colorHint" />
 
-                <TextView
-                    android:id="@+id/vendorShopName"
+                    <TextView
+                        android:id="@+id/vendorName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:hint="Vendor Name "
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:hint="Shop Name :"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textColorHint="@color/colorHint" />
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:hint="Shop Name :"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint" />
+
+                    <TextView
+                        android:id="@+id/vendorShopName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:hint="Shop Name"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint" />
 
 
-                <TextView
-                    android:id="@+id/vendorContact"
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_marginBottom="10dp"
-                    android:textAlignment="center"
-                    android:hint="Vendor Contact :"
-                    android:textColor="@color/colorText"
-                    android:textColorHint="@color/colorHint" />
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:hint="Vendor Contact :"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint" />
+
+                    <TextView
+                        android:id="@+id/vendorContact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:hint="Vendor Contact"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
