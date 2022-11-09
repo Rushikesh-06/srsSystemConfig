@@ -70,6 +70,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -195,6 +196,34 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,String.valueOf(IsStartup())+"Test",Toast.LENGTH_LONG).show();
             moveTaskToBack(true);
         }
+
+
+
+        //firebase push notification
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            System.out.println("Fetching FCM registration token failed");
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+//                        String msg = getString(R.string.msg_token_fmt, token);
+                        System.out.println(token);
+                        Toast.makeText(MainActivity.this, "You device registration token is :  "+ token,
+                                Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "onComplete: "+token );
+
+                    }
+                });
+
+
 //        createNotficationchannel();
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
