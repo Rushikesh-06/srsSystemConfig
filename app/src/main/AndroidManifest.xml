@@ -425,12 +425,29 @@
             android:stopWithTask="false" />
         
         
-        <service android:name=".Firebase.FirebasePushNotification"
+        <service android:name=".Firebase.FirebaseMessageReceiver"
             tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE"/>
             </intent-filter>
         </service>
+
+
+        <service
+            android:name=".Firebase.FirebaseMessageReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".Firebase.TokenReceiver"
+            tools:ignore="IntentFilterExportedReceiver">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

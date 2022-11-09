@@ -1,24 +1,23 @@
 package com.emi.systemconfiguration.Firebase;
 
-import android.content.SharedPreferences;
+import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
+import androidx.annotation.NonNull;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
-public class FirebaseMessageReceiver extends FirebaseInstanceIdService {
+public class FirebaseMessageReceiver extends com.google.firebase.messaging.FirebaseMessagingService {
 
+    private  String TAG = getClass().getSimpleName() ;
 
-    private static final String TAG = "FirebaseMessageReceiver";
+    public FirebaseMessageReceiver(){
+        super();
+    }
 
     @Override
-    public void onTokenRefresh() {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.e(TAG, "Refreshed token: " + refreshedToken);
-
-//        SharedPreferences
-
-
+    public void onMessageReceived(@NonNull RemoteMessage message) {
+        Log.e(TAG,message.toString());
     }
 }

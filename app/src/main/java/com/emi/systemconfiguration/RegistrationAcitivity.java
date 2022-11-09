@@ -65,6 +65,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,6 +160,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     TextView vendorName , vendorShopName, vendorContact;
 
+    //FCM Token
+    private String token;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +176,21 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         verify_icon = findViewById(R.id.verify_icon);
         et_vendorcode = findViewById(R.id.et_vendorcode);
         vendordetail_layout = findViewById(R.id.vendordetail_layout);
+
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    token = task.getException().getMessage();
+                    Log.w("FCM TOKEN Failed", task.getException());
+                } else {
+                    token = task.getResult().getToken();
+                    Log.i("FCM TOKEN", token);
+                }
+            }
+        });
+
 
 
         emi_date = findViewById(R.id.emi_date);
