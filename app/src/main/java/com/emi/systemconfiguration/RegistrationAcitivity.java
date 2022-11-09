@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +12,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,6 +30,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,6 +48,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -60,6 +66,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,6 +90,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private  String TAG = getClass().getSimpleName();
     String prevStarted = "yes";
 
     private DatePicker datePicker;
@@ -137,10 +145,18 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
 
     Spinner selectpolicy;
-    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
+    List<String> policylist=new ArrayList<>();
+//    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
 
-    EditText emi_date;
+    TextView emi_date;
     private int mYear, mMonth, mDay;
+
+    ImageView verify_icon;
+    LinearLayout vendordetail_layout;
+    private boolean verify_vendor = false;
+    EditText et_vendorcode;
+
+    TextView vendorName , vendorShopName, vendorContact;
 
 
     @Override
@@ -148,6 +164,16 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
 
+        vendorName = findViewById(R.id.vendorName);
+        vendorShopName = findViewById(R.id.vendorShopName);
+        vendorContact = findViewById(R.id.vendorContact);
+
+        verify_icon = findViewById(R.id.verify_icon);
+        et_vendorcode = findViewById(R.id.et_vendorcode);
+        vendordetail_layout = findViewById(R.id.vendordetail_layout);
+
+
+        emi_date = findViewById(R.id.emi_date);
         img_profile = findViewById(R.id.img_profile);
         btn_click = findViewById(R.id.btn_click);
         btn_click.setOnClickListener(new View.OnClickListener() {
@@ -164,8 +190,88 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         });
 
 
+
+
+
+
+        // verify vendor code
+        verify_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JSONObject vendorcode = new JSONObject();
+
+                ProgressDialog dialog = new ProgressDialog(RegistrationAcitivity.this);
+                dialog.setMessage("Please Wait...");
+                dialog.setCancelable(false);
+                dialog.show();
+
+                String vendor_code = et_vendorcode.getText().toString();
+                try {
+                     vendorcode = new JSONObject().put("VendorCode",vendor_code);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/VendorPolicyDetails", vendorcode, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e(TAG,response.toString());
+                        dialog.dismiss();
+
+                        try {
+                            if (response.getBoolean("success")==true){
+                                vendordetail_layout.setVisibility(View.VISIBLE);
+                                vendorName.setText(response.getString("vendorName"));
+                                vendorShopName.setText(response.getString("shopName"));
+                                vendorContact.setText(response.getString("vendorPhoneNumber"));
+
+                                JSONArray policies = response.getJSONArray("policies");
+                                for (int i = 0;i<policies.length();i++){
+                                   Log.e(TAG,policies.getJSONObject(i).toString());
+
+                                   JSONObject object = policies.getJSONObject(i);
+                                   Log.e(TAG,"POLICY ID: " +object.getString("policyID"));
+                                   Log.e(TAG,object.getString("policyNumber"));
+
+                                    policylist.add(object.getString("policyID"));
+
+                                }
+
+
+                            }else{
+                                vendordetail_layout.setVisibility(View.GONE );
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                       dialog.dismiss();
+                        Log.e(TAG,error.toString());
+                    }
+                });
+
+                Volley.newRequestQueue(RegistrationAcitivity.this).add(objectRequest);
+
+
+                /*if (verify_vendor){
+                    verify_vendor = false;
+                    vendordetail_layout.setVisibility(View.VISIBLE);
+                }else{
+                    verify_vendor= true;
+                    vendordetail_layout.setVisibility(View.GONE );
+                }*/
+            }
+        });
+
+
+
         //select policy drop down list
         selectpolicy = findViewById(R.id.selectpolicy);
+        policylist.add("Select policy");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(RegistrationAcitivity.this, android.R.layout.simple_spinner_dropdown_item, policylist);
         selectpolicy.setAdapter(adapter);
@@ -183,8 +289,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(RegistrationAcitivity.this);
-                        new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(RegistrationAcitivity.this, new DatePickerDialog.OnDateSetListener() {
 
                             @Override
                             public void onDateSet(DatePicker view, int year,
