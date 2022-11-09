@@ -7,20 +7,19 @@ public class RegistrationDetails {
 
     //    private final customer_active Boolean;
     // variables for storing our data.
-    public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorID, policyNo , startDate,endDate,device_amount,anti_theft_plan;
+    public String  customer_uid, customer_name, customer_contact, customer_email, customer_mobile_brand, customer_payment, customer_loan,customer_pincode,vendorID, policyNo , startDate,endDate,device_amount,anti_theft_plan,downpaymet,emi_tenure,photo;
 
-    public  Boolean customer_active, uninstall_status;
+    public  Boolean customer_active, uninstall_status , lockStatus;
 
-    public RegistrationDetails() {
+    public RegistrationDetails(String customer_uid, String customer_name, String customer_contact, String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan, String startDate, String endDate, String amount, String anti_theft_plan, String vendorId, String downpayment) {
         // empty constructor
         // required for Firebase.
     }
 
 
-
-    public RegistrationDetails(String customer_uid,String customer_name, String customer_contact,
-                               String customer_email, String customer_mobile_brand, String customer_payment,String customer_loan,
-                               String startDate, String endDate, String device_amount, String anti_theft_plan,String vendorId) {
+    public RegistrationDetails(String customerUid, String customerName, String customerContact, String customer_uid, String customer_name, String customer_contact,
+                               String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan,
+                               String startDate, String endDate, String device_amount, String anti_theft_plan, String vendorId) {
         Random r = new Random();
         int randomNumber =10000 + r.nextInt(90000);
         this.customer_uid = customer_uid;
@@ -39,6 +38,7 @@ public class RegistrationDetails {
         this.device_amount = device_amount;
         this.anti_theft_plan= anti_theft_plan;
         this.uninstall_status = false;
+        this.lockStatus = false;
     }
 
 
@@ -171,6 +171,29 @@ public class RegistrationDetails {
         this.vendorID = vendorID;
     }
 
+    public String getDownpaymet() {
+        return downpaymet;
+    }
+
+    public void setDownpaymet(String downpaymet) {
+        this.downpaymet = downpaymet;
+    }
+
+    public String getEmi_tenure() {
+        return emi_tenure;
+    }
+
+    public void setEmi_tenure(String emi_tenure) {
+        this.emi_tenure = emi_tenure;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 //    public String getVendorID() {
 //        return vendorID;
 //    }

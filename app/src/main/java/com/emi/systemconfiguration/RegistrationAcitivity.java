@@ -1,17 +1,24 @@
 package com.emi.systemconfiguration;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +30,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,11 +41,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -48,6 +66,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,20 +79,35 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
+
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private  String TAG = getClass().getSimpleName();
     String prevStarted = "yes";
 
     private DatePicker datePicker;
     private Calendar calendar;
     private SharedPreferences sharedPreferences;
-    private TextView dateView, endDateView, costLabel,spinner;
+    private TextView dateView, endDateView, spinner;
     private int year, month, day;
+
+    private CircleImageView img_profile;
+    private FloatingActionButton btn_click;
+    private final int CAMERA_REQ_CODE = 101;
+//    public static final int PICK_IMAGE = 1;
+
+
+//    private static final int PICK_IMAGE_REQUEST =1 ;
+
+    private static final String ROOT_URL = "http://goelectronix.in/api/app/UploadFile";
 
 
     // Firebase auth
@@ -77,7 +116,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     // creating variables for our edit text
     private EditText policyId, device_amount, customer_uidEdit, customer_nameEdit, customer_contactEdit,
-            customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit;
+            customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit, etdownpayment, etemitenure;
 
     // creating variable for button
     private Button registerBtn;
@@ -89,7 +128,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     // creating a strings for storing
     // our values from edittext fields.
     private String plan, policy_no, customer_uid, customer_name, customer_contact, customer_email,
-            customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate, amount;
+            customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo, startDate, endDate, amount, downpayment, emi_tenure, photo;
 
     // creating a variable
     // for firebasefirestore.
@@ -103,12 +142,169 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     List<Map<String, Object>> userData = new ArrayList<java.util.Map<String, Object>>();
 
-    private final String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
+    private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
+
+    Spinner selectpolicy;
+    List<String> policylist=new ArrayList<>();
+//    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
+
+    TextView emi_date;
+    private int mYear, mMonth, mDay;
+
+    ImageView verify_icon;
+    LinearLayout vendordetail_layout;
+    private boolean verify_vendor = false;
+    EditText et_vendorcode;
+
+    TextView vendorName , vendorShopName, vendorContact;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
+
+        vendorName = findViewById(R.id.vendorName);
+        vendorShopName = findViewById(R.id.vendorShopName);
+        vendorContact = findViewById(R.id.vendorContact);
+
+        verify_icon = findViewById(R.id.verify_icon);
+        et_vendorcode = findViewById(R.id.et_vendorcode);
+        vendordetail_layout = findViewById(R.id.vendordetail_layout);
+
+
+        emi_date = findViewById(R.id.emi_date);
+        img_profile = findViewById(R.id.img_profile);
+        btn_click = findViewById(R.id.btn_click);
+        btn_click.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(RegistrationAcitivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(icamera, CAMERA_REQ_CODE);
+                }else{
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},111);
+                }
+
+            }
+        });
+
+
+
+
+
+
+        // verify vendor code
+        verify_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JSONObject vendorcode = new JSONObject();
+
+                ProgressDialog dialog = new ProgressDialog(RegistrationAcitivity.this);
+                dialog.setMessage("Please Wait...");
+                dialog.setCancelable(false);
+                dialog.show();
+
+                String vendor_code = et_vendorcode.getText().toString();
+                try {
+                     vendorcode = new JSONObject().put("VendorCode",vendor_code);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/VendorPolicyDetails", vendorcode, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e(TAG,response.toString());
+                        dialog.dismiss();
+
+                        try {
+                            if (response.getBoolean("success")==true){
+                                vendordetail_layout.setVisibility(View.VISIBLE);
+                                vendorName.setText(response.getString("vendorName"));
+                                vendorShopName.setText(response.getString("shopName"));
+                                vendorContact.setText(response.getString("vendorPhoneNumber"));
+
+                                JSONArray policies = response.getJSONArray("policies");
+                                for (int i = 0;i<policies.length();i++){
+                                   Log.e(TAG,policies.getJSONObject(i).toString());
+
+                                   JSONObject object = policies.getJSONObject(i);
+                                   Log.e(TAG,"POLICY ID: " +object.getString("policyID"));
+                                   Log.e(TAG,object.getString("policyNumber"));
+
+                                    policylist.add(object.getString("policyID"));
+
+                                }
+
+
+                            }else{
+                                vendordetail_layout.setVisibility(View.GONE );
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                       dialog.dismiss();
+                        Log.e(TAG,error.toString());
+                    }
+                });
+
+                Volley.newRequestQueue(RegistrationAcitivity.this).add(objectRequest);
+
+
+                /*if (verify_vendor){
+                    verify_vendor = false;
+                    vendordetail_layout.setVisibility(View.VISIBLE);
+                }else{
+                    verify_vendor= true;
+                    vendordetail_layout.setVisibility(View.GONE );
+                }*/
+            }
+        });
+
+
+
+        //select policy drop down list
+        selectpolicy = findViewById(R.id.selectpolicy);
+        policylist.add("Select policy");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(RegistrationAcitivity.this, android.R.layout.simple_spinner_dropdown_item, policylist);
+        selectpolicy.setAdapter(adapter);
+
+
+        //Emi date
+
+        emi_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get Current Date
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(RegistrationAcitivity.this, new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                emi_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
+        etdownpayment = findViewById(R.id.downpayment);
+        etemitenure = findViewById(R.id.emi_tenure);
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
         getSupportActionBar().setTitle("Emi-Locker"); // set the top title
@@ -129,7 +325,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         showDate(year, month + 1, day);
-        dateView.setText("Start Date : " +new SimpleDateFormat("dd MMMM yyyy").format(new Date()));
+        dateView.setText("Start Date : " + new SimpleDateFormat("dd MMMM yyyy").format(new Date()));
 
         // taking FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
@@ -154,17 +350,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //        spinner.setAdapter(adapter);
 //        spinner.setOnItemSelectedListener(this);
 
-        TextView paymnet = (TextView) findViewById(R.id.textView4);
-        TextView cost = (TextView) findViewById(R.id.costLabel);
-        EditText amount = (EditText) findViewById(R.id.amount);
-        TextView shopCode = (TextView) findViewById(R.id.vendorShopCode);
-        TextView email = (TextView) findViewById(R.id.vendorEmail);
-        TextView address = (TextView) findViewById(R.id.vendorAddress);
-        shopCode.setVisibility(View.GONE);
-        email.setVisibility(View.GONE);
-        address.setVisibility(View.GONE);
-        paymnet.setVisibility(View.GONE);
-        cost.setVisibility(View.GONE);
+
         // Spinner Loan
         spinner2 = findViewById(R.id.spinner3);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.loan,
@@ -172,7 +358,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         adapter2.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
-        spinner2.setVisibility(View.GONE);
+        spinner2.setVisibility(View.VISIBLE);
 
         // Spinner Plan
         spinnerPlan = findViewById(R.id.spinnerPlan);
@@ -185,7 +371,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         loanView = (CheckBox) findViewById(R.id.loanBox);
         loanView.setVisibility(View.GONE);
-        costLabel = (TextView) findViewById(R.id.costLabel);
+
         device_amount = (EditText) findViewById(R.id.amount);
 
         loanView.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +382,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     planValid = true;
                 } else {
                     spinner2.setVisibility(View.GONE);
-                    costLabel.setVisibility(View.VISIBLE);
+
                     device_amount.setVisibility(View.VISIBLE);
                 }
             }
@@ -224,9 +410,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 if (isAllFieldsChecked) {
                     if (VendorID.length() > 0) {
                         registerNewUser();
-                    }
-
-                    else {
+                    } else {
                         toastMessage("Policy is empty");
                     }
                     // toastMessage("done workin");
@@ -284,6 +468,32 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     }
 
+//    private void uploadImage(String filepath) {
+//        File file = new File(filepath);
+//
+//        Retrofit retrofit = NetworkClient.getRetrofit();
+//
+//        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+//        MultipartBody.Part parts = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
+//
+//        RequestBody somedata = RequestBody.create(MediaType.parse("text/plain"),"this is new image");
+//        RequestBody cache = RequestBody.create(MediaType.parse("text/plain"),"true");
+//        FileUploadService fileUploadService = retrofit.create(FileUploadService.class);
+//        Call call = fileUploadService.uplpadImage(parts ,somedata,cache);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onResponse(Call call, Response response) {
+//
+//                Log.e("TAG", "onResponse: "+response );
+//            }
+//
+//            @Override
+//            public void onFailure(Call call, Throwable t) {
+//                Log.e("TAG", "onFailure: "+t.getMessage() );
+//            }
+//        });
+//    }
+
     public void moveToSecondary() {
         // use an intent to travel from one activity to another.
         Intent intent;
@@ -298,14 +508,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         vendorName.setText("Vendor Name : ");
         TextView vendorShopName = (TextView) findViewById(R.id.vendorShopName);
         vendorShopName.setText("Shop Name : ");
-        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
-        vendorShopCode.setText("Shop Code : ");
+//        TextView vendorShopCode = (TextView) findViewById(R.id.vendorShopCode);
+//        vendorShopCode.setText("Shop Code : ");
         TextView vendorContact = (TextView) findViewById(R.id.vendorContact);
         vendorContact.setText("Vendor Contact : ");
-        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
-        vendorEmail.setText("Email Id : ");
-        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
-        vendorAddress.setText("Shop Address : ");
+//        TextView vendorEmail = (TextView) findViewById(R.id.vendorEmail);
+//        vendorEmail.setText("Email Id : ");
+//        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
+//        vendorAddress.setText("Shop Address : ");
 
         db.collection("policy").whereEqualTo("policyNo", policiesNo)
                 .get()
@@ -353,24 +563,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             vendorShopName.setText("Shop Name : "
                                                                     + value.getData().get("shopname").toString());
                                                             vendorShopName.setTypeface(vendorShopName.getTypeface(), Typeface.BOLD);
-                                                            TextView vendorShopCode = (TextView) findViewById(
-                                                                    R.id.vendorShopCode);
-                                                            vendorShopCode.setText("Shop Code : "
-                                                                    + value.getData().get("vendorcode").toString());
                                                             TextView vendorContact = (TextView) findViewById(
                                                                     R.id.vendorContact);
                                                             vendorContact.setText("Vendor Contact : "
                                                                     + value.getData().get("contact").toString());
                                                             vendorContact.setTypeface(vendorContact.getTypeface(), Typeface.BOLD);
-                                                            TextView vendorEmail = (TextView) findViewById(
-                                                                    R.id.vendorEmail);
-                                                            vendorEmail.setText("Email Id : "
-                                                                    + value.getData().get("email").toString());
-                                                            TextView vendorAddress = (TextView) findViewById(
-                                                                    R.id.vendorAddress);
-                                                            vendorAddress.setText("Shop Address : "
-                                                                    + value.getData().get("address").toString() + ","
-                                                                    + value.getData().get("location").toString());
                                                             // editor.commit();
                                                             TextView email = findViewById(R.id.customerMail);
                                                             email.setText(
@@ -451,15 +648,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         // Validations for input email and password
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter email!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter email!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter password!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter password!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
@@ -473,13 +670,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                             amount = device_amount.getText().toString();
                             addDataToFirestore(customer_uid, customer_name, customer_contact, customer_email,
                                     customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo,
-                                    startDate, endDate, amount, plan);
+                                    startDate, endDate, amount, plan, downpayment, emi_tenure, photo );
                         } else {
                             // Registration failed
                             Toast.makeText(
-                                    getApplicationContext(),
-                                    "Authentication failed!!" + " Please try again later",
-                                    Toast.LENGTH_LONG)
+                                            getApplicationContext(),
+                                            "Authentication failed!!" + " Please try again later",
+                                            Toast.LENGTH_LONG)
                                     .show();
                             // hide the progress bar
                             progressbar.setVisibility(View.GONE);
@@ -490,7 +687,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private void addDataToFirestore(String customer_uid, String customer_name, String customer_contact,
                                     String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan,
-                                    String vendorId, String policyNo, String startDate, String endDate, String amount, String anti_theft_plan) {
+                                    String vendorId, String policyNo, String startDate, String endDate, String amount, String anti_theft_plan, String downpayment, String emi_tenure, String photo) {
 
         db.collection("policy").whereEqualTo("policyNo", policy_no).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -508,7 +705,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                 RegistrationDetails registration = new RegistrationDetails(customer_uid,
                                                         customer_name, customer_contact, customer_email,
                                                         customer_mobile_brand, customer_payment, customer_loan,
-                                                        startDate, endDate, amount, anti_theft_plan,vendorId);
+                                                        startDate, endDate, amount, anti_theft_plan, vendorId,downpayment,emi_tenure,photo);
                                                 // below method is use to add data to Firebase Firestore.
                                                 dbRegister.document(customer_uid).set(registration)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -516,33 +713,32 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                             public void onSuccess(Void avoid) {
                                                                 progressbar.setVisibility(View.GONE);
                                                                 toastMessage("Registration is done successfully");
-
-                                                                Intent mainActivityIntent = new Intent(
-                                                                        getApplicationContext(), MainActivity.class);
+                                                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                mainActivityIntent.putExtra("minimize",1);
                                                                 startActivity(mainActivityIntent);
                                                                 finish();
 
                                                             }
                                                         }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        // this method is called when the data addition process
-                                                        // is failed.
-                                                        // displaying a toast message when data addition is
-                                                        // failed.
-                                                        toastMessage(
-                                                                "Failed to register details Please try after some time \n"
-                                                                        + e);
-                                                    }
-                                                });
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // this method is called when the data addition process
+                                                                // is failed.
+                                                                // displaying a toast message when data addition is
+                                                                // failed.
+                                                                toastMessage(
+                                                                        "Failed to register details Please try after some time \n"
+                                                                                + e);
+                                                            }
+                                                        });
 
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        toastMessage("Please check the vendor details and policy");
-                                    }
-                                });
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                toastMessage("Please check the vendor details and policy");
+                                            }
+                                        });
                             }
                         } else {
                             toastMessage("Failed to register details Please try after some time \n");
@@ -690,4 +886,91 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         return null;
     }
 
+
+
+    private void uploadBitmap(final Bitmap bitmap) {
+
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, ROOT_URL,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        try {
+                            Log.e("TAG", "onResponse: "+response.data );
+                            JSONObject obj = new JSONObject(new String(response.data));
+                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("GotError",""+error.getMessage());
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("apikey", "FAC2B68A-FD0B-4224-9D99-C3309E3D810E");
+                params.put("no-cache", "true");
+                return params;
+            }
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("files", new DataPart("test1" + ".png", getFileDataFromDrawable(bitmap)));
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        Volley.newRequestQueue(this).add(volleyMultipartRequest);
+    }
+
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode){
+            case RESULT_OK:
+                switch (requestCode){
+                    case CAMERA_REQ_CODE:
+                        Bitmap img = (Bitmap) (data.getExtras().get("data"));
+                        img_profile.setImageBitmap(img);
+                        uploadBitmap(img);
+                     /*   File f = new File(getCacheDir(), filename);
+                        try {
+                            f.createNewFile();
+                            Bitmap bitmap = img;
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 *//*ignored for PNG*//*, bos);
+                            byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                            FileOutputStream fos = new FileOutputStream(f);
+                            fos.write(bitmapdata);
+                            fos.flush();
+                            fos.close();
+                            uploadImage(f.getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+*/
+//Convert bitmap to byte array
+
+                        break;
+                }
+                break;
+
+        }
+    }
 }

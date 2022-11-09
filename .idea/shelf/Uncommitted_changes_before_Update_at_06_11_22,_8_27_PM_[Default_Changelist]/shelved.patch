@@ -1,0 +1,265 @@
+Index: app/google-services.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"project_info\": {\n    \"project_number\": \"741955552131\",\n    \"firebase_url\": \"https://emi-locker-e99c1-default-rtdb.firebaseio.com\",\n    \"project_id\": \"emi-locker-e99c1\",\n    \"storage_bucket\": \"emi-locker-e99c1.appspot.com\"\n  },\n  \"client\": [\n    {\n      \"client_info\": {\n        \"mobilesdk_app_id\": \"1:741955552131:android:0285173add5600672decb6\",\n        \"android_client_info\": {\n          \"package_name\": \"com.emi.systemconfiguration\"\n        }\n      },\n      \"oauth_client\": [\n        {\n          \"client_id\": \"741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com\",\n          \"client_type\": 3\n        }\n      ],\n      \"api_key\": [\n        {\n          \"current_key\": \"AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8\"\n        }\n      ],\n      \"services\": {\n        \"appinvite_service\": {\n          \"other_platform_oauth_client\": [\n            {\n              \"client_id\": \"741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com\",\n              \"client_type\": 3\n            }\n          ]\n        }\n      }\n    },\n    {\n      \"client_info\": {\n        \"mobilesdk_app_id\": \"1:741955552131:android:46b0b42ccd4b63f42decb6\",\n        \"android_client_info\": {\n          \"package_name\": \"com.gexl.login\"\n        }\n      },\n      \"oauth_client\": [\n        {\n          \"client_id\": \"741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com\",\n          \"client_type\": 3\n        }\n      ],\n      \"api_key\": [\n        {\n          \"current_key\": \"AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8\"\n        }\n      ],\n      \"services\": {\n        \"appinvite_service\": {\n          \"other_platform_oauth_client\": [\n            {\n              \"client_id\": \"741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com\",\n              \"client_type\": 3\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"configuration_version\": \"1\"\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/google-services.json b/app/google-services.json
+--- a/app/google-services.json	(revision 618ce34fcb1fe1631cd4c6d5161ec3da30769d0b)
++++ b/app/google-services.json	(date 1667746395596)
+@@ -7,12 +7,115 @@
+   },
+   "client": [
+     {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:89eccbeadd5001de2decb6",
++        "android_client_info": {
++          "package_name": "com.emi.sys_config"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
+       "client_info": {
+         "mobilesdk_app_id": "1:741955552131:android:0285173add5600672decb6",
+         "android_client_info": {
+           "package_name": "com.emi.systemconfiguration"
+         }
+       },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-9td12m5sna2o5979flukdnhas50phvha.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.emi.systemconfiguration",
++            "certificate_hash": "ff6a70bb5def3951e2bf6fc79587dbc9f3e6c6d2"
++          }
++        },
++        {
++          "client_id": "741955552131-re87b9dthuqo43fqo5761bt56acvo18s.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.emi.systemconfiguration",
++            "certificate_hash": "fb60ea74c6d1d1441a5bee1ce5a2016fca1ed6a6"
++          }
++        },
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:7fe460e41a3993802decb6",
++        "android_client_info": {
++          "package_name": "com.example.myapplication"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:8fe08afd1a1a7ea72decb6",
++        "android_client_info": {
++          "package_name": "com.example.test2"
++        }
++      },
+       "oauth_client": [
+         {
+           "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
+@@ -21,7 +124,7 @@
+       ],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8"
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
+         }
+       ],
+       "services": {
+@@ -50,7 +153,110 @@
+       ],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyCvrNQplPwuSesIWl51Y_WJGV-yr4zNy_8"
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:e783e7ef28c914f62decb6",
++        "android_client_info": {
++          "package_name": "com.vendor"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-vm14ajaeiscva7vl2ojnm318soc0dfjn.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.vendor",
++            "certificate_hash": "797e167ebb945be5da03458e18f51cdd83052738"
++          }
++        },
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:d481995213336fc72decb6",
++        "android_client_info": {
++          "package_name": "com.vendors"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:741955552131:android:7320efc3a24a3b012decb6",
++        "android_client_info": {
++          "package_name": "com.vendorsapp"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "741955552131-bnkphko16vdh6a8mq7k54nn3i28k6mpe.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.vendorsapp",
++            "certificate_hash": "797e167ebb945be5da03458e18f51cdd83052738"
++          }
++        },
++        {
++          "client_id": "741955552131-2i2vmgf34ollrldvr890b8mci0rjnf06.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyCeSrvPQVw8tlDRRMHLY6ldSzNtHOv6x7g"
+         }
+       ],
+       "services": {
+Index: local.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>## This file must *NOT* be checked into Version Control Systems,\n# as it contains information specific to your local configuration.\n#\n# Location of the SDK. This is only used by Gradle.\n# For customization when using a Version Control System, please read the\n# header note.\n#Fri Oct 28 08:36:53 IST 2022\nsdk.dir=C\\:\\\\Users\\\\Rushikesh Shingan\\\\AppData\\\\Local\\\\Android\\\\Sdk\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/local.properties b/local.properties
+--- a/local.properties	(revision 618ce34fcb1fe1631cd4c6d5161ec3da30769d0b)
++++ b/local.properties	(date 1667746587368)
+@@ -4,5 +4,5 @@
+ # Location of the SDK. This is only used by Gradle.
+ # For customization when using a Version Control System, please read the
+ # header note.
+-#Fri Oct 28 08:36:53 IST 2022
+-sdk.dir=C\:\\Users\\Rushikesh Shingan\\AppData\\Local\\Android\\Sdk
++#Tue Oct 25 16:04:58 IST 2022
++sdk.dir=/Users/pankaj/Library/Android/sdk
