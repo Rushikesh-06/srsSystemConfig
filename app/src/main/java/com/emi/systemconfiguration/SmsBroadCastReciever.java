@@ -89,6 +89,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         contactList.add("9619361016");
         contactList.add("8828877104");
         contactList.add("9004949483");
+        contactList.add("8898527975");
 
         contactList.add(Vendor.number);
         Log.d("Numbers","------------->"+Vendor.number + contactList);

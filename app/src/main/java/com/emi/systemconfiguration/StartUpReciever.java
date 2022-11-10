@@ -63,6 +63,7 @@ public class StartUpReciever extends BroadcastReceiver {
                FirebaseFirestore db = FirebaseFirestore.getInstance();
                String deviceId = MainActivity.getDeviceId(context.getApplicationContext());
                Intent startIntent = new Intent(context, MainActivity.class);
+               startIntent.putExtra("minimize",1);
                startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                context.startActivity(startIntent);
                Toast.makeText(context, "Make sure to Pay E.M.I on Time\n \tHave a nice day.", Toast.LENGTH_SHORT).show();
