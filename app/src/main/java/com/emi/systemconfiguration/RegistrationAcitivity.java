@@ -5,20 +5,17 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -58,7 +55,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -71,7 +67,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -90,7 +85,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegistrationAcitivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private  String TAG = getClass().getSimpleName();
+    private String TAG = getClass().getSimpleName();
     String prevStarted = "yes";
 
     private DatePicker datePicker;
@@ -115,7 +110,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private FirebaseAuth mAuth;
 
     // creating variables for our edit text
-    private EditText policyId, device_amount, customer_uidEdit, customer_nameEdit, customer_contactEdit,
+    private EditText policyId, emi_amount, customer_uidEdit, customer_nameEdit, customer_contactEdit,
             customer_emailEdit, customer_mobile_brandEdit, customer_paymentEdit, customer_loanEdit, etdownpayment, etemitenure;
 
     // creating variable for button
@@ -145,7 +140,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private final String filename = "q1w2e3r4t5y6u7i8o9p0.jpg";
 
     Spinner selectpolicy;
-    List<String> policylist=new ArrayList<>();
+    List<String> policylist = new ArrayList<>();
+    List<Policy> policyList = new ArrayList<>();
 //    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
 
     TextView emi_date;
@@ -155,8 +151,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     LinearLayout vendordetail_layout;
     private boolean verify_vendor = false;
     EditText et_vendorcode;
-
-    TextView vendorName , vendorShopName, vendorContact;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    TextView vendorName, vendorShopName, vendorContact;
+    private String vendorID="";
 
 
     @Override
@@ -164,6 +162,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
 
+        preferences= getSharedPreferences("EMILOCKER",MODE_PRIVATE);
+        editor = preferences.edit();
         vendorName = findViewById(R.id.vendorName);
         vendorShopName = findViewById(R.id.vendorShopName);
         vendorContact = findViewById(R.id.vendorContact);
@@ -179,19 +179,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         btn_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(RegistrationAcitivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(RegistrationAcitivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     Intent icamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(icamera, CAMERA_REQ_CODE);
-                }else{
-                    requestPermissions(new String[]{Manifest.permission.CAMERA},111);
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, 111);
                 }
 
             }
         });
-
-
-
-
 
 
         // verify vendor code
@@ -207,38 +203,40 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                 String vendor_code = et_vendorcode.getText().toString();
                 try {
-                     vendorcode = new JSONObject().put("VendorCode",vendor_code);
+                    vendorcode = new JSONObject().put("VendorCode", vendor_code);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/VendorPolicyDetails", vendorcode, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e(TAG,response.toString());
+                        Log.e(TAG, response.toString());
                         dialog.dismiss();
 
                         try {
-                            if (response.getBoolean("success")==true){
+                            if (response.getBoolean("success") == true) {
                                 vendordetail_layout.setVisibility(View.VISIBLE);
                                 vendorName.setText(response.getString("vendorName"));
                                 vendorShopName.setText(response.getString("shopName"));
-                                vendorContact.setText(response.getString("vendorPhoneNumber"));
-
+                                vendorContact.setText(response.getString("vendorMobileNumber"));
+                                vendorID = response.getString("vendorID");
                                 JSONArray policies = response.getJSONArray("policies");
-                                for (int i = 0;i<policies.length();i++){
-                                   Log.e(TAG,policies.getJSONObject(i).toString());
+                                for (int i = 0; i < policies.length(); i++) {
+                                    Log.e(TAG, policies.getJSONObject(i).toString());
 
-                                   JSONObject object = policies.getJSONObject(i);
-                                   Log.e(TAG,"POLICY ID: " +object.getString("policyID"));
-                                   Log.e(TAG,object.getString("policyNumber"));
+                                    JSONObject object = policies.getJSONObject(i);
+                                    Log.e(TAG, "POLICY ID: " + object.getString("policyID"));
+                                    Log.e(TAG, object.getString("policyNumber"));
 
-                                    policylist.add(object.getString("policyID"));
+                                    policylist.add(object.getString("policyNumber"));
+                                    Policy policy= new Policy(object.getString("policyID"),object.getString("policyNumber"));
+                                    policyList.add(policy);
 
                                 }
 
 
-                            }else{
-                                vendordetail_layout.setVisibility(View.GONE );
+                            } else {
+                                vendordetail_layout.setVisibility(View.GONE);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -249,8 +247,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       dialog.dismiss();
-                        Log.e(TAG,error.toString());
+                        dialog.dismiss();
+                        Log.e(TAG, error.toString());
                     }
                 });
 
@@ -268,9 +266,20 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         });
 
 
-
         //select policy drop down list
         selectpolicy = findViewById(R.id.selectpolicy);
+        selectpolicy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                customer_emailEdit.setText(selectpolicy.getSelectedItem().toString()+"@gmail.com");
+                policyId.setText(selectpolicy.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         policylist.add("Select policy");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(RegistrationAcitivity.this, android.R.layout.simple_spinner_dropdown_item, policylist);
@@ -291,14 +300,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(RegistrationAcitivity.this, new DatePickerDialog.OnDateSetListener() {
 
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
 
-                                emi_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        emi_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
-                            }
-                        }, mYear, mMonth, mDay);
+                    }
+                }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
@@ -372,7 +381,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         loanView = (CheckBox) findViewById(R.id.loanBox);
         loanView.setVisibility(View.GONE);
 
-        device_amount = (EditText) findViewById(R.id.amount);
+        emi_amount = (EditText) findViewById(R.id.amount);
 
         loanView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -383,7 +392,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 } else {
                     spinner2.setVisibility(View.GONE);
 
-                    device_amount.setVisibility(View.VISIBLE);
+                    emi_amount.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -398,7 +407,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressbar.setVisibility(View.VISIBLE);
+//                progressbar.setVisibility(View.VISIBLE);
 
                 isAllFieldsChecked = CheckAllFields();
 
@@ -408,11 +417,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 customer_email = customer_emailEdit.getText().toString();
 
                 if (isAllFieldsChecked) {
-                    if (VendorID.length() > 0) {
+//                    if (VendorID.length() > 0) {
                         registerNewUser();
-                    } else {
-                        toastMessage("Policy is empty");
-                    }
+//                    } else {
+//                        toastMessage("Policy is empty");
+//                    }
                     // toastMessage("done workin");
                 }
             }
@@ -452,7 +461,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             }
         });
 
-        device_amount.addTextChangedListener(new TextWatcher() {
+        emi_amount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -667,10 +676,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             customer_uid = MainActivity.getDeviceId(getApplicationContext());
-                            amount = device_amount.getText().toString();
+                            amount = emi_amount.getText().toString();
                             addDataToFirestore(customer_uid, customer_name, customer_contact, customer_email,
                                     customer_mobile_brand, customer_payment, customer_loan, VendorID, PolicyNo,
-                                    startDate, endDate, amount, plan, downpayment, emi_tenure, photo );
+                                    startDate, endDate, amount, plan, downpayment, emi_tenure, photo);
                         } else {
                             // Registration failed
                             Toast.makeText(
@@ -683,6 +692,62 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                         }
                     }
                 });
+        registerAPI();
+    }
+
+    private void registerAPI() {
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
+        JSONObject params = new JSONObject();
+        try {
+            params.put("CustomerName", customer_name);
+            params.put("MobileNumber", customer_contact);
+            params.put("EmailID", customer_email);
+            params.put("MobileBrand", customer_mobile_brand);
+            params.put("SerialNumber", Build.getSerial());
+            params.put("IMEINumber", "");
+            params.put("DownPayment", Integer.parseInt(downpayment));
+            params.put("EmiAmount", "");
+            params.put("FinanciarName", "BAJAJ");
+            params.put("DeviceAmount", amount);
+            params.put("DownPaymentEMI", 0);
+            params.put("EmiTenure", Integer.parseInt(emi_tenure));
+            params.put("DeviceID", telephonyManager.getSubscriberId());
+            params.put("CustomerPincode", "");
+            params.put("FirebaseToken", preferences.getString("fcm_token","NA"));
+            params.put("EmiDate", emi_date.getText().toString());
+            params.put("PolicyNumber",  policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyNumber());
+            params.put("PolicyID", policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyId());
+            params.put("VendorID", Integer.parseInt(vendorID));
+            params.put("PhotoURL", photo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/RegisterCustomer", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: "+response );
+                try {
+                    if (response.getBoolean("success")){
+                        editor.putInt("customerID",response.getInt("customerID"));
+                        editor.commit();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Volley.newRequestQueue(this).add(objectRequest);
+
+
     }
 
     private void addDataToFirestore(String customer_uid, String customer_name, String customer_contact,
@@ -705,7 +770,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                 RegistrationDetails registration = new RegistrationDetails(customer_uid,
                                                         customer_name, customer_contact, customer_email,
                                                         customer_mobile_brand, customer_payment, customer_loan,
-                                                        startDate, endDate, amount, anti_theft_plan, vendorId,downpayment,emi_tenure,photo);
+                                                        startDate, endDate, amount, anti_theft_plan, vendorId, downpayment, emi_tenure, photo);
                                                 // below method is use to add data to Firebase Firestore.
                                                 dbRegister.document(customer_uid).set(registration)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -714,7 +779,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                                                 progressbar.setVisibility(View.GONE);
                                                                 toastMessage("Registration is done successfully");
                                                                 Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                                                mainActivityIntent.putExtra("minimize",1);
+                                                                mainActivityIntent.putExtra("minimize", 1);
                                                                 startActivity(mainActivityIntent);
                                                                 finish();
 
@@ -837,8 +902,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             return false;
         }
 
-        if (device_amount.length() == 0) {
-            device_amount.setError("Required");
+        if (emi_amount.length() == 0) {
+            emi_amount.setError("Required");
             return true;
         }
 //        if (endDateView.getText().toString().contains("Select end date")) {
@@ -887,7 +952,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     }
 
 
-
     private void uploadBitmap(final Bitmap bitmap) {
 
         VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, ROOT_URL,
@@ -895,8 +959,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onResponse(NetworkResponse response) {
                         try {
-                            Log.e("TAG", "onResponse: "+response.data );
+                            Log.e("TAG", "onResponse: " + response.data);
                             JSONObject obj = new JSONObject(new String(response.data));
+                            photo = obj.getString("fulleLink");
                             Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -907,7 +972,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("GotError",""+error.getMessage());
+                        Log.e("GotError", "" + error.getMessage());
                     }
                 }) {
 
@@ -918,6 +983,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 params.put("no-cache", "true");
                 return params;
             }
+
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
@@ -940,9 +1006,9 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode){
+        switch (resultCode) {
             case RESULT_OK:
-                switch (requestCode){
+                switch (requestCode) {
                     case CAMERA_REQ_CODE:
                         Bitmap img = (Bitmap) (data.getExtras().get("data"));
                         img_profile.setImageBitmap(img);

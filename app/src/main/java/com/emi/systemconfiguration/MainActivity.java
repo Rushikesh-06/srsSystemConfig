@@ -95,11 +95,11 @@ public class MainActivity extends AppCompatActivity {
     public ComponentName mDeviceAdmin;
     public DevicePolicyManager mDPM;
     public TextView mToggleAdminBtn;
-    public static final int REQUEST_CODE = 0, REQUEST_CODE_2 = 2 ;
+    public static final int REQUEST_CODE = 0, REQUEST_CODE_2 = 2;
 
     Boolean AllPerm = true;
 
-//    Button checkEmailBtn;
+    //    Button checkEmailBtn;
     TextView permissionText;
 
     private FirebaseFirestore db;
@@ -110,11 +110,10 @@ public class MainActivity extends AppCompatActivity {
     //For Permission
     private static final int CAMERA_PERMISSION_CODE = 100;
     private static final int STORAGE_PERMISSION_CODE = 101;
-    private static final int  ACCESS_NETWORK_STATE_CODE= 102;
-    private static final int PACKAGE_USAGE_STATS_CODE= 103;
-    private static final int ACCESS_FINE_LOCATION_CODE= 104;
-    private static final int READ_PHONE_STATE_CODE= 105;
-
+    private static final int ACCESS_NETWORK_STATE_CODE = 102;
+    private static final int PACKAGE_USAGE_STATS_CODE = 103;
+    private static final int ACCESS_FINE_LOCATION_CODE = 104;
+    private static final int READ_PHONE_STATE_CODE = 105;
 
 
     public static final int MAKE_USER_EPHEMERAL = 1;
@@ -165,9 +164,12 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_SECURE_SETTINGS,
             Manifest.permission.WRITE_SETTINGS,
-            Manifest.permission.INSTALL_PACKAGES
+            Manifest.permission.INSTALL_PACKAGES,
+            Manifest.permission.BATTERY_STATS,
     };
     SharedPreferences sharedPreferences;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     private Context context;
 
 //    APp install device admin
@@ -183,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
             = "com.emi.systemconfiguration.INSTALL_COMPLETE";
 
 
-
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -192,7 +193,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         //firebase push notification
-
+        db = FirebaseFirestore.getInstance();
+        preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
+        editor = preferences.edit();
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -208,10 +211,11 @@ public class MainActivity extends AppCompatActivity {
                         // Log and toast
 //                        String msg = getString(R.string.msg_token_fmt, token);
                         System.out.println(token);
-                        Toast.makeText(MainActivity.this, "You device registration token is :  "+ token,
+                        Toast.makeText(MainActivity.this, "You device registration token is :  " + token,
                                 Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "onComplete: "+token );
-
+                        Log.e(TAG, "onComplete: " + token);
+                        editor.putString("fcm_token",token);
+                        editor.commit();
                     }
                 });
 
@@ -220,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
 
-        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("status", false);
         editor.apply();
@@ -234,12 +238,12 @@ public class MainActivity extends AppCompatActivity {
         String title = actionBar.getTitle().toString(); // get the title
         actionBar.hide(); // or even hide the actionbar
 
-        pass =password.getInstance();
+        pass = password.getInstance();
 
         permissionText = findViewById(R.id.permissionText);
 
         //        Hide the textview and edittext
-        registerText =(TextView) findViewById(R.id.registerText);
+        registerText = (TextView) findViewById(R.id.registerText);
         registerText.setEnabled(true);
 
         try {
@@ -249,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
 
 
-            if(!hasPermissions(this, PERMISSIONS)){
+            if (!hasPermissions(this, PERMISSIONS)) {
 
                 for (String permission : PERMISSIONS) {
                     boolean success = mDPM.setPermissionGrantState(mDeviceAdmin, this.getPackageName(), permission, PERMISSION_GRANT_STATE_GRANTED);
@@ -283,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putStringArray("factoryResetProtectionAdmin", recoveryAccount);
             mDPM.setApplicationRestrictions(mDeviceAdmin, "com.google.android.gms", bundle);
 
-            Intent broadcastIntent =new Intent("com.google.android.gms.auth.FRP_CONFIG_CHANGED");
+            Intent broadcastIntent = new Intent("com.google.android.gms.auth.FRP_CONFIG_CHANGED");
             broadcastIntent.setPackage("com.google.android.gms");
             broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             sendBroadcast(broadcastIntent);
@@ -292,8 +296,7 @@ public class MainActivity extends AppCompatActivity {
             startAllServices();
 
 
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Log.d("Error", e.toString());
             e.printStackTrace();
         }
@@ -471,16 +474,16 @@ public class MainActivity extends AppCompatActivity {
         // validations for input email and password
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter email!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter email!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(),
-                    "Please enter password!!",
-                    Toast.LENGTH_LONG)
+                            "Please enter password!!",
+                            Toast.LENGTH_LONG)
                     .show();
             return;
         }
@@ -497,21 +500,20 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(),
-                                            "Login successful!!",
-                                            Toast.LENGTH_LONG)
+                                                    "Login successful!!",
+                                                    Toast.LENGTH_LONG)
                                             .show();
 
                                     startAllServices();
                                     finish();
 
 
-
                                 } else {
 
                                     // sign-in failed
                                     Toast.makeText(getApplicationContext(),
-                                            "Login failed!!",
-                                            Toast.LENGTH_LONG)
+                                                    "Login failed!!",
+                                                    Toast.LENGTH_LONG)
                                             .show();
                                 }
                             }
@@ -570,8 +572,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -597,21 +598,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static boolean hasPermissions(Context context, String... permissions)
-    {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null)
-        {
-            for (String permission : permissions)
-            {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED)
-                {
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
             }
         }
         return true;
     }
-
 
 
     @SuppressLint({"HardwareIds", "MissingPermission"})
@@ -737,15 +733,15 @@ public class MainActivity extends AppCompatActivity {
                             permissionToken.continuePermissionRequest();
                         }
                     }).withErrorListener(new PermissionRequestErrorListener() {
-                // this method is use to handle error
-                // in runtime permissions
-                @Override
-                public void onError(DexterError error) {
-                    // we are displaying a toast message for error message.
-                    Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                        // this method is use to handle error
+                        // in runtime permissions
+                        @Override
+                        public void onError(DexterError error) {
+                            // we are displaying a toast message for error message.
+                            Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
 //                    requestPermissions();
-                }
-            })
+                        }
+                    })
                     // below line is use to run the permissions
                     // on same thread and to check the permissions
                     .onSameThread().check();
@@ -795,7 +791,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public static boolean isConnected(Context context) {
         boolean connected = false;
         try {
@@ -811,7 +806,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("BatteryLife")
-    public void batteryOptimize(){
+    public void batteryOptimize() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = getPackageName();
@@ -820,13 +815,12 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
                 startActivity(intent);
-                try{
+                try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES));
                     }
-                }
-                catch(Exception e){
-                    Log.d("errr",e+"found");
+                } catch (Exception e) {
+                    Log.d("errr", e + "found");
                 }
             }
 
@@ -834,7 +828,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAllServices() {
-
 
 
         backgroundService = new BackgroundService();
@@ -860,7 +853,7 @@ public class MainActivity extends AppCompatActivity {
         hideApplication();
     }
 
-    public void hideApplication(){
+    public void hideApplication() {
 //        MEthod first
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDPM.setApplicationHidden(mDeviceAdmin, "com.emi.systemconfiguration", true);
@@ -1053,7 +1046,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -1150,12 +1142,12 @@ public class MainActivity extends AppCompatActivity {
                         startLockTask();
                     } else {
                         // Lock not allowed - show error or something useful here
-                        Toast.makeText(this,"Not lock found",Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Not lock found", Toast.LENGTH_LONG).show();
                     }
                 }
             } else {
                 // Not a device owner - prompt user or show error
-                Toast.makeText(this,"Not admin found",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Not admin found", Toast.LENGTH_LONG).show();
             }
         }
     }
