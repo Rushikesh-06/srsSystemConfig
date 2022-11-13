@@ -308,6 +308,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                     }
                 }, mYear, mMonth, mDay);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePickerDialog.show();
             }
         });
@@ -697,22 +698,24 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     private void registerAPI() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
+//        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
         JSONObject params = new JSONObject();
         try {
             params.put("CustomerName", customer_name);
             params.put("MobileNumber", customer_contact);
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
-            params.put("SerialNumber", Build.getSerial());
+//            params.put("SerialNumber", Build.getSerial());
+            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
             params.put("IMEINumber", "");
-            params.put("DownPayment", Integer.parseInt(downpayment));
+            params.put("DownPayment", (downpayment));
             params.put("EmiAmount", "");
             params.put("FinanciarName", "BAJAJ");
             params.put("DeviceAmount", amount);
             params.put("DownPaymentEMI", 0);
-            params.put("EmiTenure", Integer.parseInt(emi_tenure));
-            params.put("DeviceID", telephonyManager.getSubscriberId());
+            params.put("EmiTenure",(emi_tenure));
+//            params.put("DeviceID", telephonyManager.getSubscriberId());
+            params.put("DeviceID", "");
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token","NA"));
             params.put("EmiDate", emi_date.getText().toString());

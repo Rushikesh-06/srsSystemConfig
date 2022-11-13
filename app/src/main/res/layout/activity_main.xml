@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/linerbg"
+    android:background="@drawable/gradientbackground"
     tools:context=".MainActivity">
 
 
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="100dp"
-            android:background="#232323"
+            android:background="@drawable/btn_bg"
             android:onClick="registerActivity"
             android:paddingHorizontal="40sp"
             android:paddingVertical="20sp"

@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/drawable-v24/btn_bg.xml" value="0.25" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/drawable-v24/input_bg.xml" value="0.25" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/drawable/gradientbackground.xml" value="0.25" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_main.xml" value="0.309375" />
+        <entry key="..\:/Users/Rushikesh Shingan/StudioProjects/gexEMI/app/src/main/res/layout/activity_registration_acitivity.xml" value="0.309375" />
         <entry key="app/src/main/res/layout/activity_aboutus.xml" value="0.11510416666666666" />
         <entry key="app/src/main/res/layout/activity_admin_policy_compliance.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_dpc_login.xml" value="0.11510416666666666" />
