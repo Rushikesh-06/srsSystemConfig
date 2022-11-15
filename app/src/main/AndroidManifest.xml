@@ -3,13 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.emi.systemconfiguration"
     tools:ignore="MissingLeanbackLauncher">
+
     <!-- Permissions for internet -->
     <uses-permission
         android:name="android.permission.DELETE_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.REBOOT"
+    <uses-permission
+        android:name="android.permission.REBOOT"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -66,7 +69,6 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-
     <uses-permission
         android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
@@ -110,9 +112,8 @@
         android:icon="@drawable/system_icon"
         android:keepScreenOn="true"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:required="true"
         android:sharedUserId="android.uid.system"
         android:showOnLockScreen="true"
@@ -121,7 +122,16 @@
         android:testOnly="false"
         android:theme="@style/AppTheme"
         android:turnScreenOn="true"
+        android:usesCleartextTraffic="true"
         tools:ignore="MissingTvBanner">
+        <service
+            android:name=".FirebaseMessageReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.actions"
@@ -130,15 +140,11 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-
-            >
+            android:exported="true">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"
-                    android:exported="true"
-
-                    />
+                    android:exported="true" />
 
                 <category
                     android:name="android.intent.category.LAUNCHER"
@@ -159,30 +165,31 @@
             android:exported="true" />
         <activity
             android:name=".AdminPolicyCompliance"
-            android:screenOrientation="portrait"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity> <!-- <activity -->
+        <!-- android:name=".provision.DpcLoginActivity" -->
+        <!-- android:exported="true" -->
+        <!-- android:permission="android.permission.BIND_DEVICE_ADMIN"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.app.action.GET_PROVISIONING_MODE" /> -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <activity
+            android:name=".provision.GetProvisioningModeActivity"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <intent-filter>
-                <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-<!--        <activity-->
-<!--            android:name=".provision.DpcLoginActivity"-->
-<!--            android:exported="true"-->
-<!--            android:permission="android.permission.BIND_DEVICE_ADMIN">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.app.action.GET_PROVISIONING_MODE" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-        <activity android:name=".provision.GetProvisioningModeActivity"
-            android:exported="true"
-            android:permission="android.permission.BIND_DEVICE_ADMIN"
-            >
-            <intent-filter>
                 <action android:name="android.app.action.GET_PROVISIONING_MODE" />
-                <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -199,13 +206,12 @@
             android:name=".DeviceAdmin"
             android:exported="true"
             android:label="Android admin"
-
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:exported="true"
-
                 android:resource="@xml/device_admin" />
+
             <intent-filter>
                 <action
                     android:name="android.app.action.DEVICE_ADMIN_ENABLED"
@@ -227,7 +233,6 @@
                     android:exported="true" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".BroadcastReciever"
             android:directBootAware="true"
@@ -311,7 +316,6 @@
                     android:scheme="package" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".NetworkBroadcast"
             android:enabled="true"
@@ -395,6 +399,7 @@
                 <action
                     android:name="com.aaa.aaa.action.START"
                     android:exported="true" />
+
                 <category
                     android:name="android.intent.category.DEFAULT"
                     android:exported="true" />
