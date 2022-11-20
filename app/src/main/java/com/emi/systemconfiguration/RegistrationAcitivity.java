@@ -304,7 +304,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
 
-                        emi_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        emi_date.setText( year+ "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 
                     }
                 }, mYear, mMonth, mDay);
@@ -419,7 +419,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
                 if (isAllFieldsChecked) {
 //                    if (VendorID.length() > 0) {
-                        registerNewUser();
+//                        registerNewUser();
+                    registerAPI();
 //                    } else {
 //                        toastMessage("Policy is empty");
 //                    }
@@ -709,18 +710,18 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
             params.put("IMEINumber", "");
             params.put("DownPayment", (downpayment));
-            params.put("EmiAmount", "");
+            params.put("EmiAmount", 0);
             params.put("FinanciarName", "BAJAJ");
             params.put("DeviceAmount", amount);
             params.put("DownPaymentEMI", 0);
             params.put("EmiTenure",(emi_tenure));
 //            params.put("DeviceID", telephonyManager.getSubscriberId());
-            params.put("DeviceID", "");
+            params.put("DeviceID", "123");
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token","NA"));
             params.put("EmiDate", emi_date.getText().toString());
             params.put("PolicyNumber",  policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyNumber());
-            params.put("PolicyID", policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyId());
+            params.put("PolicyID", Integer.parseInt(policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
         } catch (JSONException e) {
@@ -728,7 +729,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         }
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/RegisterCustomer", new JSONObject(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/RegisterCustomer", params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.e(TAG, "onResponse: "+response );
@@ -736,7 +737,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     if (response.getBoolean("success")){
                         editor.putInt("customerID",response.getInt("customerID"));
                         editor.commit();
+                        Toast.makeText(RegistrationAcitivity.this, "User registered.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegistrationAcitivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                     }
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -745,7 +750,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.e(TAG, "onErrorResponse: "+error.getMessage() );
             }
         });
         Volley.newRequestQueue(this).add(objectRequest);

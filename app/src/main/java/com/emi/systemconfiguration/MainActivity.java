@@ -20,6 +20,8 @@ import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 
 import android.app.admin.SystemUpdatePolicy;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -171,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     private Context context;
-
+    String token;
 //    APp install device admin
 
 
@@ -206,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                         token = task.getResult();
 
                         // Log and toast
 //                        String msg = getString(R.string.msg_token_fmt, token);
@@ -265,13 +267,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             registerText.setEnabled(true);
-            permissionText.setVisibility(View.GONE);
+            permissionText.setVisibility(View.VISIBLE);
+            permissionText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("simple text",token );
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(backgroundService, "copied", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
 //            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
 //            mDPM.addUserRestriction(mDeviceAdmin,UserManager.DISALLOW_SAFE_BOOT);
 
-
+            mDPM.setUninstallBlocked(mDeviceAdmin,getPackageName(),true);
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
                 // try to become active
                 Log.d("note", "request for admin");
