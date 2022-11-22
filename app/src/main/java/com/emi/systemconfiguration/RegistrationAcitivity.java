@@ -697,6 +697,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         registerAPI();
     }
 
+
     private void registerAPI() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
 //        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
@@ -708,7 +709,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("MobileBrand", customer_mobile_brand);
 //            params.put("SerialNumber", Build.getSerial());
             params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
-            params.put("IMEINumber", "");
+//            params.put("IMEINumber", "");
+            params.put("IMEINumber", telephonyManager.getDeviceId());
             params.put("DownPayment", (downpayment));
             params.put("EmiAmount", 0);
             params.put("FinanciarName", "BAJAJ");
@@ -716,7 +718,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("DownPaymentEMI", 0);
             params.put("EmiTenure",(emi_tenure));
 //            params.put("DeviceID", telephonyManager.getSubscriberId());
-            params.put("DeviceID", "123");
+            params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()) );
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token","NA"));
             params.put("EmiDate", emi_date.getText().toString());
