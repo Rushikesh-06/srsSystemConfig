@@ -6,6 +6,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -34,6 +35,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     Intent mServiceIntent;
     private UninstallService uninstallService;
     Intent getServiceIntent;
+    SharedPreferences sharedPreferences;
 
 
 
@@ -43,6 +45,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         context = getApplicationContext();
 //        backgroundService = new BackgroundService();
         mServiceIntent = new Intent(context, FirebaseMessageReceiver.class);
+        sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
 
         String deviceId= MainActivity.getDeviceId(context);
 
@@ -59,6 +62,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(dialogIntent);
                     writeData("true",context);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("status", true);
+                    editor.apply();
                 }else if (remoteMessage.getData().get("command").equals("GOUNLOCK")){
                     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
                             .getInstance(context);
@@ -74,6 +80,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     catch(Exception e){
                         Log.d("Ee", "exc" + e);
                     }
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("status", false);
+                    editor.apply();
                 } else if(remoteMessage.getData().get("command").equals("SYSTEMUPDATE")){
                     startDownload(context);
                 }
