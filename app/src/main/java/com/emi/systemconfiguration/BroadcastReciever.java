@@ -102,8 +102,13 @@ public class BroadcastReciever extends BroadcastReceiver {
                     backgroundService = new BackgroundService();
                     mServiceIntent = new Intent(context, BackgroundService.class);
                         context.startService(mServiceIntent);
+                    Intent dialogIntent = new Intent(context, EmiDueDate.class);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(dialogIntent);
 
                 }
+
+
             }
             catch(Exception e){
                 Log.d("Err","Error"+ e);

@@ -92,6 +92,7 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Toast.makeText(context, "Background Service Started", Toast.LENGTH_SHORT).show();
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         back = new ComponentName(this, DeviceAdmin.class);
 
