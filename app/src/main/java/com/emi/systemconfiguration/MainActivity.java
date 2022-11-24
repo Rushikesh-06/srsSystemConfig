@@ -61,6 +61,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -90,6 +94,9 @@ import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANT
 import static android.os.UserManager.DISALLOW_FACTORY_RESET;
 
 import static android.service.controls.ControlsProviderService.TAG;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -186,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACTION_INSTALL_COMPLETE
             = "com.emi.systemconfiguration.INSTALL_COMPLETE";
 
+
+    String syncAPI = "http://goelectronix.in/api/app/CustomerStatusSync";
 
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -344,6 +353,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        CallsyncAPI();
+    }
+
+    private void CallsyncAPI() {
+
+        JSONObject params = new JSONObject();
+
+       String deviceid =  MainActivity.getDeviceId(getApplicationContext());
+       String newFCMtoken = preferences.getString("fcm_token","NA");
+
+        try {
+            params.put("DeviceID",deviceid);
+            params.put("FirebaseToken",newFCMtoken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, syncAPI, params, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("Call Sync API-response :" ,response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Call Sync API-error :" ,error.toString());
+            }
+        });
     }
 
     private void askPassword() {
