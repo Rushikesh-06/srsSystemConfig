@@ -3,6 +3,14 @@ apply plugin: 'com.google.gms.google-services'
 ///apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('/Users/pankaj/Desktop/emilocker2.jks')
+            storePassword 'Goex@123'
+            keyAlias 'Goex'
+            keyPassword 'Goex@123'
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -24,6 +32,9 @@ android {
                 proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             }
         }
+    }
+    defaultConfig {
+        signingConfig signingConfigs.config
     }
 }
 
