@@ -724,8 +724,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token", "NA"));
             params.put("EmiDate", emi_date.getText().toString());
-            params.put("PolicyNumber", policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyNumber());
-            params.put("PolicyID", Integer.parseInt(policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyId()));
+            params.put("PolicyNumber", policyList.get((selectpolicy.getSelectedItemPosition()-1)).getPolicyNumber());
+            params.put("PolicyID", Integer.parseInt(policyList.get((selectpolicy.getSelectedItemPosition()-1)).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
         } catch (JSONException e) {
@@ -983,7 +983,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegistrationAcitivity.this, "Upload Failed.", Toast.LENGTH_LONG).show();
                         Log.e("GotError", "" + error.getMessage());
                     }
                 }) {
@@ -1006,7 +1006,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         };
 
         //adding the request to volley
-        Volley.newRequestQueue(this).add(volleyMultipartRequest);
+        Volley.newRequestQueue(RegistrationAcitivity.this).add(volleyMultipartRequest);
     }
 
     public byte[] getFileDataFromDrawable(Bitmap bitmap) {

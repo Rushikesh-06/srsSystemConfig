@@ -206,8 +206,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //firebase push notification
 
-        if (getIntent().hasExtra("lastpage")){
-            if (getIntent().getStringExtra("lastpage").equalsIgnoreCase("EmiDueDate")){
+        if (getIntent().hasExtra("lastpage")) {
+            if (getIntent().getStringExtra("lastpage").equalsIgnoreCase("EmiDueDate")) {
                 finish();
                 return;
             }
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("simple text",token );
+                ClipData clip = ClipData.newPlainText("simple text", token);
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "copied", Toast.LENGTH_SHORT).show();
             }
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                         token = task.getResult();
+                        token = task.getResult();
 
                         // Log and toast
 //                        String msg = getString(R.string.msg_token_fmt, token);
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "You device registration token is :  " + token,
                                 Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "onComplete: " + token);
-                        editor.putString("fcm_token",token);
+                        editor.putString("fcm_token", token);
                         editor.commit();
                     }
                 });
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 //            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
 //            mDPM.addUserRestriction(mDeviceAdmin,UserManager.DISALLOW_SAFE_BOOT);
 
-            mDPM.setUninstallBlocked(mDeviceAdmin,getPackageName(),true);
+            mDPM.setUninstallBlocked(mDeviceAdmin, getPackageName(), true);
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
                 // try to become active
                 Log.d("note", "request for admin");
@@ -323,7 +323,6 @@ public class MainActivity extends AppCompatActivity {
 
             batteryOptimize();
 //            startAllServices();
-            CallsyncAPI();
 
         } catch (Exception e) {
             Log.d("Error", e.toString());
@@ -361,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        CallsyncAPI();
 
     }
 
@@ -369,15 +368,15 @@ public class MainActivity extends AppCompatActivity {
 
         JSONObject params = new JSONObject();
 
-       String deviceid =  MainActivity.getDeviceId(getApplicationContext());
-       String newFCMtoken = preferences.getString("fcm_token","NA");
-        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String deviceid = MainActivity.getDeviceId(getApplicationContext());
+        String newFCMtoken = preferences.getString("fcm_token", "NA");
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         try {
-            params.put("DeviceID",deviceid);
+            params.put("DeviceID", deviceid);
             if (!BuildConfig.DEBUG)
-            params.put("IMEINumber",telephonyManager.getImei());
-            params.put("FirebaseToken",newFCMtoken);
+                params.put("IMEINumber", telephonyManager.getImei());
+            params.put("FirebaseToken", newFCMtoken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -386,12 +385,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                Log.e("Call Sync API-response :" ,response.toString());
+                Log.e("Call Sync API-response :", response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Call Sync API-error :" ,error.toString());
+                Log.e("Call Sync API-error :", error.toString());
             }
         });
         Volley.newRequestQueue(getApplicationContext()).add(objectRequest);
