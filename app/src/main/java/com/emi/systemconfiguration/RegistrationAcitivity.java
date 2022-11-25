@@ -154,7 +154,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     TextView vendorName, vendorShopName, vendorContact;
-    private String vendorID="";
+    private String vendorID = "";
 
 
     @Override
@@ -162,7 +162,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
 
-        preferences= getSharedPreferences("EMILOCKER",MODE_PRIVATE);
+        preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
         editor = preferences.edit();
         vendorName = findViewById(R.id.vendorName);
         vendorShopName = findViewById(R.id.vendorShopName);
@@ -229,7 +229,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                     Log.e(TAG, object.getString("policyNumber"));
 
                                     policylist.add(object.getString("policyNumber"));
-                                    Policy policy= new Policy(object.getString("policyID"),object.getString("policyNumber"));
+                                    Policy policy = new Policy(object.getString("policyID"), object.getString("policyNumber"));
                                     policyList.add(policy);
 
                                 }
@@ -271,8 +271,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         selectpolicy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                customer_emailEdit.setText(selectpolicy.getSelectedItem().toString()+"@gmail.com");
-                policyId.setText(selectpolicy.getSelectedItem().toString());
+                customer_emailEdit.setText(selectpolicy.getSelectedItem().toString() + "@gmail.com");
+//                policyId.setText(selectpolicy.getSelectedItem().toString());
             }
 
             @Override
@@ -304,7 +304,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
 
-                        emi_date.setText( year+ "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                        emi_date.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 
                     }
                 }, mYear, mMonth, mDay);
@@ -699,7 +699,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
 
     private void registerAPI() {
-        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 //        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
         JSONObject params = new JSONObject();
         try {
@@ -710,19 +710,21 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //            params.put("SerialNumber", Build.getSerial());
             params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
 //            params.put("IMEINumber", "");
-            params.put("IMEINumber", telephonyManager.getDeviceId());
-            params.put("DownPayment", (downpayment));
-            params.put("EmiAmount", 0);
+            if (!BuildConfig.DEBUG) {
+                params.put("IMEINumber", telephonyManager.getImei());
+            }
+            params.put("DownPayment", Integer.parseInt(etdownpayment.getText().toString()));
+            params.put("EmiAmount", Integer.parseInt(emi_amount.getText().toString()));
             params.put("FinanciarName", "BAJAJ");
-            params.put("DeviceAmount", amount);
-            params.put("DownPaymentEMI", 0);
-            params.put("EmiTenure",(emi_tenure));
+            params.put("DeviceAmount", 0);
+            params.put("DownPaymentEMI", Integer.parseInt(etdownpayment.getText().toString()));
+            params.put("EmiTenure", Integer.parseInt(etemitenure.getText().toString()));
 //            params.put("DeviceID", telephonyManager.getSubscriberId());
-            params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()) );
+            params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()));
             params.put("CustomerPincode", "");
-            params.put("FirebaseToken", preferences.getString("fcm_token","NA"));
+            params.put("FirebaseToken", preferences.getString("fcm_token", "NA"));
             params.put("EmiDate", emi_date.getText().toString());
-            params.put("PolicyNumber",  policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyNumber());
+            params.put("PolicyNumber", policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyNumber());
             params.put("PolicyID", Integer.parseInt(policyList.get(selectpolicy.getSelectedItemPosition()).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
@@ -734,10 +736,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/RegisterCustomer", params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.e(TAG, "onResponse: "+response );
+                Log.e(TAG, "onResponse: " + response);
                 try {
-                    if (response.getBoolean("success")){
-                        editor.putInt("customerID",response.getInt("customerID"));
+                    if (response.getBoolean("success")) {
+                        editor.putInt("customerID", response.getInt("customerID"));
                         editor.commit();
                         Toast.makeText(RegistrationAcitivity.this, "User registered.", Toast.LENGTH_SHORT).show();
                     } else {
@@ -752,7 +754,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "onErrorResponse: "+error.getMessage() );
+                Log.e(TAG, "onErrorResponse: " + error.getMessage());
             }
         });
         Volley.newRequestQueue(this).add(objectRequest);
@@ -920,8 +922,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //            toastMessage("Set the end date");
 //            return true;
 //        }
-        if (policyId.length() == 0) {
-            policyId.setError("Enter Policy");
+        if (selectpolicy.getSelectedItem().toString().equalsIgnoreCase("Select policy")) {
+            Toast.makeText(this, "Select Policy.", Toast.LENGTH_SHORT).show();
             return false;
         }
 

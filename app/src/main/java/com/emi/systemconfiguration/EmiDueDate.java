@@ -86,6 +86,9 @@ public class EmiDueDate extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals("com.emi.action.unlock")){
                 setDefaultCosuPolicies(false);
+                Intent intent1 = new Intent(EmiDueDate.this,MainActivity.class);
+                intent1.putExtra("lastpage",getClass().getSimpleName());
+                startActivity(intent1);
                 finish();
             }
         }
@@ -154,6 +157,9 @@ public class EmiDueDate extends AppCompatActivity {
         TextView shopContact = findViewById(R.id.shopContact);
         TextView pendingemi = findViewById(R.id.emi);
         Button logo_button = findViewById(R.id.logo_button);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        pendingemi.setText(""+sharedPreferences.getBoolean("status", false));
 
         es.scheduleAtFixedRate(new Runnable() {
             @Override

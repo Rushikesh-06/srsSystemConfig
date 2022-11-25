@@ -44,7 +44,7 @@ public class BroadcastReciever extends BroadcastReceiver {
     DevicePolicyManager dpm;
 
     Boolean screenOff;
-    SharedPreferences sharedPreferences ;
+    SharedPreferences sharedPreferences;
     private final String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
 
     Context context1;
@@ -53,19 +53,19 @@ public class BroadcastReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         String action = intent.getAction();
-        sharedPreferences = context. getSharedPreferences("LockingState",Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("LockingState", Context.MODE_PRIVATE);
         Boolean status = sharedPreferences.getBoolean("status", false);
         dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         context1 = context;
 
-        if(("android.intent.action.BOOT_COMPLETED").equals(action) ||
+        if (("android.intent.action.BOOT_COMPLETED").equals(action) ||
                 ("restart.service").contains(action) ||
                 ("android.intent.action.ACTION_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.ACTION_LOCKED_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.QUICKBOOT_POWERON").equals(action) ||
                 ("android.intent.action.ACTION_POWER_CONNECTED").equals(action) ||
-                ("android.hardware.usb.action.USB_DEVICE_ATTACHED").equals(action)||
+                ("android.hardware.usb.action.USB_DEVICE_ATTACHED").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.BATTERY_CHANGED").contains(action) ||
                 ("android.intent.action.ACTION_POWER_CONNECTED").contains((action)) ||
@@ -77,31 +77,38 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.intent.action.CONFIGURATION_CHANGED").contains((action)) ||
                 ("android.intent.action.REBOOT").contains((action)) ||
                 ("BackgroundProcess").equals(action) ||
-                ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)){
+                ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)) {
 
             Log.d("---------->d", Objects.requireNonNull(
                     readData(context)));
 
-            startService();
-            try{
-                try{
-                    if(Objects.requireNonNull(readData(context)).equals("true") ){
+            SharedPreferences sharedPreferences= context.getSharedPreferences("LockingState",Context.MODE_PRIVATE);
+            if (sharedPreferences.getBoolean("status",false)){
+                Intent dialogIntent = new Intent(context, EmiDueDate.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(dialogIntent);
+            }
+
+//            startService();
+/*
+            try {
+                try {
+                    if (Objects.requireNonNull(readData(context)).equals("true")) {
                         Log.d("---------->d1", readData(context));
                         backgroundService = new BackgroundService();
                         mServiceIntent = new Intent(context, BackgroundService.class);
-                            context.startService(mServiceIntent);
+                        context.startService(mServiceIntent);
 
                     }
-                }
-                catch(Exception e){
-                    Log.d("Ex", "Ex"+ e);
+                } catch (Exception e) {
+                    Log.d("Ex", "Ex" + e);
 
                 }
-                if(status) {
+                if (status) {
 //                    dpm.lockNow();
                     backgroundService = new BackgroundService();
                     mServiceIntent = new Intent(context, BackgroundService.class);
-                        context.startService(mServiceIntent);
+                    context.startService(mServiceIntent);
                     Intent dialogIntent = new Intent(context, EmiDueDate.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(dialogIntent);
@@ -109,10 +116,10 @@ public class BroadcastReciever extends BroadcastReceiver {
                 }
 
 
+            } catch (Exception e) {
+                Log.d("Err", "Error" + e);
             }
-            catch(Exception e){
-                Log.d("Err","Error"+ e);
-            }
+*/
 
         }
     }
@@ -137,17 +144,17 @@ public class BroadcastReciever extends BroadcastReceiver {
         return null;
     }
 
-    public void startService(){
+    public void startService() {
         backgroundService = new BackgroundService();
         mServiceIntent = new Intent(context1, BackgroundService.class);
 
-            context1.startService(mServiceIntent);
+        context1.startService(mServiceIntent);
 
         uninstallService = new UninstallService();
         getmServiceIntent = new Intent(context1, uninstallService.getClass());
 
 
-            context1.startService(getmServiceIntent);
+        context1.startService(getmServiceIntent);
 
     }
 

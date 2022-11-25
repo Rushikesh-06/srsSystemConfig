@@ -205,9 +205,27 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         //firebase push notification
+
+        if (getIntent().hasExtra("lastpage")){
+            if (getIntent().getStringExtra("lastpage").equalsIgnoreCase("EmiDueDate")){
+                finish();
+                return;
+            }
+        }
         db = FirebaseFirestore.getInstance();
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
         editor = preferences.edit();
+        permissionText = findViewById(R.id.permissionText);
+        permissionText.setVisibility(View.VISIBLE);
+        permissionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("simple text",token );
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "copied", Toast.LENGTH_SHORT).show();
+            }
+        });
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -236,10 +254,10 @@ public class MainActivity extends AppCompatActivity {
         //Firebase Istance
         auth = FirebaseAuth.getInstance();
 
-        sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
+       /* sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("status", false);
-        editor.apply();
+        editor.apply();*/
 
 
         ActionBar actionBar = getSupportActionBar(); // or getActionBar();
@@ -252,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
 
         pass = password.getInstance();
 
-        permissionText = findViewById(R.id.permissionText);
 
         //        Hide the textview and edittext
         registerText = (TextView) findViewById(R.id.registerText);
@@ -277,16 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             registerText.setEnabled(true);
-            permissionText.setVisibility(View.VISIBLE);
-            permissionText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("simple text",token );
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(MainActivity.this, "copied", Toast.LENGTH_SHORT).show();
-                }
-            });
+
 
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
 //            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
@@ -314,8 +322,8 @@ public class MainActivity extends AppCompatActivity {
             sendBroadcast(broadcastIntent);
 
             batteryOptimize();
-            startAllServices();
-
+//            startAllServices();
+            CallsyncAPI();
 
         } catch (Exception e) {
             Log.d("Error", e.toString());
@@ -354,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        CallsyncAPI();
+
     }
 
     private void CallsyncAPI() {
@@ -363,9 +371,12 @@ public class MainActivity extends AppCompatActivity {
 
        String deviceid =  MainActivity.getDeviceId(getApplicationContext());
        String newFCMtoken = preferences.getString("fcm_token","NA");
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
 
         try {
             params.put("DeviceID",deviceid);
+            if (!BuildConfig.DEBUG)
+            params.put("IMEINumber",telephonyManager.getImei());
             params.put("FirebaseToken",newFCMtoken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -374,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, syncAPI, params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                 Log.e("Call Sync API-response :" ,response.toString());
             }
         }, new Response.ErrorListener() {
