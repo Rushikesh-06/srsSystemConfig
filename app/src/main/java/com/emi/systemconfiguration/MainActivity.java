@@ -65,6 +65,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("simple text",token );
                     clipboard.setPrimaryClip(clip);
-                    Toast.makeText(backgroundService, "copied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "copied", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -381,6 +382,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Call Sync API-error :" ,error.toString());
             }
         });
+        Volley.newRequestQueue(getApplicationContext()).add(objectRequest);
     }
 
     private void askPassword() {
