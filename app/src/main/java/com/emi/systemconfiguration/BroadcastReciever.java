@@ -21,9 +21,19 @@ import android.os.Handler;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,7 +78,7 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.hardware.usb.action.USB_DEVICE_ATTACHED").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.BATTERY_CHANGED").contains(action) ||
-                ("android.intent.action.ACTION_POWER_CONNECTED").contains((action)) ||
+                ("android.intent.action.ACTION_POWER_DISCONNECTED").contains((action)) ||
                 ("android.intent.action.PACKAGE_REMOVED").contains((action)) ||
                 ("android.intent.action.ACTION_SHUTDOWN").contains((action)) ||
                 ("android.intent.action.AIRPLANE_MODE").contains((action)) ||
@@ -82,12 +92,47 @@ public class BroadcastReciever extends BroadcastReceiver {
             Log.d("---------->d", Objects.requireNonNull(
                     readData(context)));
 
-            SharedPreferences sharedPreferences= context.getSharedPreferences("LockingState",Context.MODE_PRIVATE);
-            if (sharedPreferences.getBoolean("status",false)){
+            SharedPreferences sharedPreferences = context.getSharedPreferences("LockingState", Context.MODE_PRIVATE);
+            if (sharedPreferences.getBoolean("status", false)) {
                 Intent dialogIntent = new Intent(context, EmiDueDate.class);
                 dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(dialogIntent);
             }
+
+            //api call cst status sync passing status
+
+            JSONObject sync_params = new JSONObject();
+
+            try {
+                sync_params.put("DeviceID", MainActivity.getDeviceId(context));
+
+                if (sharedPreferences.getBoolean("status",false)) {
+                    sync_params.put("StatusID", 3);
+                }else {
+                    sync_params.put("StatusID", 4);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JsonObjectRequest sync_api_status = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/CustomerStatusSync", sync_params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Log.e("response", response.toString());
+                    Toast.makeText(context, "Locked Status check after restart successfull", Toast.LENGTH_SHORT).show();
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Log.e("error", error.getMessage());
+                }
+            });
+
+            Volley.newRequestQueue(context).add(sync_api_status);
+
 
 //            startService();
 /*

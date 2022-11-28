@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
@@ -156,12 +157,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     TextView vendorName, vendorShopName, vendorContact;
     private String vendorID = "";
 
+    TelephonyManager telephonyManager ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_acitivity);
-
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
         editor = preferences.edit();
         vendorName = findViewById(R.id.vendorName);
@@ -477,6 +480,15 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             }
         });
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_SMS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS}, 100);
+            return;
+        }
+       if (!BuildConfig.DEBUG){
+           editor.putString("Sim Serial Number", telephonyManager.getSimSerialNumber());
+           editor.putString("Mobile Number", telephonyManager.getLine1Number());
+           editor.commit();
+       }
     }
 
 //    private void uploadImage(String filepath) {
@@ -699,7 +711,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
 
     private void registerAPI() {
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 //        Log.e(TAG, "registerAPI:Imei "+telephonyManager.getDeviceId() );
         JSONObject params = new JSONObject();
         try {
@@ -724,8 +735,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token", "NA"));
             params.put("EmiDate", emi_date.getText().toString());
-            params.put("PolicyNumber", policyList.get((selectpolicy.getSelectedItemPosition()-1)).getPolicyNumber());
-            params.put("PolicyID", Integer.parseInt(policyList.get((selectpolicy.getSelectedItemPosition()-1)).getPolicyId()));
+            params.put("PolicyNumber", policyList.get((selectpolicy.getSelectedItemPosition() - 1)).getPolicyNumber());
+            params.put("PolicyID", Integer.parseInt(policyList.get((selectpolicy.getSelectedItemPosition() - 1)).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
         } catch (JSONException e) {
