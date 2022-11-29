@@ -74,7 +74,7 @@ public class EmiDueDate extends AppCompatActivity {
     public ComponentName mDeviceAdmin;
 
     Button LogoButton;
-    private FirebaseFirestore db;
+//    private FirebaseFirestore db;
     String StopPassword;
 
     ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
@@ -106,7 +106,7 @@ public class EmiDueDate extends AppCompatActivity {
         win.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        db = FirebaseFirestore.getInstance();
+//        db = FirebaseFirestore.getInstance();
         mDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         // Set DeviceAdmin Demo Receiver for active the component with different option
         mDeviceAdmin = new ComponentName(this, DeviceAdmin.class);
@@ -129,8 +129,8 @@ public class EmiDueDate extends AppCompatActivity {
         long memory = getMemorySizeHumanized();
         String memorySize = formatFileSize(memory);
         // System Storage
-        long totalMemory = getTotalStorageInfo(Environment.getRootDirectory().getPath());
-        long usedMemory = getUsedStorageInfo(Environment.getRootDirectory().getPath());
+//        long totalMemory = getTotalStorageInfo(Environment.getRootDirectory().getPath());
+//        long usedMemory = getUsedStorageInfo(Environment.getRootDirectory().getPath());
         //
         // String storage = convertMbToGb(totalMemory) + " " +
         // convertMbToGb(usedMemory);
@@ -177,6 +177,7 @@ public class EmiDueDate extends AppCompatActivity {
             }
         }, 250, 500, TimeUnit.MILLISECONDS);
 
+/*
         db.collection("policy").whereEqualTo("customerUid", MainActivity.getDeviceId(getApplicationContext()))
                 .get()
                 .addOnCompleteListener(task -> {
@@ -201,6 +202,8 @@ public class EmiDueDate extends AppCompatActivity {
                         Log.w("POLICY ERROR", "Error getting documents.", task.getException());
                     }
                 });
+*/
+/*
         db.collection("users")
                 .whereEqualTo("customer_uid", MainActivity.getDeviceId(getApplicationContext()))
                 .get()
@@ -217,6 +220,7 @@ public class EmiDueDate extends AppCompatActivity {
                         }
                     }
                 });
+*/
 
 
         LogoButton = (Button) findViewById(R.id.logo_button);
@@ -233,8 +237,8 @@ public class EmiDueDate extends AppCompatActivity {
 
     private void askPassword() {
         try {
-            getPassword();
-            String deviceId = getDeviceId(this);
+//            getPassword();
+//            String deviceId = getDeviceId(this);
             Random r = new Random();
             int randomNumber = 10000 + r.nextInt(90000);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -249,10 +253,10 @@ public class EmiDueDate extends AppCompatActivity {
                 if (StopPassword.equals(passwordInput.getText().toString())
                         || passwordInput.getText().toString().equals("0852")) {
 
-                    setDefaultCosuPolicies(false);
+//                    setDefaultCosuPolicies(false);
                     finish();
-                    db.collection("users").document(deviceId).update("customer_pincode",
-                            Integer.toString(randomNumber));
+//                    db.collection("users").document(deviceId).update("customer_pincode",
+//                            Integer.toString(randomNumber));
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Wrong Password try again", Toast.LENGTH_LONG).show();
@@ -280,7 +284,8 @@ public class EmiDueDate extends AppCompatActivity {
         if (connect) {
             try {
                 String deviceId = getDeviceId(this);
-                DocumentReference documentReference = db.collection("users").document(deviceId);
+//                DocumentReference documentReference = db.collection("users").document(deviceId);
+/*
                 documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -307,6 +312,7 @@ public class EmiDueDate extends AppCompatActivity {
 
                     }
                 });
+*/
             } catch (Exception e) {
                 StopPassword = "69691";
             }
@@ -411,7 +417,7 @@ public class EmiDueDate extends AppCompatActivity {
     }
 
     public void setDefaultCosuPolicies(boolean active) {
-        db.collection("users_status").document(getDeviceId(getApplicationContext())).update("lockStatus", active);
+//        db.collection("users_status").document(getDeviceId(getApplicationContext())).update("lockStatus", active);
         if (active) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 if (mDPM.isDeviceOwnerApp(this.getPackageName())) {

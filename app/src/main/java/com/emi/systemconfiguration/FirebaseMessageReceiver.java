@@ -30,11 +30,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     private String TAG= getClass().getSimpleName();
     public boolean islocked;
     Context context;
-    private String filename = "q1w2e3r4t5y6u7i8o9p0.txt";
-//    private BackgroundService backgroundService;
-    Intent mServiceIntent;
-    private UninstallService uninstallService;
-    Intent getServiceIntent;
     SharedPreferences sharedPreferences;
 
 
@@ -44,7 +39,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         // ...
         context = getApplicationContext();
 //        backgroundService = new BackgroundService();
-        mServiceIntent = new Intent(context, FirebaseMessageReceiver.class);
         sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
 
         String deviceId= MainActivity.getDeviceId(context);
@@ -61,7 +55,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     Intent dialogIntent = new Intent(context, EmiDueDate.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(dialogIntent);
-                    writeData("true",context);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("status", true);
                     editor.apply();
@@ -73,13 +66,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     boolean islocked = false;
                     Log.d("ServiceLocked", "------------------>"+ islocked);
 
-                    startService(context, null);
-                    try{
-                        writeData("false",context);
-                    }
-                    catch(Exception e){
-                        Log.d("Ee", "exc" + e);
-                    }
+
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("status", false);
                     editor.apply();
@@ -92,12 +79,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                         devicePolicyManager.clearDeviceOwnerApp(context.getPackageName());
                         devicePolicyManager.setUninstallBlocked(new ComponentName(getApplicationContext(), DeviceAdmin.class),getPackageName(),false);
                     }
-                }
-                else if(remoteMessage.getData().get("command").equals("DOALL")){
-
-                    mServiceIntent = new Intent(context, BackgroundService.class);
-                    context.startService(mServiceIntent);
-                    islocked = true;
                 }
             }
         }
@@ -163,28 +144,5 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         context.startActivity(intent);
     }
 
-    public void startService(Context context, Intent intent){
-//        backgroundService = new BackgroundService();
-        mServiceIntent = new Intent(context, BackgroundService.class);
-        context.startService(mServiceIntent);
-        uninstallService = new UninstallService();
-        getServiceIntent = new Intent(context, uninstallService.getClass());
-        context.startService(getServiceIntent);
-    }
 
-    private void writeData(String status,Context context)
-    {
-        try
-        {
-            FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            String data = status;
-            fos.write(data.getBytes());
-            fos.flush();
-            fos.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 }

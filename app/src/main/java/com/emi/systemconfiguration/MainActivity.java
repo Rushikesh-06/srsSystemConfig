@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     //    Button checkEmailBtn;
     TextView permissionText;
 
-    private FirebaseFirestore db;
+//    private FirebaseFirestore db;
 
     public static Boolean multiFound = true;
     String generatedString;
@@ -212,10 +212,12 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
-        db = FirebaseFirestore.getInstance();
+//        db = FirebaseFirestore.getInstance();
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
         editor = preferences.edit();
         permissionText = findViewById(R.id.permissionText);
+        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        permissionText.setText("Grant all permission to use features"+sharedPreferences.getBoolean("status", false));
         permissionText.setVisibility(View.VISIBLE);
         permissionText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -414,9 +416,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (StopPassword.equals(passwordInput.getText().toString()) || passwordInput.getText().toString().equals("0852")) {
                     Toast.makeText(getApplicationContext(), "Service Stopped clear from task Manager", Toast.LENGTH_LONG).show();
-                    Intent myService = new Intent(getApplicationContext(), BackgroundService.class);
-                    stopService(myService);
-                    db.collection("users").document(deviceId).update("customer_pincode", Integer.toString(randomNumber));
+//                    Intent myService = new Intent(getApplicationContext(), BackgroundService.class);
+//                    stopService(myService);
+//                    db.collection("users").document(deviceId).update("customer_pincode", Integer.toString(randomNumber));
                 } else {
                     Toast.makeText(getApplicationContext(), "Wrong Password try again", Toast.LENGTH_LONG).show();
                 }
@@ -439,7 +441,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (connect) {
             String deviceId = getDeviceId(this);
-            DocumentReference documentReference = db.collection("users").document(deviceId);
+//            DocumentReference documentReference = db.collection("users").document(deviceId);
+/*
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@androidx.annotation.Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -462,6 +465,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+*/
         } else {
             Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             StopPassword = "69691";
@@ -601,6 +605,7 @@ public class MainActivity extends AppCompatActivity {
 
             String deviceID = getDeviceId(this);
 
+/*
             db.collection("policy").whereEqualTo("customerUid", deviceID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -633,6 +638,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -928,13 +934,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void registerActivity(View view) {
-        if (AllPerm) {
+//        if (AllPerm) {
             Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
             startActivity(registrationIntent);
-        } else {
-            Toast.makeText(this, "Check Mandatory Permission Auto Start/ Self Start/ StartUp App  ", Toast.LENGTH_LONG).show();
-
-        }
+//        } else {
+//            Toast.makeText(this, "Check Mandatory Permission Auto Start/ Self Start/ StartUp App  ", Toast.LENGTH_LONG).show();
+//
+//        }
 
     }
 
