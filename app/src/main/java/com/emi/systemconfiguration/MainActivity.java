@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.multidex.BuildConfig;
 
 import android.Manifest;
 
@@ -206,11 +207,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //firebase push notification
 
-        if (getIntent().hasExtra("lastpage")) {
+      /*  if (getIntent().hasExtra("lastpage")) {
             if (getIntent().getStringExtra("lastpage").equalsIgnoreCase("EmiDueDate")) {
                 finish();
                 return;
             }
+        }*/
+        SharedPreferences sharedPreferences = getSharedPreferences("LockingState", Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("status", false)) {
+            Intent dialogIntent = new Intent(this, EmiDueDate.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(dialogIntent);
         }
 //        db = FirebaseFirestore.getInstance();
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
@@ -348,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
         anti.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                askPassword();
+//                askPassword();
                 return true;
             }
         });

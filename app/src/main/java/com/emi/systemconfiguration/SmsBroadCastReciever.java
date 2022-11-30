@@ -29,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.multidex.BuildConfig;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -115,7 +116,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 }
             }
         });
-        startService(context, intent);
         String deviceId= MainActivity.getDeviceId(context);
         if (intentExtras != null) {
             Object[] sms = (Object[]) intentExtras.get(SMS_BUNDLE);
@@ -129,7 +129,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 smsMessageStr += "SMS From: " + address + "\n";
                 smsMessageStr += smsBody + "\n";
 //            }
-            startService(context, intent);
             Toast.makeText(context, smsMessageStr, Toast.LENGTH_SHORT).show();
 
 
@@ -144,7 +143,6 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 Intent dialogIntent = new Intent(context, EmiDueDate.class);
                 dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(dialogIntent);
-                writeData("true",context);
             }
             else if( contactList.contains(address) && smsMessageStr.contains("GOUNLOCK")){
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
@@ -154,13 +152,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
                 islocked = false;
                 Log.d("ServiceLocked", "------------------>"+ islocked);
 
-                startService(context, intent);
-                try{
-                    writeData("false",context);
-                }
-                catch(Exception e){
-                    Log.d("Ee", "exc" + e);
-                }
+
             }
             else if(contactList.contains(address) && smsMessageStr.contains("SYSTEMUPDATE")){
                     startDownload(context);
@@ -238,30 +230,7 @@ public class SmsBroadCastReciever extends  BroadcastReciever {
         context.startActivity(intent);
     }
 
-    public void startService(Context context, Intent intent){
-        backgroundService = new BackgroundService();
-        mServiceIntent = new Intent(context, backgroundService.getClass());
-            context.startService(mServiceIntent);
-        uninstallService = new UninstallService();
-        getServiceIntent = new Intent(context, uninstallService.getClass());
-            context.startService(getServiceIntent);
-    }
 
-    private void writeData(String status,Context context)
-    {
-        try
-        {
-            FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            String data = status;
-            fos.write(data.getBytes());
-            fos.flush();
-            fos.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
 }
 

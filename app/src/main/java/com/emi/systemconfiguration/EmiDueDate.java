@@ -20,6 +20,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -259,7 +260,7 @@ public class EmiDueDate extends AppCompatActivity {
 //                            Integer.toString(randomNumber));
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Wrong Password try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(EmiDueDate.this, "Wrong Password try again", Toast.LENGTH_LONG).show();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -89,8 +89,7 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("BackgroundProcess").equals(action) ||
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)) {
 
-            Log.d("---------->d", Objects.requireNonNull(
-                    readData(context)));
+
 
             SharedPreferences sharedPreferences = context.getSharedPreferences("LockingState", Context.MODE_PRIVATE);
             if (sharedPreferences.getBoolean("status", false)) {
@@ -168,40 +167,4 @@ public class BroadcastReciever extends BroadcastReceiver {
 
         }
     }
-
-    private String readData(Context context) {
-        try {
-            FileInputStream fin = context.openFileInput(filename);
-            int a;
-            StringBuilder temp = new StringBuilder();
-            while ((a = fin.read()) != -1) {
-                temp.append((char) a);
-            }
-
-            // setting text from the file.
-            String data = temp.toString();
-            fin.close();
-            return data;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public void startService() {
-        backgroundService = new BackgroundService();
-        mServiceIntent = new Intent(context1, BackgroundService.class);
-
-        context1.startService(mServiceIntent);
-
-        uninstallService = new UninstallService();
-        getmServiceIntent = new Intent(context1, uninstallService.getClass());
-
-
-        context1.startService(getmServiceIntent);
-
-    }
-
-
 }
