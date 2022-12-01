@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.multidex.BuildConfig;
 
 import android.Manifest;
 
@@ -224,7 +223,11 @@ public class MainActivity extends AppCompatActivity {
         editor = preferences.edit();
         permissionText = findViewById(R.id.permissionText);
         sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
-        permissionText.setText("Grant all permission to use features"+sharedPreferences.getBoolean("status", false));
+        try {
+        permissionText.setText("Grant all permission to use features"+Build.getSerial());
+        }catch (Exception e){
+            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
         permissionText.setVisibility(View.VISIBLE);
         permissionText.setOnClickListener(new View.OnClickListener() {
             @Override

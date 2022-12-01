@@ -718,8 +718,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("MobileNumber", customer_contact);
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
-//            params.put("SerialNumber", Build.getSerial());
-            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
+            params.put("SerialNumber", Build.getSerial());
+//            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
 //            params.put("IMEINumber", "");
             if (!BuildConfig.DEBUG) {
                 params.put("IMEINumber", telephonyManager.getImei());
