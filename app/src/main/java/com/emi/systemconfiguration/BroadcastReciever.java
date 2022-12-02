@@ -78,6 +78,7 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.hardware.usb.action.USB_DEVICE_ATTACHED").equals(action) ||
                 ("android.intent.action.LOCKED_BOOT_COMPLETED").equals(action) ||
                 ("android.intent.action.BATTERY_CHANGED").contains(action) ||
+                ("android.intent.action.BATTERY_STATUS_CHARGING").contains(action) ||
                 ("android.intent.action.ACTION_POWER_DISCONNECTED").contains((action)) ||
                 ("android.intent.action.PACKAGE_REMOVED").contains((action)) ||
                 ("android.intent.action.ACTION_SHUTDOWN").contains((action)) ||

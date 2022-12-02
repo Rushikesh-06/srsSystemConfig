@@ -56,6 +56,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -197,6 +198,11 @@ public class MainActivity extends AppCompatActivity {
 
     String syncAPI = "http://goelectronix.in/api/app/CustomerStatusSync";
 
+    //display window if already register
+    FrameLayout mainFramelayout;
+    LinearLayout registerscreenlayout,linearLayout_fragmentdetail;
+    SessionManage session;
+
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -212,6 +218,29 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }*/
+
+
+        //display window if already register
+        registerscreenlayout = findViewById(R.id.registerscreenlayout);
+        mainFramelayout  = findViewById(R.id.mainFramelayout);
+        linearLayout_fragmentdetail  = findViewById(R.id.linearLayout_fragmentdetail);
+
+        session = new SessionManage(MainActivity.this);
+        if (session.getregisteredStatus()) {
+            mainFramelayout.setVisibility(View.VISIBLE);
+            registerscreenlayout.setVisibility(View.GONE);
+        }else{
+            mainFramelayout.setVisibility(View.GONE);
+            registerscreenlayout.setVisibility(View.VISIBLE);
+        }
+
+
+
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+//        Intent batterystatus = context.registerReceiver(new BroadcastReciever(),intentFilter);
+
+
         SharedPreferences sharedPreferences = getSharedPreferences("LockingState", Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean("status", false)) {
             Intent dialogIntent = new Intent(this, EmiDueDate.class);
@@ -386,8 +415,9 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             params.put("DeviceID", deviceid);
-            if (!BuildConfig.DEBUG)
+            if (!BuildConfig.DEBUG){
                 params.put("IMEINumber", telephonyManager.getImei());
+            }
             params.put("FirebaseToken", newFCMtoken);
         } catch (JSONException e) {
             e.printStackTrace();
