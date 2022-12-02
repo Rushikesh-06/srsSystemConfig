@@ -1,5 +1,6 @@
 package com.emi.systemconfiguration;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -19,12 +20,16 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.UserManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -90,7 +96,6 @@ public class BroadcastReciever extends BroadcastReceiver {
                 ("android.app.action.DEVICE_ADMIN_ENABLED").equals(action)) {
 
 
-
             SharedPreferences sharedPreferences = context.getSharedPreferences("LockingState", Context.MODE_PRIVATE);
             if (sharedPreferences.getBoolean("status", false)) {
                 Intent dialogIntent = new Intent(context, EmiDueDate.class);
@@ -101,14 +106,36 @@ public class BroadcastReciever extends BroadcastReceiver {
             //api call cst status sync passing status
 
             JSONObject sync_params = new JSONObject();
-
             try {
-                sync_params.put("DeviceID", MainActivity.getDeviceId(context));
+                sync_params.put("SerialNumber", Build.getSerial());
 
-                if (sharedPreferences.getBoolean("status",false)) {
-                    sync_params.put("StatusID", 3);
-                }else {
-                    sync_params.put("StatusID", 4);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    SubscriptionManager subscriptionManager = SubscriptionManager.from(context);
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+
+                    Log.d("Test", "Current list = " + subsInfoList);
+
+                    for (SubscriptionInfo subscriptionInfo : subsInfoList) {
+                        if (sync_params.has("SimNumber1")) {
+                            sync_params.put("SimNumber2", subscriptionInfo.getNumber());
+                        } else {
+                            sync_params.put("SimNumber1", subscriptionInfo.getNumber());
+                        }
+
+                        String number = subscriptionInfo.getNumber();
+
+                        Log.d("Test", " Number is  " + number);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
