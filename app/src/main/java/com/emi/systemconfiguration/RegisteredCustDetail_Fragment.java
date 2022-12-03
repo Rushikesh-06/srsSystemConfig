@@ -91,9 +91,8 @@ public class RegisteredCustDetail_Fragment extends Fragment {
 
 
                         String photourl = response.getString("photoURL");
-                        Glide.with(RegisteredCustDetail_Fragment.this).load(photourl).into(MD_custphoto);
-
-
+                        if (!photourl.equals("null")&&!photourl.equals(""))
+                        Glide.with(getContext()).load(photourl).into(MD_custphoto);
 
                     }else {
                         Toast.makeText(getContext(), response.getString("message"), Toast.LENGTH_SHORT).show();

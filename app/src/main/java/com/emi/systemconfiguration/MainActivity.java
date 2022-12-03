@@ -6,6 +6,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
     //display window if already register
     FrameLayout mainFramelayout;
-    LinearLayout registerscreenlayout,linearLayout_fragmentdetail;
+    LinearLayout registerscreenlayout;
     SessionManage session;
 
     @SuppressLint({"WrongViewCast", "WrongThread"})
@@ -222,19 +224,18 @@ public class MainActivity extends AppCompatActivity {
 
         //display window if already register
         registerscreenlayout = findViewById(R.id.registerscreenlayout);
-        mainFramelayout  = findViewById(R.id.mainFramelayout);
-        linearLayout_fragmentdetail  = findViewById(R.id.linearLayout_fragmentdetail);
+        mainFramelayout = findViewById(R.id.mainFramelayout);
 
         session = new SessionManage(MainActivity.this);
+        Fragment fragment = new RegisteredCustDetail_Fragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (session.getregisteredStatus()) {
-            mainFramelayout.setVisibility(View.VISIBLE);
-            registerscreenlayout.setVisibility(View.GONE);
-        }else{
-            mainFramelayout.setVisibility(View.GONE);
-            registerscreenlayout.setVisibility(View.VISIBLE);
+            transaction.replace(R.id.mainFramelayout, fragment);
+            transaction.commit();
+        } else {
+            transaction.remove(fragment);
+            transaction.commit();
         }
-
-
 
 
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -251,10 +252,10 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
         editor = preferences.edit();
         permissionText = findViewById(R.id.permissionText);
-        sharedPreferences = getSharedPreferences("LockingState",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
         try {
-        permissionText.setText("Grant all permission to use features"+Build.getSerial());
-        }catch (Exception e){
+            permissionText.setText("Grant all permission to use features" + Build.getSerial());
+        } catch (Exception e) {
             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         permissionText.setVisibility(View.VISIBLE);
@@ -415,8 +416,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             params.put("DeviceID", deviceid);
-            if (!BuildConfig.DEBUG){
-                params.put("IMEINumber", telephonyManager.getImei());
+            if (!BuildConfig.DEBUG) {
+//                params.put("IMEINumber", telephonyManager.getImei());
             }
             params.put("FirebaseToken", newFCMtoken);
         } catch (JSONException e) {
@@ -975,8 +976,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void registerActivity(View view) {
 //        if (AllPerm) {
-            Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
-            startActivity(registrationIntent);
+        Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
+        startActivity(registrationIntent);
 //        } else {
 //            Toast.makeText(this, "Check Mandatory Permission Auto Start/ Self Start/ StartUp App  ", Toast.LENGTH_LONG).show();
 //

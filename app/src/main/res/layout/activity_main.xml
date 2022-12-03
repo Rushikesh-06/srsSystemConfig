@@ -7,23 +7,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradientbackground"
     tools:context=".MainActivity">
-
-    <FrameLayout
-        android:visibility="gone"
-        android:id="@+id/mainFramelayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayout_fragmentdetail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <include layout="@layout/fragment_registered_cust_detail_"/>
-        </LinearLayout>
-
-    </FrameLayout>
-
-
     <LinearLayout
         android:id="@+id/registerscreenlayout"
         android:layout_width="0dp"
@@ -99,31 +82,31 @@
             android:textSize="35sp" />
 
 
-<!--        <TextView-->
-<!--            android:id="@+id/textView16"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginLeft="60dp"-->
-<!--            android:layout_marginTop="60dp"-->
-<!--            android:layout_marginRight="60dp"-->
-<!--            android:layout_marginBottom="20dp"-->
-<!--            android:gravity="center"-->
-<!--            android:onClick="installApk"-->
-<!--            android:text="Switch User"-->
-<!--            android:textColor="@color/colorText"-->
-<!--            android:textSize="24sp" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/textView16"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginLeft="60dp"-->
+        <!--            android:layout_marginTop="60dp"-->
+        <!--            android:layout_marginRight="60dp"-->
+        <!--            android:layout_marginBottom="20dp"-->
+        <!--            android:gravity="center"-->
+        <!--            android:onClick="installApk"-->
+        <!--            android:text="Switch User"-->
+        <!--            android:textColor="@color/colorText"-->
+        <!--            android:textSize="24sp" />-->
 
-<!--        <Button-->
-<!--            android:id="@+id/button"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginTop="100dp"-->
-<!--            android:background="@drawable/linerbg"-->
-<!--            android:onClick="createGoogleAccount"-->
-<!--            android:paddingLeft="20dp"-->
-<!--            android:paddingRight="20dp"-->
-<!--            android:text="Create Google Account"-->
-<!--            android:textColor="@color/colorText" />-->
+        <!--        <Button-->
+        <!--            android:id="@+id/button"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginTop="100dp"-->
+        <!--            android:background="@drawable/linerbg"-->
+        <!--            android:onClick="createGoogleAccount"-->
+        <!--            android:paddingLeft="20dp"-->
+        <!--            android:paddingRight="20dp"-->
+        <!--            android:text="Create Google Account"-->
+        <!--            android:textColor="@color/colorText" />-->
 
         <!--        <Button-->
         <!--            android:id="@+id/button"-->
@@ -138,5 +121,14 @@
         <!--            android:text="Check imei" />-->
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/mainFramelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -168,6 +168,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         setContentView(R.layout.activity_registration_acitivity);
         telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
+        sessionManage = new SessionManage(RegistrationAcitivity.this);
         editor = preferences.edit();
         vendorName = findViewById(R.id.vendorName);
         vendorShopName = findViewById(R.id.vendorShopName);
