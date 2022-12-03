@@ -159,6 +159,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     TelephonyManager telephonyManager ;
 
+    SessionManage sessionManage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -718,7 +720,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("MobileNumber", customer_contact);
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
-            params.put("SerialNumber", Build.getSerial());
+//            params.put("SerialNumber", Build.getSerial());
+            params.put("SerialNumber",MainActivity.getDeviceId(getApplicationContext()));
+
+//            String str_serialno = Build.getSerial();
+            String str_serialno = MainActivity.getDeviceId(getApplicationContext());
+            editor.putString("SerialNo",str_serialno);
+
 //            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
 //            params.put("IMEINumber", "");
             if (!BuildConfig.DEBUG) {
@@ -739,6 +747,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("PolicyID", Integer.parseInt(policyList.get((selectpolicy.getSelectedItemPosition() - 1)).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
+            editor.commit();
+
+            sessionManage.addregisteredstatus(true);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradientbackground_moredetails"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User Details"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:padding="10dp"
+           android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/MD_custphoto"
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:src="@drawable/button_blue"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"/>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Customer Name : "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Register No : "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_registerno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register No"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Current No : "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_currentphoneno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current No"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Email ID : "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_mailID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="customer@gmail.com"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_blue"/>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Loan Date : "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_loandate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13-11-2022"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="EMI Date :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_emidate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13-12-2022 "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Device Name"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_deviceaname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apple"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Device Amount :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_deviceamount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13-12-2022 "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Down Payment :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_downpayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10,000"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="EMI Amount :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_emiamount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25,000"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="EMI Tenure :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_emitenure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12 months"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Finance Company :"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/MD_financecompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GoEx Pvt Ltd"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_blue"/>
+
+
+
+
+
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_blue"/>
+
+
+
+
+    </LinearLayout>
+</ScrollView>
