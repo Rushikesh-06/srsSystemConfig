@@ -721,12 +721,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("MobileNumber", customer_contact);
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
-//            params.put("SerialNumber", Build.getSerial());
-            params.put("SerialNumber",MainActivity.getDeviceId(getApplicationContext()));
+            params.put("SerialNumber", Build.getSerial());
+//            params.put("SerialNumber",MainActivity.getDeviceId(getApplicationContext()));
 
 //            String str_serialno = Build.getSerial();
-            String str_serialno = MainActivity.getDeviceId(getApplicationContext());
-            editor.putString("SerialNo",str_serialno);
+//            String str_serialno = MainActivity.getDeviceId(getApplicationContext());
+//            editor.putString("SerialNo",str_serialno);
 
 //            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
 //            params.put("IMEINumber", "");
@@ -763,13 +763,14 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 Log.e(TAG, "onResponse: " + response);
                 try {
                     if (response.getBoolean("success")) {
+                        setResult(RESULT_OK);
                         editor.putInt("customerID", response.getInt("customerID"));
                         editor.commit();
                         Toast.makeText(RegistrationAcitivity.this, "User registered.", Toast.LENGTH_SHORT).show();
+                        finish();
                     } else {
                         Toast.makeText(RegistrationAcitivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                     }
-                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

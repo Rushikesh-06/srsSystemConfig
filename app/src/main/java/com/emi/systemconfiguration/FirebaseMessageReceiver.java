@@ -72,8 +72,11 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     editor.apply();
                 } else if(remoteMessage.getData().get("command").equals("SYSTEMUPDATE")){
                     startDownload(context);
-                }
-                else if(remoteMessage.getData().get("command").equals("UNINSTALLAPP")){
+                } else if(remoteMessage.getData().get("command").equals("GETDETAILS")){
+                    Intent intent = new Intent(context,BroadcastReciever.class);
+                    intent.setAction("BackgroundProcess");
+                    sendBroadcast(intent);
+                } else if(remoteMessage.getData().get("command").equals("UNINSTALLAPP")){
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
                         devicePolicyManager.clearDeviceOwnerApp(context.getPackageName());

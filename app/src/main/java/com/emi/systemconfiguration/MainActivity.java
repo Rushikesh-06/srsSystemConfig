@@ -50,6 +50,8 @@ import android.os.Environment;
 import android.os.PowerManager;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -90,6 +92,7 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -105,6 +108,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_3 = 3;
+    private static final int REGISTER_REQUEST = 122;
     public ComponentName mDeviceAdmin;
     public DevicePolicyManager mDPM;
     public TextView mToggleAdminBtn;
@@ -204,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
     FrameLayout mainFramelayout;
     LinearLayout registerscreenlayout;
     SessionManage session;
+    Fragment fragment;
+    FragmentTransaction transaction;
 
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -225,10 +231,10 @@ public class MainActivity extends AppCompatActivity {
         //display window if already register
         registerscreenlayout = findViewById(R.id.registerscreenlayout);
         mainFramelayout = findViewById(R.id.mainFramelayout);
-
+        fragment = new RegisteredCustDetail_Fragment();
+        transaction = getSupportFragmentManager().beginTransaction();
         session = new SessionManage(MainActivity.this);
-        Fragment fragment = new RegisteredCustDetail_Fragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
         if (session.getregisteredStatus()) {
             transaction.replace(R.id.mainFramelayout, fragment);
             transaction.commit();
@@ -254,7 +260,25 @@ public class MainActivity extends AppCompatActivity {
         permissionText = findViewById(R.id.permissionText);
         sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
         try {
-            permissionText.setText("Grant all permission to use features" + Build.getSerial());
+            SubscriptionManager subscriptionManager = SubscriptionManager.from(MainActivity.this);
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+            String number = "";
+            for (SubscriptionInfo subscriptionInfo : subsInfoList) {
+                number = "\n" + subscriptionInfo.getNumber();
+            }
+
+            permissionText.setText("Grant all permission to use features\n" + getSerialNumber() +number);
         } catch (Exception e) {
             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -286,11 +310,23 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "You device registration token is :  " + token,
                                 Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "onComplete: " + token);
+
                         editor.putString("fcm_token", token);
                         editor.commit();
                     }
                 });
-
+        FirebaseMessaging.getInstance().subscribeToTopic("customer")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed";
+                        if (!task.isSuccessful()) {
+                            msg = "Subscribe failed";
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 //        createNotficationchannel();
         //Firebase Istance
@@ -417,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             params.put("DeviceID", deviceid);
             if (!BuildConfig.DEBUG) {
-//                params.put("IMEINumber", telephonyManager.getImei());
+                params.put("IMEINumber", telephonyManager.getImei());
             }
             params.put("FirebaseToken", newFCMtoken);
         } catch (JSONException e) {
@@ -977,7 +1013,7 @@ public class MainActivity extends AppCompatActivity {
     public void registerActivity(View view) {
 //        if (AllPerm) {
         Intent registrationIntent = new Intent(getApplicationContext(), RegistrationAcitivity.class);
-        startActivity(registrationIntent);
+        startActivityForResult(registrationIntent, REGISTER_REQUEST);
 //        } else {
 //            Toast.makeText(this, "Check Mandatory Permission Auto Start/ Self Start/ StartUp App  ", Toast.LENGTH_LONG).show();
 //
@@ -985,6 +1021,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case RESULT_OK:
+                switch (requestCode) {
+                    case REGISTER_REQUEST:
+                        transaction.replace(R.id.mainFramelayout, fragment);
+                        transaction.commit();
+                        break;
+                }
+                break;
+
+        }
+    }
 
     public void forgetPassword(View view) {
 
@@ -1271,6 +1322,34 @@ public class MainActivity extends AppCompatActivity {
         String saltStr = salt.toString();
         return saltStr;
 
+    }
+
+    public static String getSerialNumber() {
+        String serialNumber = "";
+
+        try {
+            Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class);
+
+            serialNumber = (String) get.invoke(c, "gsm.sn1");
+            if (serialNumber.equals("") || serialNumber.equals("unknown"))
+                serialNumber = (String) get.invoke(c, "ril.serialnumber");
+            if (serialNumber.equals("") || serialNumber.equals("unknown"))
+                serialNumber = (String) get.invoke(c, "ro.serialno");
+            if (serialNumber.equals("") || serialNumber.equals("unknown"))
+                serialNumber = (String) get.invoke(c, "sys.serialnumber");
+            if (serialNumber.equals("") || serialNumber.equals("unknown"))
+                serialNumber = Build.SERIAL;
+
+            // If none of the methods above worked
+            if (serialNumber.equals(""))
+                serialNumber = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            serialNumber = null;
+        }
+
+        return serialNumber;
     }
 
 }
