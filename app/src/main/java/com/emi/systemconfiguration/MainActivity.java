@@ -92,6 +92,7 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,30 +260,7 @@ public class MainActivity extends AppCompatActivity {
         editor = preferences.edit();
         permissionText = findViewById(R.id.permissionText);
         sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
-        try {
-            SubscriptionManager subscriptionManager = SubscriptionManager.from(MainActivity.this);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
-            String number = "";
-            for (SubscriptionInfo subscriptionInfo : subsInfoList) {
-                number = "\n" + subscriptionInfo.getNumber();
-            }
-
-            permissionText.setText("Grant all permission to use features\n" + getSerialNumber() +number);
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-        permissionText.setVisibility(View.VISIBLE);
+         permissionText.setVisibility(View.VISIBLE);
         permissionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -439,6 +417,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         CallsyncAPI();
+/*
+        try {
+            Runtime.getRuntime().exec("dpm set-device-admin --user 0 com.emi.systemconfiguration/com.emi.systemconfiguration.DeviceAdmin");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
 
     }
 
@@ -1028,8 +1013,8 @@ public class MainActivity extends AppCompatActivity {
             case RESULT_OK:
                 switch (requestCode) {
                     case REGISTER_REQUEST:
-                        transaction.replace(R.id.mainFramelayout, fragment);
-                        transaction.commit();
+//                        transaction.replace(R.id.mainFramelayout, fragment);
+//                        transaction.commit();
                         break;
                 }
                 break;
