@@ -108,7 +108,8 @@ public class BroadcastReciever extends BroadcastReceiver {
 
             JSONObject sync_params = new JSONObject();
             try {
-                sync_params.put("SerialNumber", Build.getSerial());
+                sync_params.put("SerialNumber", MainActivity.getDeviceId(context));
+//                sync_params.put("IMEINumber", );
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                     SubscriptionManager subscriptionManager = SubscriptionManager.from(context);

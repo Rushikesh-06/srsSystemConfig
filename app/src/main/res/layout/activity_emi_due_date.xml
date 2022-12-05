@@ -1,128 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:padding="20dp"
+    android:background="@drawable/gradientbackground"
+    android:orientation="vertical"
+    android:weightSum="2"
     tools:context=".EmiDueDate">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_color"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="Please pay the Emi on time. \n To unlock your device contact your retailer or shopkeeper"
+            android:textColor="@color/white">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="20sp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="कृपया समय पर ईएमआई का भुगतान करें। अपने फ़ोन को अनलॉक करने के लिए अपने रिटेलर या दुकानदार से संपर्क करें"
+            android:textColor="@color/white">
+
+        </TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:orientation="vertical">
 
-
-        <TextView
-            android:id="@+id/sys_info"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="System Informaton"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
-            android:textSize="16dp" />
+            android:weightSum="2">
 
-        <GridView
-            android:id="@+id/idGVcourses"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="IMEI No"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:horizontalSpacing="10dp"
-            android:minHeight="48dp"
-            android:numColumns="3"
-            android:padding="8dp"
-            android:verticalSpacing="10dp"
-            tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
+            android:weightSum="2">
 
-        <TextView
-            android:id="@+id/protect_header"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Finance"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="Protection mode"
-            android:textColor="@color/white"
-            android:textSize="16dp" />
+            android:weightSum="2">
 
-        <MultiAutoCompleteTextView
-            android:id="@+id/main_message"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="EMI Amount"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:textSize="20sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:enabled="false"
-            android:gravity="center_horizontal"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:text="Please pay the Emi on time. \n To unlock your device contact your retailer or shopkeeper"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:weightSum="2">
 
-        <TextView
-            android:id="@+id/emi"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Name"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:fontFamily="More Fonts..."
-            android:gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:paddingHorizontal="10sp"
-            android:paddingVertical="5sp"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textColor="@color/white"
+            android:weightSum="2">
 
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Contact No"
+                android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/logo_button"
+            <TextView
+                android:layout_width="0dp"
+                android:textSize="20sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Offline Unlock"
-            android:textColor="@color/white"
-            />
+            android:weightSum="2">
 
-        <TextView
-            android:id="@+id/shopName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:fontFamily="More Fonts..."
-            android:gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:paddingHorizontal="10sp"
-            android:paddingVertical="5sp"
-            android:layout_marginTop="5sp"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textColor="@color/white"
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Payment No"
+                android:textColor="@color/white" />
 
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/shopContact"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:fontFamily="More Fonts..."
-            android:gravity="center_horizontal|fill_horizontal|center_vertical"
-            android:paddingHorizontal="10sp"
-            android:paddingVertical="5sp"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="TextView" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="TEST"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
 
     </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
