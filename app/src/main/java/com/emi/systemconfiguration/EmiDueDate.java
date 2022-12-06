@@ -7,15 +7,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -31,8 +34,8 @@ public class EmiDueDate extends AppCompatActivity {
 //    GridView coursesGV;
     public DevicePolicyManager mDPM;
     public ComponentName mDeviceAdmin;
-
-
+    SharedPreferences preferences;
+    TextView imei,finance,emi_amount,display_name,contact,payment;
 
     ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
 
@@ -56,6 +59,10 @@ public class EmiDueDate extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Window win = getWindow();
+        preferences = getSharedPreferences("EMILOCKER", MODE_PRIVATE);
+//  Contact your  shop
+//        9892580308
+//        NA
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("com.emi.action.unlock");
@@ -70,6 +77,20 @@ public class EmiDueDate extends AppCompatActivity {
 
         setContentView(R.layout.activity_emi_due_date);
 //        LinearLayout background = (LinearLayout) findViewById(R.id.linearLayout);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        imei = findViewById(R.id.imei);
+        finance = findViewById(R.id.finance);
+        emi_amount = findViewById(R.id.emi_amount);
+        display_name = findViewById(R.id.display_name);
+        contact = findViewById(R.id.contact);
+        payment = findViewById(R.id.payment);
+        imei.setText(telephonyManager.getImei());
+        finance.setText(preferences.getString("financiarName","NA"));
+        emi_amount.setText(preferences.getString("emiAmount","NA"));
+        display_name.setText(preferences.getString("displayName","Contact your shop"));
+        contact.setText(preferences.getString("displayContactNumber","9892580308"));
+        payment.setText(preferences.getString("paymentNumber","NA"));
 
         ActionBar actionBar = getSupportActionBar();
         // or getActionBar();

@@ -21,20 +21,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:gravity="center"
-            android:text="Please pay the Emi on time. \n To unlock your device contact your retailer or shopkeeper"
+            android:text="Sorry !!! \nMy operations is blocked due miss instalment \nPlease pay your EMI and Unlock me"
             android:textColor="@color/white">
 
         </TextView>
 
         <TextView
             android:layout_width="match_parent"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="कृपया समय पर ईएमआई का भुगतान करें। अपने फ़ोन को अनलॉक करने के लिए अपने रिटेलर या दुकानदार से संपर्क करें"
+            android:text="माफ़ करना !!!\nकिश्त न चुकाने के कारण मेरा परिचालन अवरुद्ध हो गया है|\nकृपया अपनी ईएमआई का भुगतान करें और मुझे अनलॉक करें|"
             android:textColor="@color/white">
 
         </TextView>
@@ -56,16 +56,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="IMEI No"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/imei"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
@@ -80,18 +81,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="Finance"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 />
 
             <TextView
+                android:id="@+id/finance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="20sp"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -106,16 +108,17 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="EMI Amount"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/emi_amount"
                 android:layout_width="0dp"
                 android:textSize="20sp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -130,16 +133,17 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="Name"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/display_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="20sp"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -154,16 +158,17 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="Contact No"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/contact"
                 android:layout_width="0dp"
                 android:textSize="20sp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -178,16 +183,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="Payment No"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/payment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white" />
         </LinearLayout>
