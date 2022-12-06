@@ -699,62 +699,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                                     String customer_email, String customer_mobile_brand, String customer_payment, String customer_loan,
                                     String vendorId, String policyNo, String startDate, String endDate, String amount, String anti_theft_plan, String downpayment, String emi_tenure, String photo) {
 
-        db.collection("policy").whereEqualTo("policyNo", policy_no).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                db.collection("policy").document(document.getId()).update("customerUid", customer_uid)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                CollectionReference dbRegister = db.collection("users");
-                                                // adding our data to our courses object class.
-                                                RegistrationDetails registration = new RegistrationDetails(customer_uid,
-                                                        customer_name, customer_contact, customer_email,
-                                                        customer_mobile_brand, customer_payment, customer_loan,
-                                                        startDate, endDate, amount, anti_theft_plan, vendorId, downpayment, emi_tenure, photo);
-                                                // below method is use to add data to Firebase Firestore.
-                                                dbRegister.document(customer_uid).set(registration)
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void avoid) {
-                                                                progressbar.setVisibility(View.GONE);
-                                                                toastMessage("Registration is done successfully");
-                                                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                                                mainActivityIntent.putExtra("minimize", 1);
-                                                                startActivity(mainActivityIntent);
-                                                                finish();
-
-                                                            }
-                                                        }).addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                // this method is called when the data addition process
-                                                                // is failed.
-                                                                // displaying a toast message when data addition is
-                                                                // failed.
-                                                                toastMessage(
-                                                                        "Failed to register details Please try after some time \n"
-                                                                                + e);
-                                                            }
-                                                        });
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                toastMessage("Please check the vendor details and policy");
-                                            }
-                                        });
-                            }
-                        } else {
-                            toastMessage("Failed to register details Please try after some time \n");
-                        }
-                    }
-                });
     }
 
     public void setDate(View view) {
