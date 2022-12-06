@@ -128,8 +128,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
     // creating a variable
     // for firebasefirestore.
-    private FirebaseFirestore db;
-
     Spinner spinnerPlan, spinner2;
 
     CheckBox planView, loanView;
@@ -349,10 +347,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
         // getting our instance
         // from Firebase Firestore.
-        db = FirebaseFirestore.getInstance();
 
         // Fetch All the Policy Id
-        getPolicyIdList(getApplicationContext());
 
         // Progress Bar
         progressbar = findViewById(R.id.progressbar);
@@ -544,100 +540,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //        TextView vendorAddress = (TextView) findViewById(R.id.vendorAddress);
 //        vendorAddress.setText("Shop Address : ");
 
-        db.collection("policy").whereEqualTo("policyNo", policiesNo)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // toastMessage("Success found");
-                            Log.d("Success", "Suucfull ofund ==========================");
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                // toastMessage(document.getData().toString());
-                                Log.d("2Success", "Suucfull ofund ==========================");
-                                if (!document.getData().containsKey("customerUid")
-                                        && document.getData().containsKey("vendorID")) {
-
-                                    String vendorID = document.getData().get("vendorID").toString();
-                                    VendorID = vendorID;
-                                    // toastMessage("Succ" + vendorId);
-                                    db.collection("vendors").document(vendorID)
-                                            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                @SuppressLint("SetTextI18n")
-                                                @Override
-                                                public void onEvent(@Nullable DocumentSnapshot value,
-                                                                    @Nullable FirebaseFirestoreException error) {
-                                                    if (error != null) {
-                                                        // this method is called when error is not null
-                                                        // and we gt any error
-                                                        // in this cas we are displaying an error message.
-                                                        toastMessage("Error found" + error);
-                                                        return;
-                                                    }
-                                                    // Log.d("-------->",VendorID +"===="+ value.toString() );
-                                                    if (value != null && value.exists()) {
-                                                        if (value.getId().equals(VendorID)) {
-                                                            // toastMessage(value.getData().toString());
-                                                            TextView vendorName = (TextView) findViewById(
-                                                                    R.id.vendorName);
-                                                            vendorName.setText("Vendor Name : "
-                                                                    + value.getData().get("contactperson").toString());
-                                                            vendorName.setTypeface(vendorName.getTypeface(), Typeface.BOLD);
-
-                                                            TextView vendorShopName = (TextView) findViewById(
-                                                                    R.id.vendorShopName);
-                                                            vendorShopName.setText("Shop Name : "
-                                                                    + value.getData().get("shopname").toString());
-                                                            vendorShopName.setTypeface(vendorShopName.getTypeface(), Typeface.BOLD);
-                                                            TextView vendorContact = (TextView) findViewById(
-                                                                    R.id.vendorContact);
-                                                            vendorContact.setText("Vendor Contact : "
-                                                                    + value.getData().get("contact").toString());
-                                                            vendorContact.setTypeface(vendorContact.getTypeface(), Typeface.BOLD);
-                                                            // editor.commit();
-                                                            TextView email = findViewById(R.id.customerMail);
-                                                            email.setText(
-                                                                    policiesNo.toLowerCase(Locale.ROOT) + "@gmail.com");
-                                                            // Log.d("-------->1",VendorID +"===="+ value.toString() );
-
-                                                        }
-                                                    }
-
-                                                }
-                                            });
-                                }
-                            }
-                        } else {
-                            Log.d("Policy", "Policy not found");
-                            toastMessage("policy not found");
-
-                        }
-                    }
-                });
     }
 
     private void getPolicyIdList(Context context) {
         final String cust_policy = MainActivity.getDeviceId(context);
-        db.collection("policy").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<String> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        list.add(document.getId());
-                        policyDocID.add(document.getId());
-                        // Log.d("this id are", String.valueOf(document.getData()));
-                        //
-                        // toastMessage(document.getData()));
-                    }
-                    // toastMessage(policyDocID.toString());
-                    Log.d("List are", policyDocID.toString());
-                } else {
-                    Log.d("Error", "Error getting documents: ", task.getException());
-                }
-            }
-        });
     }
 
     public void toastMessage(String message) {
