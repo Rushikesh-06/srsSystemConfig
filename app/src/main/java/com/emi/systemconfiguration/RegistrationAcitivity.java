@@ -629,7 +629,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
 //            params.put("SerialNumber", Build.getSerial());
+            try {
             params.put("SerialNumber",MainActivity.getDeviceId(getApplicationContext()));
+            }catch (Exception e){
+                Toast.makeText(RegistrationAcitivity.this, "Exception getting SerialNumber", Toast.LENGTH_SHORT).show();
+            }
 
 //            String str_serialno = Build.getSerial();
 //            String str_serialno = MainActivity.getDeviceId(getApplicationContext());
@@ -637,8 +641,13 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
 //            params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
 //            params.put("IMEINumber", "");
+            try {
+
             if (!BuildConfig.DEBUG) {
                 params.put("IMEINumber", telephonyManager.getImei());
+            }
+            }catch (Exception e){
+                Toast.makeText(RegistrationAcitivity.this, "Exception getting IMEINumber", Toast.LENGTH_SHORT).show();
             }
             params.put("DownPayment", Integer.parseInt(etdownpayment.getText().toString()));
             params.put("EmiAmount", Integer.parseInt(emi_amount.getText().toString()));
@@ -647,7 +656,12 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("DownPaymentEMI", Integer.parseInt(etdownpayment.getText().toString()));
             params.put("EmiTenure", Integer.parseInt(etemitenure.getText().toString()));
 //            params.put("DeviceID", telephonyManager.getSubscriberId());
+            try {
             params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()));
+            } catch (Exception e){
+                Toast.makeText(RegistrationAcitivity.this, "Exception getting DeviceID", Toast.LENGTH_SHORT).show();
+
+            }
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token", "NA"));
             params.put("EmiDate", emi_date.getText().toString());
@@ -657,7 +671,6 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("PhotoURL", photo);
             params.put("AdditionalComment", comment.getText().toString().isEmpty()?"NA":comment.getText().toString());
             editor.commit();
-
             sessionManage.addregisteredstatus(true);
 
         } catch (JSONException e) {

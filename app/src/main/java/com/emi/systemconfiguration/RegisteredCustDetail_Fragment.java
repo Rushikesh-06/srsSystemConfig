@@ -49,6 +49,7 @@ public class RegisteredCustDetail_Fragment extends Fragment {
             public boolean onLongClick(View v) {
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.remove(RegisteredCustDetail_Fragment.this);
+                transaction.commit();
                 return false;
             }
         });

@@ -145,6 +145,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action
@@ -161,9 +162,11 @@
         </activity>
         <activity
             android:name=".EmiDueDate"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".RegistrationAcitivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".Script"
