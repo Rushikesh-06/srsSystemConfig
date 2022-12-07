@@ -148,7 +148,7 @@ public class BroadcastReciever extends BroadcastReceiver {
                 public void onResponse(JSONObject response) {
 
                     Log.e("response", response.toString());
-                    Toast.makeText(context, "Locked Status check after restart successfull", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
 
                 }
             }, new Response.ErrorListener() {
