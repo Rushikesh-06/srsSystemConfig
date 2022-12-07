@@ -22,6 +22,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
   <LinearLayout
+      android:background="@color/white"
       android:id="@+id/dpc_login"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -36,6 +37,12 @@
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         />
+    <ImageView
+        android:src="@drawable/gexlogo"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="200dp"
+        android:layout_height="200dp"/>
+
 
     <LinearLayout
         android:id="@+id/do_option"
@@ -43,6 +50,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+
 
       <LinearLayout
           android:orientation="vertical"

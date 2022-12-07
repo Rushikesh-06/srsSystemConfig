@@ -45,6 +45,11 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.e(TAG, "From: " + remoteMessage.getFrom());
+//        Toast.makeText(context, "Test Success.", Toast.LENGTH_SHORT).show();
+        if (remoteMessage.getData().containsKey("command")) {
+            Log.e(TAG, "onMessageReceived: "+remoteMessage.getData().get("command") );
+//            Toast.makeText(context, remoteMessage.getData().get("command"), Toast.LENGTH_SHORT).show();
+        }
 
         if (remoteMessage.getFrom().equalsIgnoreCase("741955552131")) {
             if (remoteMessage.getData().containsKey("command")) {

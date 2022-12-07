@@ -94,7 +94,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     private SharedPreferences sharedPreferences;
     private TextView dateView, endDateView, spinner;
     private int year, month, day;
-
+String datetosend;
     private CircleImageView img_profile;
     private FloatingActionButton btn_click;
     private final int CAMERA_REQ_CODE = 101;
@@ -143,19 +143,19 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
     List<Policy> policyList = new ArrayList<>();
 //    String[] policylist = {"Select Policy","ABC001", "ABC002", "ABC003", "ABC004", "ABC005", "ABC006"};
 
-    TextView emi_date;
+    Spinner emi_date;
     private int mYear, mMonth, mDay;
 
     ImageView verify_icon;
     LinearLayout vendordetail_layout;
     private boolean verify_vendor = false;
-    EditText et_vendorcode,comment;
+    EditText et_vendorcode, comment;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     TextView vendorName, vendorShopName, vendorContact;
     private String vendorID = "";
 
-    TelephonyManager telephonyManager ;
+    TelephonyManager telephonyManager;
 
     SessionManage sessionManage;
 
@@ -276,7 +276,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
         selectpolicy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                customer_emailEdit.setText(selectpolicy.getSelectedItem().toString() + "@gmail.com");
+//                customer_emailEdit.setText(selectpolicy.getSelectedItem().toString() + "@gmail.com");
 //                policyId.setText(selectpolicy.getSelectedItem().toString());
             }
 
@@ -292,7 +292,29 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 
 
         //Emi date
+        emi_date.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Calendar current = Calendar.getInstance();
+                Calendar emidate = Calendar.getInstance();
+                emidate.set(Calendar.DAY_OF_MONTH,Integer.parseInt(emi_date.getSelectedItem().toString()));
+                if (emidate.before(current)){
+                    emidate.add(Calendar.MONTH,1);
+                }
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                String date = format.format(new Date(emidate.getTimeInMillis()));
+                String[] arr= date.split("-");
 
+                datetosend = arr[0]+"-"+arr[1]+"-"+arr[2];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+/*
         emi_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,6 +339,7 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
                 datePickerDialog.show();
             }
         });
+*/
 
         etdownpayment = findViewById(R.id.downpayment);
         etemitenure = findViewById(R.id.emi_tenure);
@@ -484,11 +507,11 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             requestPermissions(new String[]{Manifest.permission.READ_SMS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS}, 100);
             return;
         }
-       if (!BuildConfig.DEBUG){
-           editor.putString("Sim Serial Number", telephonyManager.getSimSerialNumber());
-           editor.putString("Mobile Number", telephonyManager.getLine1Number());
-           editor.commit();
-       }
+        if (!BuildConfig.DEBUG) {
+            editor.putString("Sim Serial Number", telephonyManager.getSimSerialNumber());
+            editor.putString("Mobile Number", telephonyManager.getLine1Number());
+            editor.commit();
+        }
     }
 
 //    private void uploadImage(String filepath) {
@@ -630,8 +653,8 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("MobileBrand", customer_mobile_brand);
 //            params.put("SerialNumber", Build.getSerial());
             try {
-            params.put("SerialNumber",MainActivity.getDeviceId(getApplicationContext()));
-            }catch (Exception e){
+                params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
+            } catch (Exception e) {
                 Toast.makeText(RegistrationAcitivity.this, "Exception getting SerialNumber", Toast.LENGTH_SHORT).show();
             }
 
@@ -643,10 +666,10 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
 //            params.put("IMEINumber", "");
             try {
 
-            if (!BuildConfig.DEBUG) {
-                params.put("IMEINumber", telephonyManager.getImei());
-            }
-            }catch (Exception e){
+                if (!BuildConfig.DEBUG) {
+                    params.put("IMEINumber", telephonyManager.getImei());
+                }
+            } catch (Exception e) {
                 Toast.makeText(RegistrationAcitivity.this, "Exception getting IMEINumber", Toast.LENGTH_SHORT).show();
             }
             params.put("DownPayment", Integer.parseInt(etdownpayment.getText().toString()));
@@ -657,19 +680,19 @@ public class RegistrationAcitivity extends AppCompatActivity implements AdapterV
             params.put("EmiTenure", Integer.parseInt(etemitenure.getText().toString()));
 //            params.put("DeviceID", telephonyManager.getSubscriberId());
             try {
-            params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()));
-            } catch (Exception e){
+                params.put("DeviceID", MainActivity.getDeviceId(getApplicationContext()));
+            } catch (Exception e) {
                 Toast.makeText(RegistrationAcitivity.this, "Exception getting DeviceID", Toast.LENGTH_SHORT).show();
 
             }
             params.put("CustomerPincode", "");
             params.put("FirebaseToken", preferences.getString("fcm_token", "NA"));
-            params.put("EmiDate", emi_date.getText().toString());
+            params.put("EmiDate", datetosend);
             params.put("PolicyNumber", policyList.get((selectpolicy.getSelectedItemPosition() - 1)).getPolicyNumber());
             params.put("PolicyID", Integer.parseInt(policyList.get((selectpolicy.getSelectedItemPosition() - 1)).getPolicyId()));
             params.put("VendorID", Integer.parseInt(vendorID));
             params.put("PhotoURL", photo);
-            params.put("AdditionalComment", comment.getText().toString().isEmpty()?"NA":comment.getText().toString());
+            params.put("AdditionalComment", comment.getText().toString().isEmpty() ? "NA" : comment.getText().toString());
             editor.commit();
             sessionManage.addregisteredstatus(true);
 

@@ -258,15 +258,13 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/input_bg"
+                android:background="@color/white"
                 android:ems="10"
-                android:enabled="false"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:padding="10dp"
-                android:textColor="@color/colorText"
+                android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerNumber"
@@ -289,7 +287,6 @@
                 android:shadowColor="@color/colorAccent"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -312,7 +309,7 @@
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerName"
@@ -335,7 +332,7 @@
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerName"
@@ -358,13 +355,13 @@
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerName"
                 tools:ignore="MissingConstraints" />
 
-            <TextView
+            <Spinner
                 android:id="@+id/emi_date"
                 android:layout_width="match_parent"
                 android:layout_height="49dp"
@@ -376,13 +373,14 @@
                 android:ems="10"
                 android:gravity="center"
                 android:textSize="18dp"
+                android:entries="@array/date"
                 android:hint="EMI Date "
                 android:textAlignment="center"
                 android:inputType="number"
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerName"
@@ -450,7 +448,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-
                 tools:ignore="MissingConstraints" />
 
 
@@ -470,7 +467,6 @@
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/customerNumber"
@@ -520,7 +516,6 @@
                 android:padding="10dp"
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/colorHint"
-                android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="MissingConstraints" />
