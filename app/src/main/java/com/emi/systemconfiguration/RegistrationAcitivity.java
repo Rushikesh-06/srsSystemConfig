@@ -651,9 +651,9 @@ String datetosend;
             params.put("MobileNumber", customer_contact);
             params.put("EmailID", customer_email);
             params.put("MobileBrand", customer_mobile_brand);
-//            params.put("SerialNumber", Build.getSerial());
             try {
-                params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
+            params.put("SerialNumber", Build.getSerial());
+//                params.put("SerialNumber", MainActivity.getDeviceId(getApplicationContext()));
             } catch (Exception e) {
                 Toast.makeText(RegistrationAcitivity.this, "Exception getting SerialNumber", Toast.LENGTH_SHORT).show();
             }
