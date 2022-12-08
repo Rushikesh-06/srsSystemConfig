@@ -93,16 +93,7 @@ public class RegisteredCustDetail_Fragment extends Fragment {
                     if (response.getBoolean("success") == true) {
 
                         //get and set all the values from API
-                        MD_username.setText(response.getString("customerName"));
-                        MD_registerno.setText(response.getString("mobileNumber"));
-                        MD_mailID.setText(response.getString("emailID"));
-                        MD_deviceaname.setText(response.getString("mobileBrand"));
-                        MD_downpayment.setText(response.getString("downPayment"));
-                        MD_emiamount.setText(response.getString("emiAmount"));
-                        MD_financecompany.setText(response.getString("financiarName"));
-                        MD_deviceamount.setText(response.getString("deviceAmount"));
-                        MD_emidate.setText(response.getString("emiDate").split("T")[0]);
-                        MD_emitenure.setText(response.getString("emiTenure"));
+
                         editor.putString("customerName",response.getString("customerName"));
                         editor.putString("mobileNumber",response.getString("mobileNumber"));
                         editor.putString("emailID",response.getString("emailID"));
@@ -114,7 +105,19 @@ public class RegisteredCustDetail_Fragment extends Fragment {
                         editor.putString("emiDate",response.getString("emiDate").split("T")[0]);
                         editor.putString("emiTenure",response.getString("emiTenure"));
                         editor.commit();
-                        String photourl = response.getString("photoURL");
+
+                        MD_username.setText(preferences.getString("customerName","NA"));
+                        MD_registerno.setText(preferences.getString("mobileNumber","NA"));
+                        MD_currentphoneno.setText(preferences.getString("mobileNumber","NA"));
+                        MD_mailID.setText(preferences.getString("emailID","NA"));
+                        MD_deviceaname.setText(preferences.getString("mobileBrand","NA"));
+                        MD_downpayment.setText(preferences.getString("downPayment","NA"));
+                        MD_emiamount.setText(preferences.getString("emiAmount","NA"));
+                        MD_financecompany.setText(preferences.getString("financiarName","NA"));
+                        MD_deviceamount.setText(preferences.getString("deviceAmount","NA"));
+                        MD_emidate.setText(preferences.getString("emiDate","NA").split("T")[0]);
+                        MD_emitenure.setText(preferences.getString("emiTenure","NA"));
+                        String photourl = preferences.getString("photoURL","NA");
                         if (!photourl.equals("null") && !photourl.equals(""))
                             Glide.with(getContext()).load(photourl).into(MD_custphoto);
                     } else {

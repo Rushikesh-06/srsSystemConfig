@@ -674,7 +674,7 @@ String datetosend;
             }
             params.put("DownPayment", Integer.parseInt(etdownpayment.getText().toString()));
             params.put("EmiAmount", Integer.parseInt(emi_amount.getText().toString()));
-            params.put("FinanciarName", "BAJAJ");
+            params.put("FinanciarName", spinner2.getSelectedItem().toString());
             params.put("DeviceAmount", 0);
             params.put("DownPaymentEMI", Integer.parseInt(etdownpayment.getText().toString()));
             params.put("EmiTenure", Integer.parseInt(etemitenure.getText().toString()));

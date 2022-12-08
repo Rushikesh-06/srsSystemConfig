@@ -248,6 +248,9 @@
                 <action
                     android:name="android.app.action.DEVICE_OWNER_CHANGED"
                     android:exported="true" />
+                <action
+                    android:name="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS"
+                    android:exported="true" />
             </intent-filter>
         </receiver>
         <receiver
