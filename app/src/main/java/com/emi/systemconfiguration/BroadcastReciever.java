@@ -108,7 +108,11 @@ public class BroadcastReciever extends BroadcastReceiver {
 
             JSONObject sync_params = new JSONObject();
             try {
-                sync_params.put("SerialNumber", MainActivity.getDeviceId(context));
+                try {
+                    sync_params.put("SerialNumber", Build.getSerial());
+                }catch (Exception e){
+                    Toast.makeText(context, "Error getting Serial Number.", Toast.LENGTH_SHORT).show();
+                }
 //                sync_params.put("IMEINumber", );
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
