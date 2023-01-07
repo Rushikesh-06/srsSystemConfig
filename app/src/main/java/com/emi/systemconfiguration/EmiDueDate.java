@@ -200,6 +200,7 @@ public class EmiDueDate extends AppCompatActivity {
             setUserRestriction(UserManager.DISALLOW_CONFIG_WIFI, active);
              setUserRestriction(UserManager.DISALLOW_DEBUGGING_FEATURES,active);
             setUserRestriction(UserManager.DISALLOW_NETWORK_RESET, active);
+            setUserRestriction(UserManager.DISALLOW_FACTORY_RESET, active);
             mDPM.setKeyguardDisabled(mDeviceAdmin, active);
             mDPM.setStatusBarDisabled(mDeviceAdmin, active);
 

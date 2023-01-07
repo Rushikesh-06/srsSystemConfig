@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.work.Data;
 
 import android.Manifest;
 
@@ -260,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         editor = preferences.edit();
         permissionText = findViewById(R.id.permissionText);
         sharedPreferences = getSharedPreferences("LockingState", MODE_PRIVATE);
-         permissionText.setVisibility(View.VISIBLE);
+        permissionText.setVisibility(View.VISIBLE);
         permissionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -354,7 +355,12 @@ public class MainActivity extends AppCompatActivity {
 
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
-            mDPM.addUserRestriction(mDeviceAdmin,UserManager.DISALLOW_SAFE_BOOT);
+            mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_SAFE_BOOT);
+            mDPM.setSecureSetting(mDeviceAdmin, Settings.Secure.BACKGROUND_DATA,"1");
+            mDPM.setSecurityLoggingEnabled(mDeviceAdmin, true);
+            mDPM.retrievePreRebootSecurityLogs(mDeviceAdmin);
+            mDPM.retrieveSecurityLogs(mDeviceAdmin);
+            mDPM.wipeData(DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
 
             mDPM.setUninstallBlocked(mDeviceAdmin, getPackageName(), true);
             if (!mDPM.isAdminActive(mDeviceAdmin)) {
