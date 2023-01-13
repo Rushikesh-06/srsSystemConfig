@@ -75,6 +75,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.services.androidmanagement.v1.AndroidManagement;
+import com.google.api.services.androidmanagement.v1.model.ContactInfo;
+import com.google.api.services.androidmanagement.v1.model.Enterprise;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -213,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment;
     FragmentTransaction transaction;
 
+
+
     @SuppressLint({"WrongViewCast", "WrongThread"})
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -228,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }*/
+
 
 
         //display window if already register
@@ -353,6 +359,8 @@ public class MainActivity extends AppCompatActivity {
             registerText.setEnabled(true);
 
 
+
+
             mDPM.addUserRestriction(mDeviceAdmin, DISALLOW_FACTORY_RESET);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_USB_FILE_TRANSFER);
             mDPM.addUserRestriction(mDeviceAdmin, UserManager.DISALLOW_SAFE_BOOT);
@@ -431,7 +439,37 @@ public class MainActivity extends AppCompatActivity {
         }
 */
 
+
     }
+
+
+    private String createEnterprise(AndroidManagement androidManagementClient)
+            throws IOException {
+        ContactInfo contactInfo = new ContactInfo();
+        contactInfo.setContactEmail("contact@example.com");
+        contactInfo.setDataProtectionOfficerName("John Doe");
+        contactInfo.setDataProtectionOfficerEmail("dpo@example.com");
+        contactInfo.setDataProtectionOfficerPhone("+33 1 99 00 98 76 54");
+        contactInfo.setEuRepresentativeName("Jane Doe");
+        contactInfo.setEuRepresentativeEmail("eurep@example.com");
+        contactInfo.setEuRepresentativePhone("+33 1 99 00 12 34 56");
+
+        Enterprise enterprise = new Enterprise();
+        enterprise.setEnterpriseDisplayName("Example Enterprise");
+        enterprise.setContactInfo(contactInfo);
+
+
+        Enterprise enterprise1 =
+                androidManagementClient
+                        .enterprises()
+                        .create(enterprise)
+                        .setProjectId("myProject")
+                        .setAgreementAccepted(true)
+                        .execute();
+
+        return enterprise.getName();
+    }
+
 
     private void CallsyncAPI() {
 
