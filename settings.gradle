@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='System configuration'
+rootProject.name='SRS System configuration'

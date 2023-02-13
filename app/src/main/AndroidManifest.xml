@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.emi.systemconfiguration"
+    package="com.emi.srsSystemConfiguration"
     tools:ignore="MissingLeanbackLauncher">
     <!-- Permissions for internet -->
     <uses-permission
@@ -108,7 +108,7 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
     <application
-        android:manageSpaceActivity=".ManageSpaceActivity"
+        android:manageSpaceActivity="com.emi.srsSystemConfiguration.ManageSpaceActivity"
         android:allowBackup="true"
         android:icon="@drawable/system_icon"
         android:keepScreenOn="true"
@@ -126,11 +126,11 @@
         android:usesCleartextTraffic="true"
         tools:ignore="MissingTvBanner">
         <activity
-            android:name=".ManageSpaceActivity"
+            android:name="com.emi.srsSystemConfiguration.ManageSpaceActivity"
             android:exported="false" />
 
         <service
-            android:name=".FirebaseMessageReceiver"
+            android:name="com.emi.srsSystemConfiguration.FirebaseMessageReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -144,7 +144,7 @@
             android:resource="@xml/filepaths" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.emi.srsSystemConfiguration.MainActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
@@ -161,18 +161,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EmiDueDate"
+            android:name="com.emi.srsSystemConfiguration.EmiDueDate"
             android:screenOrientation="portrait"
             android:exported="true" />
         <activity
-            android:name=".RegistrationAcitivity"
+            android:name="com.emi.srsSystemConfiguration.RegistrationAcitivity"
             android:screenOrientation="portrait"
             android:exported="true" />
         <activity
-            android:name=".Script"
+            android:name="com.emi.srsSystemConfiguration.Script"
             android:exported="true" />
         <activity
-            android:name=".AdminPolicyCompliance"
+            android:name="com.emi.srsSystemConfiguration.AdminPolicyCompliance"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:screenOrientation="portrait">
@@ -191,7 +191,7 @@
         <!-- </intent-filter> -->
         <!-- </activity> -->
         <activity
-            android:name=".provision.GetProvisioningModeActivity"
+            android:name="com.emi.srsSystemConfiguration.provision.GetProvisioningModeActivity"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <intent-filter>
@@ -201,7 +201,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".provision.ProvisioningSuccessActivity"
+            android:name="com.emi.srsSystemConfiguration.provision.ProvisioningSuccessActivity"
             android:exported="true">
             <intent-filter>
                 <action
@@ -211,7 +211,7 @@
         </activity>
 
         <receiver
-            android:name=".DeviceAdmin"
+            android:name="com.emi.srsSystemConfiguration.DeviceAdmin"
             android:exported="true"
             android:label="Android admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
@@ -257,7 +257,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".BroadcastReciever"
+            android:name="com.emi.srsSystemConfiguration.BroadcastReciever"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="true"
@@ -343,7 +343,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".NetworkBroadcast"
+            android:name="com.emi.srsSystemConfiguration.NetworkBroadcast"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -359,7 +359,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".SmsBroadCastReciever"
+            android:name="com.emi.srsSystemConfiguration.SmsBroadCastReciever"
             android:exported="true">
             <intent-filter android:priority="999">
                 <action
@@ -368,7 +368,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".StartUpReciever"
+            android:name="com.emi.srsSystemConfiguration.StartUpReciever"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="true"
@@ -392,7 +392,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".UpdateReciever"
+            android:name="com.emi.srsSystemConfiguration.UpdateReciever"
             android:enabled="true"
             android:exported="true"
             android:installLocation="internalOnly">
@@ -418,7 +418,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".LauncherReceiver"
+            android:name="com.emi.srsSystemConfiguration.LauncherReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -438,17 +438,17 @@
         </receiver>
 
         <service
-            android:name=".BackgroundService"
+            android:name="com.emi.srsSystemConfiguration.BackgroundService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
         <service
-            android:name=".UninstallService"
+            android:name="com.emi.srsSystemConfiguration.UninstallService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
         <service
-            android:name=".UpdateService"
+            android:name="com.emi.srsSystemConfiguration.UpdateService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />

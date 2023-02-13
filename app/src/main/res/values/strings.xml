@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">System Configuration</string>
+    <string name="app_name">SRS System Configuration</string>
     <string-array name="brands">
         <item>Select brand</item>
         <item>Samsung</item>
@@ -83,7 +83,7 @@
         <li>This phone will be managed by your IT admin</li>\n\n
         <li>Your data won\'t be private and can be erased at any time</li>
     </string>
-    <string name="do_selection_button_text">Register your phone with Goelectronix</string>
+    <string name="do_selection_button_text">Register your phone with SRS EMI Protect</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
