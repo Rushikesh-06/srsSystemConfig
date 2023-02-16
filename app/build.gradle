@@ -5,7 +5,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     signingConfigs {
         config {
-            storeFile file('/Users/pankaj/Desktop/emilocker2.jks')
+            storeFile file('/Users/pankaj/StudioProjects/srsSystemConfig/emilocker2.jks')
             storePassword 'Goex@123'
             keyAlias 'Goex'
             keyPassword 'Goex@123'
