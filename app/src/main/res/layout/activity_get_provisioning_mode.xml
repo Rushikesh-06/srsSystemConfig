@@ -38,7 +38,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         />
     <ImageView
-        android:src="@drawable/gexlogo"
+        android:src="@drawable/srslogo"
         android:layout_gravity="center_horizontal"
         android:layout_width="200dp"
         android:layout_height="200dp"/>

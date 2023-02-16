@@ -103,7 +103,7 @@ String datetosend;
 
 //    private static final int PICK_IMAGE_REQUEST =1 ;
 
-    private static final String ROOT_URL = "http://goelectronix.in/api/app/UploadFile";
+    private static final String ROOT_URL = "http://api.srsemiprotect.com/api/app/UploadFile";
 
 
     // Firebase auth
@@ -212,7 +212,7 @@ String datetosend;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/VendorPolicyDetails", vendorcode, new Response.Listener<JSONObject>() {
+                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://api.srsemiprotect.com/api/app/VendorPolicyDetails", vendorcode, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, response.toString());
@@ -701,7 +701,7 @@ String datetosend;
         }
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://goelectronix.in/api/app/RegisterCustomer", params, new Response.Listener<JSONObject>() {
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, "http://api.srsemiprotect.com/api/app/RegisterCustomer", params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.e(TAG, "onResponse: " + response);
