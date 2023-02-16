@@ -33,7 +33,7 @@ public class RegisteredCustDetail_Fragment extends Fragment {
     TextView MD_emitenure, MD_financecompany, MD_deviceaname, MD_deviceamount;
 
     ImageView MD_custphoto;
-    String Cust_detailAPI = "http://goelectronix.in/api/app/CustomerDetails";
+    String Cust_detailAPI = "http://api.srsemiprotect.com/api/app/CustomerDetails";
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
 
