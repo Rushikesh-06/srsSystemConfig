@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             = "com.emi.systemconfiguration.INSTALL_COMPLETE";
 
 
-    String syncAPI = "http://goelectronix.in/api/app/CustomerStatusSync";
+    String syncAPI = "http://api.srsemiprotect.com/api/app/CustomerStatusSync";
 
     //display window if already register
     FrameLayout mainFramelayout;
